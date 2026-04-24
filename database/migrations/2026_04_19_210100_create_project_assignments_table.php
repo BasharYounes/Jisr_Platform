@@ -1,0 +1,51 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('project_assignments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')
+          ->constrained()
+          ->cascadeOnDelete();
+
+    $table->foreignId('project_template_id')
+          ->constrained()
+          ->cascadeOnDelete();
+
+    $table->foreignId('supervisor_id')
+          ->constrained('users')
+          ->cascadeOnDelete();
+
+    $table->string('status', 32)->default('assigned');
+
+    $table->unsignedSmallInteger('progress_percentage')->default(0);
+
+    
+    $table->text('submission_url')->nullable();
+
+    $table->string('github_link')->nullable();
+
+    $table->timestamp('assigned_at')->useCurrent();
+    $table->timestamp('submitted_at')->nullable();
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('project_assignments');
+    }
+};
