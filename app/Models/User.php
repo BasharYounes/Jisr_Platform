@@ -14,6 +14,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable,HasApiTokens;
     /** @use HasFactory<\Database\Factories\UserFactory> */
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -71,10 +72,14 @@ class User extends Authenticatable
     return $this->belongsToMany(Comment::class, 'comment_likes');
     }
 
+
+
     public function supervisorProfile()
     {
     return $this->hasOne(SupervisorProfile::class);
     }
+
+
 
     public function mentorProfile()
     {

@@ -5,7 +5,11 @@
         "This file is @generated automatically"
     ],
 <<<<<<< HEAD
+<<<<<<< HEAD
     "content-hash": "7bf2a3341046774e4d519e7bd590d67c",
+=======
+    "content-hash": "f60f8b6e279e6de64f92f6b9fb420141",
+>>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
 =======
     "content-hash": "f60f8b6e279e6de64f92f6b9fb420141",
 >>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
@@ -1335,6 +1339,7 @@
         {
             "name": "laravel/sanctum",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "version": "v4.3.1",
             "source": {
                 "type": "git",
@@ -1346,6 +1351,8 @@
                 "url": "https://api.github.com/repos/laravel/sanctum/zipball/e3b85d6e36ad00e5db2d1dcc27c81ffdf15cbf76",
                 "reference": "e3b85d6e36ad00e5db2d1dcc27c81ffdf15cbf76",
 =======
+=======
+>>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
             "version": "v4.0.8",
             "source": {
                 "type": "git",
@@ -1356,11 +1363,15 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/sanctum/zipball/ec1dd9ddb2ab370f79dfe724a101856e0963f43c",
                 "reference": "ec1dd9ddb2ab370f79dfe724a101856e0963f43c",
+<<<<<<< HEAD
+>>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
+=======
 >>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
+<<<<<<< HEAD
 <<<<<<< HEAD
                 "illuminate/console": "^11.0|^12.0|^13.0",
                 "illuminate/contracts": "^11.0|^12.0|^13.0",
@@ -1374,6 +1385,8 @@
                 "orchestra/testbench": "^9.15|^10.8|^11.0",
                 "phpstan/phpstan": "^1.10"
 =======
+=======
+>>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
                 "illuminate/console": "^11.0|^12.0",
                 "illuminate/contracts": "^11.0|^12.0",
                 "illuminate/database": "^11.0|^12.0",
@@ -1386,6 +1399,9 @@
                 "orchestra/testbench": "^9.0|^10.0",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^11.3"
+<<<<<<< HEAD
+>>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
+=======
 >>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
             },
             "type": "library",
@@ -1422,7 +1438,11 @@
                 "source": "https://github.com/laravel/sanctum"
             },
 <<<<<<< HEAD
+<<<<<<< HEAD
             "time": "2026-02-07T17:19:31+00:00"
+=======
+            "time": "2025-01-26T19:34:36+00:00"
+>>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80
 =======
             "time": "2025-01-26T19:34:36+00:00"
 >>>>>>> 347dbcf3bf305875beb63ad9b0bb99a6422aed80

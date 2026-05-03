@@ -34,4 +34,5 @@ class UserSkill extends Model
     {
         return $this->belongsTo(User::class, 'UserId', 'id');
     }
+
 }
