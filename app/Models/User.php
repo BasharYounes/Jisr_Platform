@@ -6,11 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+
+    use HasFactory, Notifiable,HasApiTokens;
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+
 
     /**
      * The attributes that are mass assignable.
@@ -42,6 +45,20 @@ class User extends Authenticatable
         ];
     }
 
+    public function assessmentSessions()
+    {
+        return $this->hasMany(AssessmentSession::class, 'UserID', 'id');
+    }
+
+    public function createdQuestionBanks()
+    {
+        return $this->hasMany(QuestionBank::class, 'CreatedByUserId', 'id');
+    }
+
+    public function candidateMatchSnapshots()
+    {
+        return $this->hasMany(CandidateMatchSnapshot::class, 'user_id', 'id');
+    }
     public function posts()
     {
     return $this->hasMany(Post::class);
@@ -54,12 +71,16 @@ class User extends Authenticatable
     {
     return $this->belongsToMany(Comment::class, 'comment_likes');
     }
-    
+
+
+
     public function supervisorProfile()
     {
     return $this->hasOne(SupervisorProfile::class);
     }
-    
+
+
+
     public function mentorProfile()
     {
     return $this->hasOne(MentorProfile::class);
