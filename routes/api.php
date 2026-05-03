@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\LearningController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Matching\MatchingController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AssessmentAnswerController;
 use App\Http\Controllers\Api\AssessmentController;
@@ -45,3 +46,6 @@ Route::get('/dev/test-gemini', function (\App\Services\AI\AIClientInterface $ai)
         'Return this exact JSON: {"status":"ok","provider":"gemini"}'
     );
 });
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');

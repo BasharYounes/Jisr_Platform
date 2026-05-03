@@ -56,4 +56,5 @@ class Skill extends Model
     {
         return 'id';
     }
+
 }
