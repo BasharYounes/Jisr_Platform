@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
+use App\Services\AI\AIClientInterface;
+use App\Services\AI\GeminiClient;
+use App\Services\AI\MockAIClient;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
          $this->app->bind(
@@ -26,11 +26,14 @@ class AppServiceProvider extends ServiceProvider
         \App\Interfaces\CompanyRepositoryInterface::class,
         \App\Repositories\CompanyRepository::class
     );
+
+        $this->app->bind(AIClientInterface::class, function () {
+            return env('AI_PROVIDER') === 'gemini'
+                ? app(GeminiClient::class)
+                : app(MockAIClient::class);
+        });
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //
