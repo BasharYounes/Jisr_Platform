@@ -39,7 +39,7 @@ class OtpService
     ];
 }
 
-public function verifyOtpByType(User $user, string $code, string $type): string{
+public function verifyOtpByType(User $user, string $code, string $type): bool{
     $otp = $user->otpCodes()
         ->where('type', $type)
         ->where('used', false)
@@ -48,16 +48,16 @@ public function verifyOtpByType(User $user, string $code, string $type): string{
         ->first();
 
     if (! $otp) {
-        return 'Invalid OTP or expired';
+        return false;
     }
 
     if (! Hash::check($code, $otp->code)) {
-        return 'Invalid OTP';
+        return false;
     }
 
     $otp->update(['used' => true]);
 
-    return 'Your OTP is verified successfully';
+    return true;
 }
 
 public function generateResetOtp(User $user): array
