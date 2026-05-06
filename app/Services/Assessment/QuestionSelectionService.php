@@ -13,7 +13,7 @@ class QuestionSelectionService
             ->pluck('QuestionID')
             ->toArray();
 
-        $targetLevel = $this->resolveTargetLevel((float) $skillSession->CurrentEstimatedLevel);
+        $targetLevel = $this->resolveAdaptiveLevel($skillSession);
 
         // 1) Try exact level first
         $question = $this->queryBase($skillSession, $usedQuestionIds)
@@ -41,6 +41,32 @@ class QuestionSelectionService
 
         return null;
     }
+    private function resolveAdaptiveLevel(AssessmentSkillSession $skillSession): int
+    {
+        $currentLevel = (float) $skillSession->CurrentEstimatedLevel;
+
+        $lastAttempt = $skillSession->attempts()
+            ->whereNotNull('NormalizedScore')
+            ->latest('AnsweredAt')
+            ->first();
+
+        if (!$lastAttempt) {
+            return $this->resolveTargetLevel($currentLevel);
+        }
+
+        $score = (float) $lastAttempt->NormalizedScore;
+
+        if ($score >= 0.80) {
+            return min(5, (int) ceil($currentLevel) + 1);
+        }
+
+        if ($score < 0.50) {
+            return max(1, (int) floor($currentLevel) - 1);
+        }
+
+        return $this->resolveTargetLevel($currentLevel);
+    }
+
 
     private function queryBase(AssessmentSkillSession $skillSession, array $usedQuestionIds)
     {
