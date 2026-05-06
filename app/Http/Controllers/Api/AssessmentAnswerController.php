@@ -22,9 +22,11 @@ class AssessmentAnswerController extends Controller
 
     public function submit(SubmitAnswerRequest $request, $session, AssessmentQuestionAttempt $attempt): JsonResponse
     {
-        $attempt->load(['questionBank.rubrics', 'questionBank.skill', 'assessmentSkillSession']);
-
-        $attempt->load('assessmentSkillSession.assessmentSession');
+        $attempt->load([
+            'questionBank.rubrics',
+            'questionBank.skill',
+            'assessmentSkillSession.assessmentSession',
+        ]);
 
         if ($attempt->assessmentSkillSession->assessmentSession->UserID !== auth()->id()) {
             return ApiResponse::error('Unauthorized access to this attempt.', 403);
@@ -35,7 +37,12 @@ class AssessmentAnswerController extends Controller
         }
 
         $answerText = $request->answer_text;
-        $evaluation = $this->answerEvaluationService->evaluate($attempt->questionBank, $answerText);
+
+        $evaluation = $this->answerEvaluationService->evaluate(
+            $attempt->questionBank,
+            $answerText
+        );
+
         $normalizedScore = (float) ($evaluation['normalized_score'] ?? 0);
 
         DB::transaction(function () use ($attempt, $answerText, $evaluation, $normalizedScore) {
@@ -56,7 +63,8 @@ class AssessmentAnswerController extends Controller
             ]);
 
             $skillSession = $attempt->assessmentSkillSession;
-            $newLevel = $this->levelEstimationService->updateLevel(
+
+            $newLevel = $this->levelEstimationService->resolveNextLevel(
                 (float) $skillSession->CurrentEstimatedLevel,
                 $normalizedScore
             );
@@ -67,11 +75,11 @@ class AssessmentAnswerController extends Controller
             ]);
         });
 
-        return  ApiResponse::success('Answer submitted and evaluated successfully.', [
+        return ApiResponse::success('Answer submitted and evaluated successfully.', [
             'attempt_id' => $attempt->AssessmentQuestionAttemptID,
             'normalized_score' => $normalizedScore,
             'feedback' => $evaluation['feedback_ar'] ?? null,
-            ],);
+        ]);
     }
 
     public function result($session, AssessmentQuestionAttempt $attempt): JsonResponse

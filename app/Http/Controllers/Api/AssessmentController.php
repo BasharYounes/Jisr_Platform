@@ -37,10 +37,13 @@ class AssessmentController extends Controller
         return ApiResponse::success('Assessment session created successfully.', $session);
     }
 
-    public function nextQuestion(AssessmentSession $session, Skill $skill): JsonResponse
+   public function nextQuestion(AssessmentSession $session, Skill $skill): JsonResponse
     {
         $skillSession = AssessmentSkillSession::query()
-            ->with(['assessmentSession', 'attempts'])
+            ->with([
+                'assessmentSession',
+                'questionAttempts.questionBank',
+            ])
             ->where('AssessmentSessionID', $session->AssessmentSessionID)
             ->where('SkillID', $skill->id)
             ->first();
@@ -49,13 +52,22 @@ class AssessmentController extends Controller
             return ApiResponse::error('Skill session not found.', 404);
         }
 
-        if ($skillSession->QuestionCount >= 3 || $skillSession->Status === 'completed') {
-            $this->assessmentCompletionService->completeSkillSessionIfEligible($skillSession);
+        $this->assessmentCompletionService
+            ->completeSkillSessionIfEligible($skillSession);
 
+        $skillSession->refresh();
+
+        $skillSession->load([
+            'assessmentSession',
+            'questionAttempts.questionBank',
+        ]);
+
+        if ($this->assessmentCompletionService->shouldStopAsking($skillSession)) {
             return ApiResponse::error('This skill assessment is already completed.', 422);
         }
 
-        $question = $this->questionSelectionService->selectNextQuestion($skillSession);
+        $question = $this->questionSelectionService
+            ->selectNextQuestion($skillSession);
 
         if (!$question) {
             return ApiResponse::error('No more questions available for this skill.', 404);
@@ -75,7 +87,7 @@ class AssessmentController extends Controller
             'question_text' => $question->QuestionText,
             'question_level' => $question->Level,
             'skill_id' => $skill->id,
-            'skill_name' => $skill->Name,
+            'skill_name' => $skill->Name ?? $skill->name,
         ]);
     }
 
