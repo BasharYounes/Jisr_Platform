@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserSkill extends Model
 {
+
+        protected $guarded = [];
     protected $table = 'user_skills';
     protected $primaryKey = 'UserSkillID';
 

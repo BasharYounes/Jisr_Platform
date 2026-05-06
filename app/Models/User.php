@@ -6,13 +6,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
+use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
+
 
 class User extends Authenticatable
 {
-
-    use HasFactory, Notifiable,HasApiTokens;
     /** @use HasFactory<\Database\Factories\UserFactory> */
+
+    
+
+  use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
 
     /**
@@ -90,11 +95,11 @@ class User extends Authenticatable
     return $this->hasMany(AuditLog::class);
     }
 
-    public function roles()
-    {
-    return $this->belongsToMany(Role::class, 'user_roles')
-                ->withPivot('assigned_at')->withTimestamps();
-    }
+    // public function roles()
+    // {
+    // return $this->belongsToMany(Role::class, 'user_roles')
+    //             ->withPivot('assigned_at')->withTimestamps();
+    // }
 
     public function complaintsMade()
 {
@@ -137,7 +142,7 @@ public function mockInterviews()
 
 public function companies()
 {
-    return $this->belongsToMany(Company::class)
+    return $this->belongsToMany(Company::class,'company_users')
                 ->withPivot('role')
                 ->withTimestamps();
 }
@@ -241,6 +246,11 @@ public function conversations()
 public function sentMessages()
 {
     return $this->hasMany(Message::class, 'sender_id');
+}
+
+public function otpCodes()
+{
+    return $this->hasMany(OtpCode::class);
 }
 
 }

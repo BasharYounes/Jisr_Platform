@@ -8,9 +8,10 @@ class Company extends Model
 {
     protected $guarded = [];
 
+
     public function users()
     {
-        return $this->belongsToMany(User::class)
+        return $this->belongsToMany(User::class, 'company_users')
                     ->withPivot('role')
                     ->withTimestamps();
     }
