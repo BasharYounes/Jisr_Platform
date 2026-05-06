@@ -137,30 +137,35 @@ public function generateResetOtp(User $user): array
         return $this->userRepository->getUserByOTP($OTP, 'password_reset');
     }
 
+    public function findByEmailOrFail(string $email): User
+    {
+        return $this->userRepository->findByEmailOrFail($email);
+    }
+
+    public function verifyPasswordResetOtp(array $data): array
+    {
+    $user = $this->userRepository->findByEmailOrFail($data['email']);
+
+    if (! $this->otpService->verifyOtpByType($user, $data['code'], 'password_reset')) {
+        throw ValidationException::withMessages([
+            'code' => ['OTP Expired or invalid'],
+        ]);
+    }
+
+    $token = $user->createToken('api-token')->plainTextToken;
+
+    return [
+        'user' => $user->load('roles'),
+        'token' => $token,
+    ];
+}
+
 
 public function resetPassword(array $data): array
 {
-    // $user = User::whereNotNull('reset_token')->first();
-
-    // if (!$user) {
-    //     throw ValidationException::withMessages([
-    //         'token' => ['Invalid token'],
-    //     ]);
-    // }
-
-    // if (
-    // !hash_equals($user->reset_token, hash('sha256', $data['token'])) 
-    //     $user->reset_token_expires_at < now()
-    // ) {
-    //     throw ValidationException::withMessages([
-    //         'token' => ['Invalid or expired token'],
-    //     ]);
-    // }
     $user = Auth::user();
     $user->update([
         'password' => Hash::make($data['new_password']),
-        // 'reset_token' => null,
-        // 'reset_token_expires_at' => null,
     ]);
 
     $user->tokens()->delete();

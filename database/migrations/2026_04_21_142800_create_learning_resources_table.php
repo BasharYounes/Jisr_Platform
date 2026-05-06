@@ -13,20 +13,21 @@ return new class extends Migration
     {
         Schema::create('learning_resources', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->unsignedBigInteger('SkillID');
 
-    $table->string('type'); 
+            $table->string('Title');
+            $table->string('Url');
 
-    $table->string('url');
+            $table->string('Type'); // video, article, course, project
+            $table->unsignedTinyInteger('Level'); // 1-5
 
-    $table->string('provider')->nullable();
+            $table->decimal('EstimatedHours', 5, 2)->nullable();
 
-    $table->integer('duration_hours')->nullable();
+            $table->string('Provider')->nullable(); // YouTube, Coursera
+            $table->string('Language', 10)->default('en');
 
-    $table->string('level'); 
-
-    $table->string('format'); 
-            $table->timestamps();
+            $table->boolean('IsFree')->default(true);
+            $table->boolean('IsActive')->default(true);
         });
     }
 

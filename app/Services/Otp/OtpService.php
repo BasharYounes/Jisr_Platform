@@ -74,11 +74,5 @@ public function generateResetOtp(User $user): array
         ]; 
     }
 
-    public function verifyOtpByReset(User $user, string $code, string $type): string
-    {
-        $this->verifyOtpByType($user, $code, $type);
-        $token = $user->createToken('api-token')->plainTextToken;
-        return $token;
-    }
 
 }

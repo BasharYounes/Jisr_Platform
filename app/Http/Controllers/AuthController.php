@@ -58,15 +58,13 @@ public function verifyOTPresetPassword(Request $request)
     {
         $request->validate([
             'code' => ['required', 'digits:6'],
+            'email' => ['required', 'email', 'exists:users,email'],
         ]);
-        $user = $this->authService->getUserByOTP($request->code);
 
-        $response = $this->otpService->verifyOtpByReset($user, $request->code, 'password_reset');
+        $response = $this->authService->verifyPasswordResetOtp($request->all());
+      
 
-        return response([
-            'message' => "OTP verification successful",
-            'token' => $response
-        ]);
+        return $response;
     }
 
     public function resetPassword(Request $request)

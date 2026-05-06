@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('resource_skill_mappings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('resource_id')
-          ->constrained('learning_resources')
-          ->cascadeOnDelete();
+            $table->foreignId('resource_id')->constrained('learning_resources')->cascadeOnDelete();
 
     $table->foreignId('skill_id')
           ->constrained()
