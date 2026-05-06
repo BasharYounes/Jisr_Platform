@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('learning_resources', function (Blueprint $table) {
-            $table->id('LearningResourceID');
+            $table->id();
             $table->unsignedBigInteger('SkillID');
 
             $table->string('Title');
@@ -28,14 +28,6 @@ return new class extends Migration
 
             $table->boolean('IsFree')->default(true);
             $table->boolean('IsActive')->default(true);
-
-            $table->timestamps();
-
-            $table->foreign('SkillID')
-                ->references('id')
-                ->on('skills')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
         });
     }
 

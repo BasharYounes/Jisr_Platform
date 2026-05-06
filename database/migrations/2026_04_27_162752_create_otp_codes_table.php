@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('otp_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('code'); 
+            $table->string('type') ;  // login, reset, verify
+            $table->timestamp('expires_at');
+            $table->boolean('used')->default(false);
             $table->timestamps();
         });
     }
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('otp_codes');
     }
 };

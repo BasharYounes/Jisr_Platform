@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Company;
+use App\Models\User;
+
 return [
 
     /*
@@ -36,9 +39,20 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+    
+    'sanctum' => [
+        'driver' => 'sanctum',
+        'provider' => 'users',
+    ],
+
+    // Guard for admin
+       'admin' => [
+        'driver' => 'sanctum',
+        'provider' => 'admins',
         ],
     ],
 
@@ -59,17 +73,25 @@ return [
     |
     */
 
-    'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+  'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => env('AUTH_MODEL', App\Models\User::class),
     ],
+
+    // Provider for admin
+    'admins' => [
+        'driver' => 'eloquent',
+        'model' => User::class, 
+         ],
+
+        // Provider for company
+        'companies' => [
+        'driver' => 'eloquent',
+        'model' =>User::class, 
+        ],
+    ],
+
 
     /*
     |--------------------------------------------------------------------------
