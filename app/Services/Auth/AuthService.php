@@ -59,12 +59,19 @@ public function login(array $data): array
          ]);
     }
 
-    if ($user->hasRole('company') && $user->is_verified_by_admin != 'accepted') {
+   if ($user->hasRole('company')) {
+    if ($user->is_verified_by_admin === 'pending') {
         throw ValidationException::withMessages([
-            'email' => 'Your account is not verified by admin yet',
+            'email' => ['Your account is still pending admin verification.'],
         ]);
     }
 
+    if ($user->is_verified_by_admin === 'rejected') {
+        throw ValidationException::withMessages([
+            'email' => ['Your company account has been rejected. Please sign up again and upload valid verification documents.'],
+        ]);
+    }
+}
     $otpData =$this->otpService->generateLoginOtp($user);
 
      event(new LoginOtpRequested(
