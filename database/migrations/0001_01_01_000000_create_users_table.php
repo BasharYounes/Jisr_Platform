@@ -21,7 +21,8 @@ return new class extends Migration
             $table->enum('is_verified_by_admin', ['pending', 'accepted', 'rejected'])->default('pending');        
             $table->text('profile_picture_url')->nullable();
             $table->text('bio')->nullable();
-            
+            $table->timestamp('otp_last_sent_at')->nullable();
+            $table->integer('otp_attempts')->default(0);
             //$table->timestamp('email_verified_at')->nullable();
             //$table->rememberToken();
             $table->timestamps();

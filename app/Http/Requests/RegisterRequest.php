@@ -39,7 +39,7 @@ class RegisterRequest extends FormRequest
             //  company fields
              'industry' => 'required_if:role,company|string',
              'website' => 'nullable|url',
-             'documentation_file' => 'required_if:role,company|file|max:2048',
+             'documentation_file' => 'required_if:role,company|file|max:2048|mimes:pdf,jpg,jpeg,png,doc,docx',
              'location' => 'required_if:role,company|string',
             // 'description' => 'nullable|string|max:1000',
             

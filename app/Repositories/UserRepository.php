@@ -41,4 +41,23 @@ class UserRepository implements UserRepositoryInterface
     $user = User::find($otp->user_id);
      return $user;
   }
+
+  public function updateOtpMeta(User $user, array $data): bool
+{
+    return $user->update($data);
+}
+
+
+  public function findByEmail(string $email): ?User
+{
+    return User::where('email', $email)->first();
+}
+
+public function updateOtp(User $user, array $data): bool
+{
+    return $user->update($data);
+}
+
+
+
 }

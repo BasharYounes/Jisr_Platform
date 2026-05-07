@@ -7,6 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyResource extends JsonResource
 {
+     protected $adminService;
+
     /**
      * Transform the resource into an array.
      *
