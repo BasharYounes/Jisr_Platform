@@ -31,7 +31,7 @@ return new class extends Migration
 
     $table->foreignId('cv_id')
           ->nullable()
-          ->constrained('c_v_s')
+        ->constrained('c_v_s', 'CvID')
           ->nullOnDelete();
 
 
