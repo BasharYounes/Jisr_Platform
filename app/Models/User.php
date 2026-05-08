@@ -15,7 +15,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
 
-    
+
 
   use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
@@ -149,12 +149,12 @@ public function companies()
 
 public function skills()
 {
-    return $this->belongsToMany(Skill::class)
+    return $this->belongsToMany(Skill::class, 'user_skills', 'UserId', 'SkillId')
                 ->withPivot([
-                    'proficiency_level',
-                    'confidence_score',
-                    'source',
-                    'verified'
+                    'ProficiencyLevel',
+                    'ConfidenceScore',
+                    'Source',
+                    'Verified'
                 ])
                 ->withTimestamps();
 }
