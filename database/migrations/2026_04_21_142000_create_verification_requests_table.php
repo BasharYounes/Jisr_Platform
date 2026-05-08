@@ -17,29 +17,29 @@ return new class extends Migration
           ->constrained('users')
           ->cascadeOnDelete();
 
-   
-    $table->string('requested_role', 32);
-    
 
-   
+    $table->string('requested_role', 32);
+
+
+
     $table->string('requested_specialization', 128)->nullable();
 
     $table->unsignedInteger('experience_years')->nullable();
 
     $table->text('portfolio_url')->nullable();
 
-  
+
     $table->foreignId('cv_id')
           ->nullable()
-          ->constrained('cvs')
+          ->constrained('c_v_s')
           ->nullOnDelete();
 
- 
+
     $table->text('motivation_message')->nullable();
 
-  
+
     $table->string('status', 32)->default('pending');
-    
+
 
 
     $table->text('review_notes')->nullable();

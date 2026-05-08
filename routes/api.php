@@ -4,7 +4,7 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
+// use App\Http\Controllers\UserController;
 
 use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\LearningController;
