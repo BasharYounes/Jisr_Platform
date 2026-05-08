@@ -29,6 +29,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('cv_extracted_skills');
         Schema::dropIfExists('c_v_analyses');
     }
 };
