@@ -15,13 +15,15 @@ use App\Services\Assessment\QuestionSelectionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Support\ApiResponse;
+use App\Services\Assessment\AssessmentTelemetryService;
 
 class AssessmentController extends Controller
 {
     public function __construct(
         private readonly AssessmentSessionService $assessmentSessionService,
         private readonly QuestionSelectionService $questionSelectionService,
-        private readonly AssessmentCompletionService $assessmentCompletionService
+        private readonly AssessmentCompletionService $assessmentCompletionService,
+        private readonly AssessmentTelemetryService $telemetryService,
     ) {
     }
 
@@ -133,6 +135,31 @@ class AssessmentController extends Controller
                 })->toArray(),
             ]);
         });
+
+        $this->telemetryService->record([
+            'assessment_session_id' => $skillSession->AssessmentSessionID ?? null,
+            'assessment_skill_session_id' => $session->skillSessions()->AssessmentSkillSessionID,
+
+            'event_type' => 'skill_session_completed',
+
+            'level_after' => $skillSession->FinalEstimatedLevel ?? null,
+            'confidence_score' => $skillSession->ConfidenceScore ?? null,
+
+            'payload' => [
+                'completion_reason' => $completionReason ?? null,
+                'question_count' => $session->skillSessions()->attempts()->count() ?? null,
+                'tested_levels' => $session->skillSessions()->attempts()
+                    ->pluck('questionBank.Level')
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all(),
+                'average_score' => $session->skillSessions()->attempts()->avg('NormalizedScore'),
+                'min_score' => $session->skillSessions()->attempts()->min('NormalizedScore'),
+                'max_score' => $session->skillSessions()->attempts()->max('NormalizedScore'),
+                'score_variance' => null,
+            ],
+        ]);
 
         return ApiResponse::success('Assessment session completed successfully.', $session->fresh('skillSessions'));
     }

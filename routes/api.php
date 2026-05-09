@@ -35,6 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 Route::get('/opportunities/{id}/top-candidates', [MatchingController::class, 'topCandidates']);
 
+require __DIR__ . '/MetricsResultAI/MetricsRoute.php';
+
 Route::get('/dev/login-as-test', function () {
         $user = \App\Models\User::firstOrCreate(
             ['email' => 'dev@test.com'],
