@@ -66,12 +66,12 @@ class Skill extends Model
 
     public function users()
 {
-    return $this->belongsToMany(User::class)
+        return $this->belongsToMany(User::class, 'user_skills', 'SkillId', 'UserId')
                 ->withPivot([
-                    'proficiency_level',
-                    'confidence_score',
-                    'source',
-                    'verified'
+                        'ProficiencyLevel',
+                        'ConfidenceScore',
+                        'Source',
+                        'Verified'
                 ])
                 ->withTimestamps();
 }

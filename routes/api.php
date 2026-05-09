@@ -4,7 +4,7 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
+// use App\Http\Controllers\UserController;
 
 use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\LearningController;
@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\AssessmentAnswerController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\CVAnalysisController;
 use App\Http\Controllers\Api\CVController;
+use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cvs/upload', [CVController::class, 'upload']);
@@ -34,6 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/assessments/{session}/ai-learning-plan/latest', [AILearningPlanController::class, 'latest']);
 });
 Route::get('/opportunities/{id}/top-candidates', [MatchingController::class, 'topCandidates']);
+
+require __DIR__ . '/MetricsResultAI/MetricsRoute.php';
 
 Route::get('/dev/login-as-test', function () {
         $user = \App\Models\User::firstOrCreate(

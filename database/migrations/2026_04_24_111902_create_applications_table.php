@@ -24,7 +24,7 @@ return new class extends Migration
 
     $table->foreignId('cv_id')
           ->nullable()
-          ->constrained('cvs')
+          ->constrained('c_v_s', 'CvID')
           ->nullOnDelete();
 
     $table->text('cover_letter')->nullable();

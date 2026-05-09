@@ -4,16 +4,20 @@ namespace App\Services\Assessment;
 
 use App\Models\AssessmentSkillSession;
 use App\Models\QuestionBank;
+use App\Services\Assessment\AssessmentTelemetryService;
 
 class QuestionSelectionService
 {
+    public function __construct(
+        private AssessmentTelemetryService $telemetryService
+    ) {}
     public function selectNextQuestion(AssessmentSkillSession $skillSession): ?QuestionBank
     {
         $usedQuestionIds = $skillSession->attempts()
             ->pluck('QuestionID')
             ->toArray();
 
-        $targetLevel = $this->resolveTargetLevel((float) $skillSession->CurrentEstimatedLevel);
+        $targetLevel = $this->resolveAdaptiveLevel($skillSession);
 
         // 1) Try exact level first
         $question = $this->queryBase($skillSession, $usedQuestionIds)
@@ -22,6 +26,20 @@ class QuestionSelectionService
             ->first();
 
         if ($question) {
+            $this->telemetryService->record([
+                'assessment_session_id' => $skillSession->AssessmentSessionID ?? null,
+                'assessment_skill_session_id' => $skillSession->AssessmentSkillSessionID ?? null,
+                'question_id' => $question->QuestionID ?? null,
+                'event_type' => 'question_selected',
+                'level_before' => $skillSession->CurrentEstimatedLevel ?? null,
+                'payload' => [
+                    'selected_question_level' => $question->Level ?? null,
+                    'difficulty_weight' => $question->DifficultyWeight ?? null,
+                    'selection_strategy' => 'closest_estimated_level',
+                    'current_estimated_level' => $skillSession->CurrentEstimatedLevel ?? null,
+                    'used_questions_count' => count($usedQuestionIds) ?? null,
+                ],
+            ]);
             return $question;
         }
 
@@ -35,12 +53,52 @@ class QuestionSelectionService
                 ->first();
 
             if ($question) {
+                $this->telemetryService->record([
+                'assessment_session_id' => $skillSession->assessment_session_id ?? null,
+                'assessment_skill_session_id' => $skillSession->id,
+                'question_id' => $question->id,
+                'event_type' => 'question_selected',
+                'level_before' => $skillSession->CurrentEstimatedLevel ?? null,
+                'payload' => [
+                    'selected_question_level' => $question->Level ?? null,
+                    'difficulty_weight' => $question->DifficultyWeight ?? null,
+                    'selection_strategy' => 'closest_estimated_level',
+                    'current_estimated_level' => $skillSession->CurrentEstimatedLevel ?? null,
+                    'used_questions_count' => count($usedQuestionIds) ?? null,
+                ],
+            ]);
                 return $question;
             }
         }
 
         return null;
     }
+    private function resolveAdaptiveLevel(AssessmentSkillSession $skillSession): int
+    {
+        $currentLevel = (float) $skillSession->CurrentEstimatedLevel;
+
+        $lastAttempt = $skillSession->attempts()
+            ->whereNotNull('NormalizedScore')
+            ->latest('AnsweredAt')
+            ->first();
+
+        if (!$lastAttempt) {
+            return $this->resolveTargetLevel($currentLevel);
+        }
+
+        $score = (float) $lastAttempt->NormalizedScore;
+
+        if ($score >= 0.80) {
+            return min(5, (int) ceil($currentLevel) + 1);
+        }
+
+        if ($score < 0.50) {
+            return max(1, (int) floor($currentLevel) - 1);
+        }
+
+        return $this->resolveTargetLevel($currentLevel);
+    }
+
 
     private function queryBase(AssessmentSkillSession $skillSession, array $usedQuestionIds)
     {

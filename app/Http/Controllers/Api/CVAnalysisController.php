@@ -36,7 +36,7 @@ class CVAnalysisController extends Controller
         try {
             $extractionResult = $this->skillExtractionService->extractSkills($text, 'Backend Developer');
         } catch (\Throwable $e) {
-            return ApiResponse::error('AI analysis failed.', 502, $e->getMessage()); 
+            return ApiResponse::error('AI analysis failed.', 502, $e->getMessage());
         }
         $skills = $extractionResult['skills'] ?? [];
 
@@ -89,7 +89,10 @@ class CVAnalysisController extends Controller
         return ApiResponse::success('CV analyzed successfully.', [
             'analysis_id' => $analysis->CVAnalysisID,
             'cv_id' => $cv->CvID,
-            'skills' => $skills,
+            'skills' => collect($skills)->map(function ($skill, $index) use ($normalized) {
+                return array_merge($skill, ['skill_id' => $normalized[$index]['skill_id'] ?? null]);
+            })->values()->toArray(),
+            // 'skill_ids' => $analysis->extractedSkills()->distinct()->pluck('SkillID')->values()->toArray(),
         ]);
 
     }

@@ -11,20 +11,24 @@ use App\Services\Assessment\LevelEstimationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Support\ApiResponse;
+use App\Services\Assessment\AssessmentTelemetryService;
 
 class AssessmentAnswerController extends Controller
 {
     public function __construct(
         private readonly AnswerEvaluationService $answerEvaluationService,
-        private readonly LevelEstimationService $levelEstimationService
+        private readonly LevelEstimationService $levelEstimationService,
+        private AssessmentTelemetryService $telemetryService,
     ) {
     }
 
     public function submit(SubmitAnswerRequest $request, $session, AssessmentQuestionAttempt $attempt): JsonResponse
     {
-        $attempt->load(['questionBank.rubrics', 'questionBank.skill', 'assessmentSkillSession']);
-
-        $attempt->load('assessmentSkillSession.assessmentSession');
+        $attempt->load([
+            'questionBank.rubrics',
+            'questionBank.skill',
+            'assessmentSkillSession.assessmentSession',
+        ]);
 
         if ($attempt->assessmentSkillSession->assessmentSession->UserID !== auth()->id()) {
             return ApiResponse::error('Unauthorized access to this attempt.', 403);
@@ -35,10 +39,17 @@ class AssessmentAnswerController extends Controller
         }
 
         $answerText = $request->answer_text;
-        $evaluation = $this->answerEvaluationService->evaluate($attempt->questionBank, $answerText);
+
+        $levelBefore = $attempt->assessmentSkillSession->CurrentEstimatedLevel;
+
+        $evaluation = $this->answerEvaluationService->evaluate(
+            $attempt->questionBank,
+            $answerText
+        );
+
         $normalizedScore = (float) ($evaluation['normalized_score'] ?? 0);
 
-        DB::transaction(function () use ($attempt, $answerText, $evaluation, $normalizedScore) {
+        DB::transaction(function () use ($attempt, $answerText, $evaluation, $normalizedScore, $levelBefore) {
             AssessmentAnswer::query()->create([
                 'AssessmentQuestionAttemptID' => $attempt->AssessmentQuestionAttemptID,
                 'AnswerText' => $answerText,
@@ -56,7 +67,8 @@ class AssessmentAnswerController extends Controller
             ]);
 
             $skillSession = $attempt->assessmentSkillSession;
-            $newLevel = $this->levelEstimationService->updateLevel(
+
+            $newLevel = $this->levelEstimationService->resolveNextLevel(
                 (float) $skillSession->CurrentEstimatedLevel,
                 $normalizedScore
             );
@@ -65,13 +77,37 @@ class AssessmentAnswerController extends Controller
                 'CurrentEstimatedLevel' => $newLevel,
                 'QuestionCount' => $skillSession->QuestionCount + 1,
             ]);
+
+            $levelAfter = $attempt->assessmentSkillSession->fresh()->CurrentEstimatedLevel;
+
+            $this->telemetryService->record([
+                'assessment_session_id' => $attempt->assessmentSkillSession->AssessmentSessionID ?? null,
+                'assessment_skill_session_id' => $attempt->assessmentSkillSession->AssessmentSkillSessionID,
+                'assessment_question_attempt_id' => $attempt->AssessmentQuestionAttemptID,
+                'question_id' => $attempt->QuestionID,
+
+                'event_type' => 'answer_evaluated',
+
+                'level_before' => $levelBefore,
+                'level_after' => $levelAfter,
+
+                'normalized_score' => $evaluation['normalized_score'] ?? null,
+                'confidence_score' => $evaluation['confidence'] ?? null,
+
+                'payload' => [
+                    'question_level' => $attempt->questionBank->Level ?? null,
+                    'difficulty_weight' => $attempt->questionBank->DifficultyWeight ?? null,
+                    'feedback' => $evaluation['feedback'] ?? null,
+                    'raw_evaluation' => $evaluation,
+                ],
+            ]);
         });
 
-        return  ApiResponse::success('Answer submitted and evaluated successfully.', [
+        return ApiResponse::success('Answer submitted and evaluated successfully.', [
             'attempt_id' => $attempt->AssessmentQuestionAttemptID,
             'normalized_score' => $normalizedScore,
             'feedback' => $evaluation['feedback_ar'] ?? null,
-            ],);
+        ]);
     }
 
     public function result($session, AssessmentQuestionAttempt $attempt): JsonResponse
