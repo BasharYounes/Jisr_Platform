@@ -50,7 +50,7 @@ class UserController extends Controller
     }
 
    // Student
-     public function getProfileStudent(StudentProfileRequest $request)
+     public function getProfileStudent()
     {
         $user =Auth::user();
         $studentProfile = $this->UserService->getStudentProfile($user);
