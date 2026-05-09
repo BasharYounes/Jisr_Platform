@@ -145,6 +145,11 @@ protected UserRepository $userRepository;
         user: $user,
     ));
 
+    $user->update([
+    'is_verified_by_admin' => 'rejected',
+]);
+
+$user->delete();
     return [
         'status' => true,
         'message' => 'Company rejected successfully'

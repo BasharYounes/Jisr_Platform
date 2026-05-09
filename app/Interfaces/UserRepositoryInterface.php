@@ -9,4 +9,9 @@ interface UserRepositoryInterface
     public function findByEmailOrFail(string $email): User;
     public function listUsers();
     public function getUserByOTP(string $OTP,string $type): User;
+    public function findByEmail(string $email): ?User;
+    public function updateOtp(User $user, array $data): bool;
+    public function updateOtpMeta(User $user, array $data): bool;
+    public function update(User $user, array $data): User;
+    
 }

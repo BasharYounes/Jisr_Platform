@@ -77,6 +77,19 @@ public function verifyOTPresetPassword(Request $request)
 
         return response()->json($response);
     }
+        public function resendOtp(Request $request)
+{
+     $data = $request->validate([
+        'email' => ['required', 'email', 'exists:users,email'],
+    ]);
+    $this->authService->resendOtp($data);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'OTP resent successfully.',
+    ]);
+}
+
 
     public function logout()
     {

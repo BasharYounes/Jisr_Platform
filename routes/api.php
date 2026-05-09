@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\AssessmentAnswerController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\CVAnalysisController;
 use App\Http\Controllers\Api\CVController;
+use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cvs/upload', [CVController::class, 'upload']);
@@ -56,12 +57,14 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+//Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/login/verify-otp', [AuthController::class, 'verifyLoginOtp']);
 Route::post('/password/forgot', [AuthController::class, 'forgetPassword']);
 Route::post('/password/reset/verify-otp', [AuthController::class, 'verifyOTPresetPassword']);
 Route::post('/password/reset', [AuthController::class, 'resetPassword'])->middleware('auth:admin');
+Route::post('/otp/resend',[AuthController::class,'resendOtp']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
@@ -75,4 +78,18 @@ Route::middleware('auth:admin')-> prefix('admin')->group(function () {
     Route::post('/companiesReject/{companyId}', [AdminController::class, 'rejectCompany']);
     Route::get('/companyDetails/{companyId}', [AdminController::class, 'getCompanyDetails']);
     // Route::post('/users/{id}/assign-role', [AdminController::class, 'assignRole']);
+});
+
+
+//Company
+Route::middleware('auth:sanctum')->prefix('company')->group(function(){
+Route::get('profile',[UserController::class,'getProfileCompany']);
+Route::post('profile/edit',[UserController::class,'editProfile']);
+});
+
+
+//Student
+Route::middleware('auth:sanctum')->prefix('student')->group(function(){
+Route::get('profile',[UserController::class,'getProfileStudent']);
+Route::post('profile/edit',[UserController::class,'editProfileStudent']);
 });

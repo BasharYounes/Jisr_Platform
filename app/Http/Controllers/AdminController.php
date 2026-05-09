@@ -9,7 +9,6 @@ use App\Traits\ApiResponse;
 class AdminController extends Controller
 {
     use ApiResponse;
-
     protected $adminService;
 
     public function __construct(AdminService $adminService)

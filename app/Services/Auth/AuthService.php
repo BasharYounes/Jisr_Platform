@@ -6,6 +6,7 @@ use App\Events\LoginOtpRequested;
 use App\Events\PasswordResetOtpRequested;
 use App\Models\OtpCode;
 use App\Models\User;
+use App\Notifications\SendOtpNotification;
 use App\Repositories\UserRepository;
 use App\Services\Otp\OtpService;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;  
+use Carbon\Carbon;
 
 
 class AuthService
@@ -51,18 +53,25 @@ public function register(string $role, array $data): array
 public function login(array $data): array
 {
   $user = $this->userRepository->findByEmailOrFail($data['email']);
-    if (! $user || ! Hash::check($data['password'], $user->password)) {
+    if (! Hash::check($data['password'], $user->password)) {
         throw ValidationException::withMessages([
          'email' => 'Invalid email or password', 
          ]);
     }
 
-    if ($user->hasRole('company') && $user->is_verified_by_admin != 'accepted') {
+   if ($user->hasRole('company')) {
+    if ($user->is_verified_by_admin === 'pending') {
         throw ValidationException::withMessages([
-            'email' => 'Your account is not verified by admin yet',
+            'email' => ['Your account is still pending admin verification.'],
         ]);
     }
 
+    if ($user->is_verified_by_admin === 'rejected') {
+        throw ValidationException::withMessages([
+            'email' => ['Your company account has been rejected. Please sign up again and upload valid verification documents.'],
+        ]);
+    }
+}
     $otpData =$this->otpService->generateLoginOtp($user);
 
      event(new LoginOtpRequested(
@@ -111,27 +120,6 @@ public function forgetPassword(string $email): array
     ];
 }
 
-public function generateResetOtp(User $user): array
-{
-    $user->otpCodes()
-        ->where('type', 'password_reset')
-        ->where('used', false)
-        ->delete();
-
-    $plainCode = (string) random_int(100000, 999999);
-
-    $otp = $user->otpCodes()->create([
-        'code' => Hash::make($plainCode),
-        'type' => 'password_reset',
-        'expires_at' => now()->addMinutes(10),
-        'used' => false,
-    ]);
-      
-    return [
-        'otp' => $otp,
-        ]; 
-}
-
  public function getUserByOTP(string $OTP): User
     {
         return $this->userRepository->getUserByOTP($OTP, 'password_reset');
@@ -145,19 +133,24 @@ public function generateResetOtp(User $user): array
     public function verifyPasswordResetOtp(array $data): array
     {
     $user = $this->userRepository->findByEmailOrFail($data['email']);
-
+    $attempts = $user->otp_attempts ?? 0; 
     if (! $this->otpService->verifyOtpByType($user, $data['code'], 'password_reset')) {
         throw ValidationException::withMessages([
             'code' => ['OTP Expired or invalid'],
         ]);
     }
 
-    $token = $user->createToken('api-token')->plainTextToken;
+$this->userRepository->updateOtpMeta($user, [
+    'otp_last_sent_at' => now(),
+    'otp_attempts' => $attempts + 1,
+]);
 
-    return [
-        'user' => $user->load('roles'),
-        'token' => $token,
-    ];
+$token = $user->createToken('api-token')->plainTextToken;
+
+return [
+    'user' => $user->load('roles'),
+    'token' => $token,
+];
 }
 
 
@@ -169,24 +162,62 @@ public function resetPassword(array $data): array
     ]);
 
     $user->tokens()->delete();
-
+    
     return [
         'message' => 'Password reset successfully',
     ];
     }
 
 
-    public function logout()
+
+public function resendOtp(array $data): void
+{
+    $user = $this->userRepository->findByEmailOrFail($data['email']);
+
+    $attempts = $user->otp_attempts ?? 0;
+
+    $waitMinutes = 5 * (2 ** max(0, $attempts - 1));
+
+    if ($user->otp_last_sent_at) {
+
+        $nextAllowedAt = Carbon::parse($user->otp_last_sent_at)
+            ->addMinutes($waitMinutes);
+
+        if (now()->lessThan($nextAllowedAt)) {
+
+            $remainingMinutes = now()->diffInMinutes($nextAllowedAt) + 1;
+
+            throw ValidationException::withMessages([
+                'otp' => [
+                    "Please wait {$remainingMinutes} minutes before requesting another OTP."
+                ],
+            ]);
+        }
+    }
+
+    $this->userRepository->updateOtpMeta($user, [
+        'otp_last_sent_at' => now(),
+        'otp_attempts' => $attempts + 1,
+    ]);
+
+    $otpData = $this->otpService->generateResetOtp($user);
+
+    event(new PasswordResetOtpRequested(
+        user: $user,
+        code: $otpData['plain_code']
+    ));
+}
+
+public function logout(): array
 {
     $user = Auth::user();
+
     $user->currentAccessToken()->delete();
 
     return [
-        'status' => true,
-        'message' => 'Logged out successfully'
+        'message' => 'Logged out successfully',
     ];
-}
-
+}   
 
 public function logoutAll()
 {

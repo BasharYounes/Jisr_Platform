@@ -39,7 +39,7 @@ class CompanyRejectedNotification extends Notification implements ShouldQueue
                     ->subject('Company Rejected Notification')
                     ->greeting('Hello ' . $notifiable->name)
                     ->line('Sorry, your company has been rejected. Because it does not have the required documentation 
-                    and We Can Not Approve Your Company At this time.')
+                    and We Can Not Approve Your Company At this time.Try Again Later.Sign up again and make sure to upload the required documentation.')
                     ->action('View Company', url('/company/' . $this->company->id))
                     ->line('Thank you for using our platform!');
     }

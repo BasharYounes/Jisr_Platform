@@ -18,10 +18,11 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'is_verified_by_admin' => $this->is_verified_by_admin ? 'Verified' : 'Not Verified',
-            'profile_picture_url' => $this->profile_picture_url ? url('storage/profiles' . $this->profile_picture_url) : null, 
+            'is_verified_by_admin' => $this->is_verified_by_admin,
+            'profile_picture_url' => $this->profile_picture_url? asset('storage/' . $this->profile_picture_url): null,
             'bio' => $this->bio,
+            'is_active' => $this->is_active,
           ];    
-    }
+    } 
 
 }
