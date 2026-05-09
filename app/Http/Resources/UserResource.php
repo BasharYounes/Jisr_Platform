@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'is_verified_by_admin' => $this->is_verified_by_admin,
             'profile_picture_url' => $this->profile_picture_url? asset('storage/' . $this->profile_picture_url): null,
             'bio' => $this->bio,
+            'is_active' => $this->is_active,
           ];    
     } 
 

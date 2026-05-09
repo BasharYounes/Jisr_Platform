@@ -86,7 +86,7 @@ Route::post('profile/edit',[UserController::class,'editProfile']);
 
 
 //Student
-Route::middleware('auth:santum')->prefix('student')->group(function(){
-Route::get('profile',[UserController::class,'getPofileStudent']);
-Route::post('profile/edit',[UserController::class,'editPofile']);
+Route::middleware('auth:sanctum')->prefix('student')->group(function(){
+Route::get('profile',[UserController::class,'getProfileStudent']);
+Route::post('profile/edit',[UserController::class,'editProfileStudent']);
 });

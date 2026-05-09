@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\CompanyProfileRequest;
+use App\Http\Requests\StudentProfileRequest;
+use App\Http\Resources\StudentResource;
 use Illuminate\Support\Facades\Auth;
 use App\Services\User\UserService;
 use App\Traits\ApiResponse;
@@ -35,8 +37,8 @@ class UserController extends Controller
     
    public function editProfile(CompanyProfileRequest $request)
     {
-        $user = Auth::user();
-      $company = Auth::user()->companies()->first();
+    $user = Auth::user();
+    $company = Auth::user()->companies()->first();
 
     $company = $this->UserService->editCompanyProfile(
         $user,
@@ -47,9 +49,30 @@ class UserController extends Controller
         return new CompanyResource($company);
     }
 
-    //Student
-    // public function getPofileStudent (){
-    //     $user=Auth::user()->studentProfile;
-    //     return new UserResource($user);
-    // }
+   // Student
+     public function getProfileStudent(StudentProfileRequest $request)
+    {
+        $user =Auth::user();
+        $studentProfile = $this->UserService->getStudentProfile($user);
+
+        if (!$studentProfile) {
+            return $this->error('Student profile not found', 404);
+        }
+
+        return new StudentResource($studentProfile);
+    }
+
+    public function editProfileStudent(StudentProfileRequest $request)
+    {
+        $user = Auth::user();
+        $studentProfile = $this->UserService->editStudentProfile(
+            $user,
+            $request->validated(),
+            $request->file('profile_picture')
+        );
+
+        return new StudentResource($studentProfile);
+    }
+
+    
 }

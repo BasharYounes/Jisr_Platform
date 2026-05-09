@@ -58,6 +58,12 @@ public function updateOtp(User $user, array $data): bool
     return $user->update($data);
 }
 
+public function update(User $user, array $data): User
+{
+    $user->update($data);
+
+    return $user->fresh();
+}
 
 
 }
