@@ -70,9 +70,14 @@ public function login(array $data): array
         throw ValidationException::withMessages([
             'email' => ['Your company account has been rejected. Please sign up again and upload valid verification documents.'],
         ]);
+         }
     }
-}
+    $attempts = $this->otpService->ensureCanRequestOtp($user);
     $otpData =$this->otpService->generateLoginOtp($user);
+     $this->userRepository->updateOtpMeta($user, [
+        'otp_last_sent_at' => now(),
+        'otp_attempts' => $attempts + 1,
+    ]);
 
      event(new LoginOtpRequested(
     user: $user,
@@ -98,7 +103,7 @@ public function verifyLoginOtp(array $data): array
     $token = $user->createToken('api-token')->plainTextToken;
 
     return [
-        'user' => $user->load('roles'),
+         'user' => $user->load('roles'),
         'token' => $token,
     ];
 }
@@ -148,7 +153,7 @@ $this->userRepository->updateOtpMeta($user, [
 $token = $user->createToken('api-token')->plainTextToken;
 
 return [
-    'user' => $user->load('roles'),
+    'message' => 'OTP verified successfully',
     'token' => $token,
 ];
 }
@@ -174,26 +179,7 @@ public function resendOtp(array $data): void
 {
     $user = $this->userRepository->findByEmailOrFail($data['email']);
 
-    $attempts = $user->otp_attempts ?? 0;
-
-    $waitMinutes = 5 * (2 ** max(0, $attempts - 1));
-
-    if ($user->otp_last_sent_at) {
-
-        $nextAllowedAt = Carbon::parse($user->otp_last_sent_at)
-            ->addMinutes($waitMinutes);
-
-        if (now()->lessThan($nextAllowedAt)) {
-
-            $remainingMinutes = now()->diffInMinutes($nextAllowedAt) + 1;
-
-            throw ValidationException::withMessages([
-                'otp' => [
-                    "Please wait {$remainingMinutes} minutes before requesting another OTP."
-                ],
-            ]);
-        }
-    }
+    $attempts = $this->otpService->ensureCanRequestOtp($user);
 
     $this->userRepository->updateOtpMeta($user, [
         'otp_last_sent_at' => now(),
