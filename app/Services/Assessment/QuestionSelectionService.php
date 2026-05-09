@@ -4,9 +4,13 @@ namespace App\Services\Assessment;
 
 use App\Models\AssessmentSkillSession;
 use App\Models\QuestionBank;
+use App\Services\Assessment\AssessmentTelemetryService;
 
 class QuestionSelectionService
 {
+    public function __construct(
+        private AssessmentTelemetryService $telemetryService
+    ) {}
     public function selectNextQuestion(AssessmentSkillSession $skillSession): ?QuestionBank
     {
         $usedQuestionIds = $skillSession->attempts()
@@ -22,6 +26,20 @@ class QuestionSelectionService
             ->first();
 
         if ($question) {
+            $this->telemetryService->record([
+                'assessment_session_id' => $skillSession->AssessmentSessionID ?? null,
+                'assessment_skill_session_id' => $skillSession->AssessmentSkillSessionID ?? null,
+                'question_id' => $question->QuestionID ?? null,
+                'event_type' => 'question_selected',
+                'level_before' => $skillSession->CurrentEstimatedLevel ?? null,
+                'payload' => [
+                    'selected_question_level' => $question->Level ?? null,
+                    'difficulty_weight' => $question->DifficultyWeight ?? null,
+                    'selection_strategy' => 'closest_estimated_level',
+                    'current_estimated_level' => $skillSession->CurrentEstimatedLevel ?? null,
+                    'used_questions_count' => count($usedQuestionIds) ?? null,
+                ],
+            ]);
             return $question;
         }
 
@@ -35,6 +53,20 @@ class QuestionSelectionService
                 ->first();
 
             if ($question) {
+                $this->telemetryService->record([
+                'assessment_session_id' => $skillSession->assessment_session_id ?? null,
+                'assessment_skill_session_id' => $skillSession->id,
+                'question_id' => $question->id,
+                'event_type' => 'question_selected',
+                'level_before' => $skillSession->CurrentEstimatedLevel ?? null,
+                'payload' => [
+                    'selected_question_level' => $question->Level ?? null,
+                    'difficulty_weight' => $question->DifficultyWeight ?? null,
+                    'selection_strategy' => 'closest_estimated_level',
+                    'current_estimated_level' => $skillSession->CurrentEstimatedLevel ?? null,
+                    'used_questions_count' => count($usedQuestionIds) ?? null,
+                ],
+            ]);
                 return $question;
             }
         }

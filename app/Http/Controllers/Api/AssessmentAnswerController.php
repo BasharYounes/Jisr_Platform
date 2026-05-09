@@ -11,12 +11,14 @@ use App\Services\Assessment\LevelEstimationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Support\ApiResponse;
+use App\Services\Assessment\AssessmentTelemetryService;
 
 class AssessmentAnswerController extends Controller
 {
     public function __construct(
         private readonly AnswerEvaluationService $answerEvaluationService,
-        private readonly LevelEstimationService $levelEstimationService
+        private readonly LevelEstimationService $levelEstimationService,
+        private AssessmentTelemetryService $telemetryService,
     ) {
     }
 
@@ -38,6 +40,8 @@ class AssessmentAnswerController extends Controller
 
         $answerText = $request->answer_text;
 
+        $levelBefore = $attempt->assessmentSkillSession->CurrentEstimatedLevel;
+
         $evaluation = $this->answerEvaluationService->evaluate(
             $attempt->questionBank,
             $answerText
@@ -45,7 +49,7 @@ class AssessmentAnswerController extends Controller
 
         $normalizedScore = (float) ($evaluation['normalized_score'] ?? 0);
 
-        DB::transaction(function () use ($attempt, $answerText, $evaluation, $normalizedScore) {
+        DB::transaction(function () use ($attempt, $answerText, $evaluation, $normalizedScore, $levelBefore) {
             AssessmentAnswer::query()->create([
                 'AssessmentQuestionAttemptID' => $attempt->AssessmentQuestionAttemptID,
                 'AnswerText' => $answerText,
@@ -72,6 +76,30 @@ class AssessmentAnswerController extends Controller
             $skillSession->update([
                 'CurrentEstimatedLevel' => $newLevel,
                 'QuestionCount' => $skillSession->QuestionCount + 1,
+            ]);
+
+            $levelAfter = $attempt->assessmentSkillSession->fresh()->CurrentEstimatedLevel;
+
+            $this->telemetryService->record([
+                'assessment_session_id' => $attempt->assessmentSkillSession->AssessmentSessionID ?? null,
+                'assessment_skill_session_id' => $attempt->assessmentSkillSession->AssessmentSkillSessionID,
+                'assessment_question_attempt_id' => $attempt->AssessmentQuestionAttemptID,
+                'question_id' => $attempt->QuestionID,
+
+                'event_type' => 'answer_evaluated',
+
+                'level_before' => $levelBefore,
+                'level_after' => $levelAfter,
+
+                'normalized_score' => $evaluation['normalized_score'] ?? null,
+                'confidence_score' => $evaluation['confidence'] ?? null,
+
+                'payload' => [
+                    'question_level' => $attempt->questionBank->Level ?? null,
+                    'difficulty_weight' => $attempt->questionBank->DifficultyWeight ?? null,
+                    'feedback' => $evaluation['feedback'] ?? null,
+                    'raw_evaluation' => $evaluation,
+                ],
             ]);
         });
 
