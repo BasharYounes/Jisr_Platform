@@ -89,8 +89,10 @@ class CVAnalysisController extends Controller
         return ApiResponse::success('CV analyzed successfully.', [
             'analysis_id' => $analysis->CVAnalysisID,
             'cv_id' => $cv->CvID,
-            'skills' => $skills,
-            'skill_ids' => $analysis->extractedSkills()->distinct()->pluck('SkillID')->values()->toArray(),
+            'skills' => collect($skills)->map(function ($skill, $index) use ($normalized) {
+                return array_merge($skill, ['skill_id' => $normalized[$index]['skill_id'] ?? null]);
+            })->values()->toArray(),
+            // 'skill_ids' => $analysis->extractedSkills()->distinct()->pluck('SkillID')->values()->toArray(),
         ]);
 
     }
