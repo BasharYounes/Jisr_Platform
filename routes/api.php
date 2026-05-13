@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\AssessmentAnswerController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\CVAnalysisController;
 use App\Http\Controllers\Api\CVController;
+use App\Http\Controllers\Company\CompanyTaskController;
 use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -82,14 +83,24 @@ Route::middleware('auth:admin')-> prefix('admin')->group(function () {
 
 
 //Company
-Route::middleware('auth:sanctum')->prefix('company')->group(function(){
+Route::middleware('auth:company')->prefix('company')->group(function(){
 Route::get('profile',[UserController::class,'getProfileCompany']);
 Route::post('profile/edit',[UserController::class,'editProfile']);
 });
 
 
+//Company Tasks
+Route::middleware(['auth:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{taskId}', 'show');
+        Route::put('/{taskId}', 'update');
+        Route::patch('/{taskId}/publish', 'publish');
+    });
+
+
 //Student
-Route::middleware('auth:sanctum')->prefix('student')->group(function(){
+Route::middleware('auth:student')->prefix('student')->group(function(){
 Route::get('profile',[UserController::class,'getProfileStudent']);
 Route::post('profile/edit',[UserController::class,'editProfileStudent']);
 });

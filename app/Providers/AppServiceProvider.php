@@ -6,6 +6,8 @@ use App\Services\AI\AIClientInterface;
 use App\Services\AI\GeminiClient;
 use App\Services\AI\MockAIClient;
 use Illuminate\Support\ServiceProvider;
+use App\Interfaces\CompanyTaskRepositoryInterface;
+use App\Repositories\CompanyTaskRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,11 +23,16 @@ class AppServiceProvider extends ServiceProvider
         \App\Repositories\StudentRepository::class
     );
 
-
     $this->app->bind(
         \App\Interfaces\CompanyRepositoryInterface::class,
         \App\Repositories\CompanyRepository::class
     );
+
+     $this->app->bind(
+     CompanyTaskRepositoryInterface::class,
+     CompanyTaskRepository::class
+     );
+
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
