@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('project_evaluations', function (Blueprint $table) {
             $table->id();
     $table->foreignId('project_assignment_id')
-          ->constrained()
+          ->constrained('project_assignments')
           ->cascadeOnDelete();
 
     $table->foreignId('supervisor_id')

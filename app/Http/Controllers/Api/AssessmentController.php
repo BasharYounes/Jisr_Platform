@@ -65,7 +65,7 @@ class AssessmentController extends Controller
         ]);
 
         if ($this->assessmentCompletionService->shouldStopAsking($skillSession)) {
-            return ApiResponse::error('This skill assessment is already completed.', 422);
+            return ApiResponse::success('This skill assessment is already completed.');
         }
 
         $question = $this->questionSelectionService
@@ -136,32 +136,37 @@ class AssessmentController extends Controller
             ]);
         });
 
-        $this->telemetryService->record([
-            'assessment_session_id' => $skillSession->AssessmentSessionID ?? null,
-            'assessment_skill_session_id' => $session->skillSessions()->AssessmentSkillSessionID,
+        foreach ($session->skillSessions as $skillSession) {
+            $this->telemetryService->record([
+                    'assessment_session_id' => $skillSession->AssessmentSessionID ?? null,
+                    'assessment_skill_session_id' => $skillSession->AssessmentSkillSessionID,
 
-            'event_type' => 'skill_session_completed',
+                    'event_type' => 'skill_session_completed',
 
-            'level_after' => $skillSession->FinalEstimatedLevel ?? null,
-            'confidence_score' => $skillSession->ConfidenceScore ?? null,
+                    'level_after' => $skillSession->FinalEstimatedLevel ?? null,
+                    'confidence_score' => $skillSession->ConfidenceScore ?? null,
 
-            'payload' => [
-                'completion_reason' => $completionReason ?? null,
-                'question_count' => $session->skillSessions()->attempts()->count() ?? null,
-                'tested_levels' => $session->skillSessions()->attempts()
-                    ->pluck('questionBank.Level')
-                    ->filter()
-                    ->unique()
-                    ->values()
-                    ->all(),
-                'average_score' => $session->skillSessions()->attempts()->avg('NormalizedScore'),
-                'min_score' => $session->skillSessions()->attempts()->min('NormalizedScore'),
-                'max_score' => $session->skillSessions()->attempts()->max('NormalizedScore'),
-                'score_variance' => null,
-            ],
-        ]);
+                    'payload' => [
+                        'completion_reason' => $completionReason ?? null,
+                        'question_count' => $skillSession->attempts()->count() ?? null,
+                        'tested_levels' => $skillSession->attempts()
+                            ->pluck('QuestionLevel')
+                            ->filter()
+                            ->unique()
+                            ->values()
+                            ->all(),
+                        'average_score' => $skillSession->attempts()->avg('NormalizedScore'),
+                        'min_score' => $skillSession->attempts()->min('NormalizedScore'),
+                        'max_score' => $skillSession->attempts()->max('NormalizedScore'),
+                        'score_variance' => null,
+                    ],
+                ]);
+            }
 
-        return ApiResponse::success('Assessment session completed successfully.', $session->fresh('skillSessions'));
+
+        return ApiResponse::success('Assessment session completed successfully.',
+            $session->fresh('skillSessions')
+        );
     }
 
     public function summary(AssessmentSession $session): JsonResponse
