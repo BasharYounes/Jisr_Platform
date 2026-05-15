@@ -16,13 +16,14 @@ class PortfolioProjectResource extends JsonResource
 
             'title' => $this->title,
             'description' => $this->description,
-
+            'project_url' => $this->project_url,
             'source' => $this->source,
 
-            'portfolioable' => [
-                'type' => $this->portfolioable_type,
-                'id' => $this->portfolioable_id,
-            ],
+            'portfolioable' => $this->when($this->portfolioable_type && $this->portfolioable_id,fn () => [
+            'type' => $this->portfolioable_type,
+            'id' => $this->portfolioable_id,
+            ]
+            ),
 
             'completion_date' => $this->completion_date?->toISOString(),
 

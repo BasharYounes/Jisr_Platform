@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('source', [ 'manual','project_assignment','company_task_assignment',])->default('manual');
             $table->string('title');
             $table->text('description')->nullable();
+            $table->string('project_url', 2048)->nullable();            
             $table->timestamp('completion_date')->nullable();
             $table->decimal('grade', 5, 2)->nullable();
             $table->timestamps();

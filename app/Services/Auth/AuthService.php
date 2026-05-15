@@ -52,37 +52,39 @@ public function register(string $role, array $data): array
 
 public function login(array $data): array
 {
-  $user = $this->userRepository->findByEmailOrFail($data['email']);
+    $user = $this->userRepository->findByEmailOrFail($data['email']);
+
     if (! Hash::check($data['password'], $user->password)) {
         throw ValidationException::withMessages([
-         'email' => 'Invalid email or password', 
-         ]);
-    }
-
-   if ($user->hasRole('company')) {
-    if ($user->is_verified_by_admin === 'pending') {
-        throw ValidationException::withMessages([
-            'email' => ['Your account is still pending admin verification.'],
+            'email' => ['Invalid email or password'],
         ]);
     }
 
-    if ($user->is_verified_by_admin === 'rejected') {
-        throw ValidationException::withMessages([
-            'email' => ['Your company account has been rejected. Please sign up again and upload valid verification documents.'],
-        ]);
-         }
-    }
-    $attempts = $this->otpService->ensureCanRequestOtp($user);
-    $otpData =$this->otpService->generateLoginOtp($user);
-     $this->userRepository->updateOtpMeta($user, [
-        'otp_last_sent_at' => now(),
-        'otp_attempts' => $attempts + 1,
-    ]);
+    if ($user->hasRole('company')) {
 
-     event(new LoginOtpRequested(
-    user: $user,
-    code: $otpData['plain_code']
-));
+        if ($user->is_verified_by_admin === 'pending') {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Your account is still pending admin verification.'
+                ],
+            ]);
+        }
+
+        if ($user->is_verified_by_admin === 'rejected') {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Your company account has been rejected. Please sign up again and upload valid verification documents.'
+                ],
+            ]);
+        }
+    }
+
+    $otpData = $this->otpService->generateLoginOtp($user);
+
+    event(new LoginOtpRequested(
+        user: $user,
+        code: $otpData['plain_code']
+    ));
 
     return [
         'message' => 'OTP sent to your email',
@@ -113,7 +115,14 @@ public function forgetPassword(string $email): array
 {
     $user = $this->userRepository->findByEmailOrFail($email);
 
+    $attempts = $this->otpService->ensureCanRequestOtp($user);
+
     $otpData = $this->otpService->generateResetOtp($user);
+
+    $this->userRepository->updateOtpMeta($user, [
+        'otp_last_sent_at' => now(),
+        'otp_attempts' => $attempts + 1,
+    ]);
 
     event(new PasswordResetOtpRequested(
         user: $user,

@@ -17,9 +17,10 @@ class StorePortfolioProjectRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
 
             'description' => ['nullable', 'string'],
+            'project_url' => ['required', 'url', 'max:2048'],
 
             'completion_date' => ['nullable', 'date'],
-
+            
             'grade' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
     }
@@ -32,7 +33,8 @@ class StorePortfolioProjectRequest extends FormRequest
             'title.max' => 'عنوان المشروع يجب ألا يتجاوز 255 حرفاً. | Project title must not exceed 255 characters.',
 
             'description.string' => 'وصف المشروع يجب أن يكون نصاً صحيحاً. | Project description must be a valid text.',
-
+            'project_url.url' => 'رابط المشروع يجب أن يكون رابطاً صحيحاً. | Project URL must be a valid URL.',
+            'project_url.max' => 'رابط المشروع يجب ألا يتجاوز 2048 حرفاً. | Project URL must not exceed 2048 characters.',
             'completion_date.date' => 'تاريخ الإكمال يجب أن يكون تاريخاً صحيحاً. | Completion date must be a valid date.',
 
             'grade.numeric' => 'التقييم يجب أن يكون رقماً. | Grade must be a number.',

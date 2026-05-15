@@ -14,7 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
-class StudentPortfolioProjectController extends Controller
+class PortfolioProjectController extends Controller
 {
     public function __construct(
         private readonly UserPortfolioProjectService $portfolioProjectService
