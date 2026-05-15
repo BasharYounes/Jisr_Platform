@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\CVAnalysisController;
 use App\Http\Controllers\Api\CVController;
 use App\Http\Controllers\Company\CompanyTaskController;
+use App\Http\Controllers\Student\StudentPortfolioProjectController;
+use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -64,7 +66,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/login/verify-otp', [AuthController::class, 'verifyLoginOtp']);
 Route::post('/password/forgot', [AuthController::class, 'forgetPassword']);
 Route::post('/password/reset/verify-otp', [AuthController::class, 'verifyOTPresetPassword']);
-Route::post('/password/reset', [AuthController::class, 'resetPassword'])->middleware('auth:admin');
+Route::post('/password/reset', [AuthController::class, 'resetPassword'])->middleware('auth:sanctum,role:admin');
 Route::post('/otp/resend',[AuthController::class,'resendOtp']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -72,7 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Admin
-Route::middleware('auth:admin')-> prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/users', [AdminController::class, 'listUsers']);
     Route::get('/CompanyUnverified', [AdminController::class, 'getUnverifiedCompanies']);
     Route::post('/companiesVerify/{companyId}', [AdminController::class, 'verifyCompany']);
@@ -83,14 +85,14 @@ Route::middleware('auth:admin')-> prefix('admin')->group(function () {
 
 
 //Company
-Route::middleware('auth:company')->prefix('company')->group(function(){
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(function(){
 Route::get('profile',[UserController::class,'getProfileCompany']);
 Route::post('profile/edit',[UserController::class,'editProfile']);
 });
 
 
 //Company Tasks
-Route::middleware(['auth:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::get('/{taskId}', 'show');
@@ -98,9 +100,30 @@ Route::middleware(['auth:company'])->prefix('company/tasks')->controller(Company
         Route::patch('/{taskId}/publish', 'publish');
     });
 
+    //============
+    //== Student
+    //============
+    Route::middleware(['auth:sanctum', 'role:student'])->prefix('student')->group(function(){
+    Route::get('profile',[UserController::class,'getProfileStudent']);
+    Route::post('profile/edit',[UserController::class,'editProfileStudent']);
+    });
 
-//Student
-Route::middleware('auth:student')->prefix('student')->group(function(){
-Route::get('profile',[UserController::class,'getProfileStudent']);
-Route::post('profile/edit',[UserController::class,'editProfileStudent']);
-});
+    // Student Tasks
+    Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskController::class)->group(function () {
+        Route::get('/explore', 'explore');
+        Route::get('/recommended', 'recommended');
+        Route::get('/{taskId}', 'show');
+        Route::post('/{taskId}/apply', 'apply');
+    }); 
+
+    //Student Portfolio Projects
+    Route::middleware(['auth:sanctum', 'role:student'])
+    ->prefix('student/portfolio-projects')
+    ->controller(StudentPortfolioProjectController::class)
+    ->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{portfolioProjectId}', 'show');
+        Route::put('/{portfolioProjectId}', 'update');
+        Route::delete('/{portfolioProjectId}', 'destroy');
+    });

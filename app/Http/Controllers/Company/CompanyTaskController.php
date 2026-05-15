@@ -19,8 +19,7 @@ class CompanyTaskController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $companyId = Auth::user()->companies->id;
-
+        $companyId = Auth::user()->companies()->firstOrFail()->id;
         $tasks = $this->companyTaskService->getCompanyTasks($companyId);
 
         return CompanyTaskResource::collection($tasks);
@@ -28,7 +27,7 @@ class CompanyTaskController extends Controller
 
     public function store(StoreCompanyTaskRequest $request): JsonResponse
     {
-        $companyId = Auth::user()->companies->id;
+        $companyId = Auth::user()->companies()->firstOrFail()->id;
 
         $task = $this->companyTaskService->createTask(
             companyId: $companyId,
@@ -43,7 +42,7 @@ class CompanyTaskController extends Controller
 
     public function show(int $taskId): JsonResponse
     {
-        $companyId = Auth::user()->companies->id;
+        $companyId = Auth::user()->companies()->firstOrFail()->id;
 
         $task = $this->companyTaskService->getCompanyTaskDetails(
             companyId: $companyId,
@@ -57,7 +56,7 @@ class CompanyTaskController extends Controller
 
     public function update(UpdateCompanyTaskRequest $request, int $taskId): JsonResponse
     {
-        $companyId = Auth::user()->companies->id;
+        $companyId = Auth::user()->companies()->firstOrFail()->id;
 
         $task = $this->companyTaskService->updateTask(
             companyId: $companyId,
@@ -73,7 +72,7 @@ class CompanyTaskController extends Controller
 
     public function publish(int $taskId): JsonResponse
     {
-        $companyId = Auth::user()->companies->id;
+        $companyId = Auth::user()->companies()->firstOrFail()->id;
 
         $task = $this->companyTaskService->publishTask(
             companyId: $companyId,

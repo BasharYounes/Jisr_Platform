@@ -22,11 +22,10 @@ class ProjectAssignment extends Model
         return $this->belongsTo(ProjectTemplate::class, 'project_template_id');
     }
 
-    public function portfolioProject()
-    {
-        return $this->hasOne(PortfolioProject::class);
-    }
-
+public function portfolioProject()
+{
+    return $this->morphOne(PortfolioProject::class, 'portfolioable');
+}
     public function evaluation()
 {
     return $this->hasOne(ProjectEvaluation::class);

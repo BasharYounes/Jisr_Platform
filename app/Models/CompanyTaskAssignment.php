@@ -54,4 +54,9 @@ class CompanyTaskAssignment extends Model
     {
         return $this->hasMany(CompanyTaskReview::class);
     }
+
+    public function portfolioProject()
+{
+    return $this->morphOne(PortfolioProject::class, 'portfolioable');
+}
 }

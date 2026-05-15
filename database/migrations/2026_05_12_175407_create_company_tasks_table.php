@@ -23,21 +23,8 @@ return new class extends Migration
         $table->unsignedInteger('max_accepted_students')->default(1);
         $table->json('deliverables')->nullable();
         $table->json('acceptance_criteria')->nullable();
-        $table->enum('submission_type', [
-            'github_link',
-            'zip_file',
-            'demo_link',
-            'mixed',
-        ])->default('github_link');
-        $table->enum('status', [
-            'draft',
-            'published',
-            'in_progress',
-            'completed',
-            'closed',
-            'cancelled',
-        ])->default('draft');
-
+        $table->enum('submission_type', ['github_link','zip_file','demo_link','mixed',])->default('github_link');
+        $table->enum('status', ['draft','published','in_progress','completed','closed','cancelled',])->default('draft');
         $table->timestamp('published_at')->nullable();
 
         $table->timestamps();

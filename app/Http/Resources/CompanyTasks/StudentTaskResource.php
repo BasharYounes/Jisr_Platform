@@ -5,8 +5,13 @@ namespace App\Http\Resources\CompanyTasks;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CompanyTaskResource extends JsonResource
+class StudentTaskResource extends JsonResource
 {
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -20,12 +25,10 @@ class CompanyTaskResource extends JsonResource
 
             'title' => $this->title,
             'description' => $this->description,
+
             'difficulty_level' => $this->difficulty_level,
             'duration_days' => $this->duration_days,
             'deadline' => $this->deadline?->toISOString(),
-
-            'max_applicants' => $this->max_applicants,
-            'max_accepted_students' => $this->max_accepted_students,
 
             'deliverables' => $this->deliverables,
             'acceptance_criteria' => $this->acceptance_criteria,
@@ -33,7 +36,15 @@ class CompanyTaskResource extends JsonResource
             'submission_type' => $this->submission_type,
             'status' => $this->status,
 
-            'published_at' => $this->published_at?->toISOString(),
+            'match_score' => $this->when(
+                isset($this->match_score),
+                fn () => (float) $this->match_score
+            ),
+
+            'match_reasons' => $this->when(
+                isset($this->match_reasons),
+                fn () => $this->match_reasons
+            ),
 
             'skills' => $this->whenLoaded('skills', function () {
                 return $this->skills->map(function ($skill) {
@@ -48,8 +59,7 @@ class CompanyTaskResource extends JsonResource
                 });
             }),
 
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'published_at' => $this->published_at?->toISOString(),
         ];
     }
 }
