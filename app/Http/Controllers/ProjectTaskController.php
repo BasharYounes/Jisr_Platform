@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Supervisor\Actions\CreateProjectTaskAction;
+use App\Domains\Supervisor\Requests\CreateProjectTaskRequest;
 use App\Models\ProjectTask;
+use App\Models\ProjectTemplate;
+use App\Support\ApiResponse;
 use Illuminate\Http\Request;
 
 class ProjectTaskController extends Controller
@@ -26,9 +30,21 @@ class ProjectTaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(
+        CreateProjectTaskRequest $request,
+        ProjectTemplate $projectTemplate,
+        CreateProjectTaskAction $action
+    ) {
+        $task = $action->execute(
+            $projectTemplate,
+            $request->validated()
+        );
+
+        return ApiResponse::success(
+            'Project task created successfully',
+            $task,
+            201
+        );
     }
 
     /**

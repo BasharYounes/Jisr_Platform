@@ -2,64 +2,176 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Supervisor\Actions\AssignProjectAction;
+use App\Domains\Supervisor\Actions\RecalculateProjectAssignmentProgressAction;
+use App\Domains\Supervisor\Requests\AssignProjectRequest;
+use App\Http\Resources\ProjectAssignmentResource;
 use App\Models\ProjectAssignment;
-use Illuminate\Http\Request;
+use App\Support\ApiResponse;
+use App\Domains\Student\Actions\SubmitAssignmentTaskAction;
+use App\Domains\Student\Requests\SubmitAssignmentTaskRequest;
+use App\Http\Resources\ProjectAssignmentTaskResource;
+use App\Models\ProjectAssignmentTask;
+use App\Domains\Supervisor\Actions\StartAssignmentTaskReviewAction;
+use App\Domains\Supervisor\Actions\ApproveAssignmentTaskAction;
+use App\Domains\Supervisor\Actions\RequestAssignmentTaskRevisionAction;
+use App\Domains\Supervisor\Requests\RequestAssignmentTaskRevisionRequest;
+use App\Domains\Student\Actions\StartAssignmentTaskAction;
+use App\Domains\Supervisor\Actions\AssignAssignmentTaskToStudentAction;
+use App\Domains\Supervisor\Requests\AssignAssignmentTaskToStudentRequest;
+
+
 
 class ProjectAssignmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    public function __construct()
+    {
+
+    }
     public function index()
     {
-        //
+        $assignments = ProjectAssignment::query()
+            ->with([
+                'students',
+                'supervisor',
+                'projectTemplate',
+                'assignmentTasks' => fn ($query) => $query->orderBy('order_index'),
+            ])
+            ->latest()
+            ->paginate(10);
+
+        return ApiResponse::success('Project assignments retrieved successfully',
+            ProjectAssignmentResource::collection($assignments)
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+
+
+    public function assignProject(
+        AssignProjectRequest $request,
+        AssignProjectAction $assignProjectAction
+    ) {
+        $assignment = $assignProjectAction->execute(
+            $request->validated()
+        );
+
+        return ApiResponse::success('Project assigned successfully',
+            new ProjectAssignmentResource($assignment),
+            201
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(ProjectAssignment $projectAssignment)
     {
-        //
+        $projectAssignment->load([
+            'students',
+            'supervisor',
+            'projectTemplate',
+            'evaluation',
+            'assignmentTasks' => fn ($query) => $query->orderBy('order_index'),
+        ]);
+
+        return ApiResponse::success('Project assignment details retrieved successfully',
+            new ProjectAssignmentResource($projectAssignment)
+        );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ProjectAssignment $projectAssignment)
-    {
-        //
+
+    public function assignTaskToStudent(
+        AssignAssignmentTaskToStudentRequest $request,
+        ProjectAssignmentTask $projectAssignmentTask,
+        AssignAssignmentTaskToStudentAction $action
+    ) {
+        $task = $action->execute(
+            $projectAssignmentTask,
+            $request->validated()['student_id']
+        );
+
+        return ApiResponse::success(
+            'Task assigned to student successfully',
+            new ProjectAssignmentTaskResource($task)
+        );
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ProjectAssignment $projectAssignment)
-    {
-        //
+    public function startTask(
+    ProjectAssignmentTask $projectAssignmentTask,
+    StartAssignmentTaskAction $action
+    ) {
+        \Gate::authorize('start', $projectAssignmentTask);
+
+        $task = $action->execute($projectAssignmentTask);
+
+        return ApiResponse::success('Task started successfully',
+            new ProjectAssignmentTaskResource($task),
+        );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ProjectAssignment $projectAssignment)
-    {
-        //
+
+    public function submitTask(
+    SubmitAssignmentTaskRequest $request,
+    ProjectAssignmentTask $projectAssignmentTask,
+    SubmitAssignmentTaskAction $action
+    ) {
+        \Gate::authorize('submit', $projectAssignmentTask);
+
+        $task = $action->execute(
+            $projectAssignmentTask,
+            $request->validated()
+        );
+
+        return ApiResponse::success('Task submitted successfully',
+            new ProjectAssignmentTaskResource($task)
+        );
+    }
+
+    public function startTaskReview(
+    ProjectAssignmentTask $projectAssignmentTask,
+    StartAssignmentTaskReviewAction $action
+    ) {
+        \Gate::authorize('review', $projectAssignmentTask);
+
+        $task = $action->execute($projectAssignmentTask);
+
+        return ApiResponse::success(
+            'Task review started successfully',
+            new ProjectAssignmentTaskResource($task)
+        );
+    }
+
+    public function approveTask(
+    ProjectAssignmentTask $projectAssignmentTask,
+    ApproveAssignmentTaskAction $action,
+    RecalculateProjectAssignmentProgressAction $recalculateProgress
+    ) {
+        \Gate::authorize('approve', $projectAssignmentTask);
+
+        $task = $action->execute(
+            $projectAssignmentTask,
+            $recalculateProgress
+        );
+
+        return ApiResponse::success(
+            'Task approved successfully',
+            new ProjectAssignmentTaskResource($task)
+        );
+    }
+
+    public function requestTaskRevision(
+        RequestAssignmentTaskRevisionRequest $request,
+        ProjectAssignmentTask $projectAssignmentTask,
+        RequestAssignmentTaskRevisionAction $action
+    ) {
+        \Gate::authorize('requestRevision', $projectAssignmentTask);
+
+        $task = $action->execute(
+            $projectAssignmentTask,
+            $request->validated()['feedback']
+        );
+
+        return ApiResponse::success(
+            'Task revision requested successfully',
+            new ProjectAssignmentTaskResource($task)
+        );
     }
 }

@@ -6,7 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvaluationItem extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'project_evaluation_id',
+        'evaluation_criteria_id',
+        'score',
+        'comment',
+        'evidence',
+        'evidence_urls',
+    ];
+
+    protected $casts = [
+        'score' => 'decimal:2',
+        'evidence_urls' => 'array',
+    ];
+
     public function evaluation()
     {
         return $this->belongsTo(ProjectEvaluation::class, 'project_evaluation_id');
@@ -16,4 +29,5 @@ class EvaluationItem extends Model
     {
         return $this->belongsTo(EvaluationCriteria::class, 'evaluation_criteria_id');
     }
+
 }
