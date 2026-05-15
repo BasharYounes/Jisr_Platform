@@ -2,10 +2,24 @@
 
 namespace App\Providers;
 
+use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
+use App\Models\ProjectAssignment;
+use App\Models\ProjectAssignmentTask;
+use App\Policies\ProjectAssignmentPolicy;
+use App\Policies\ProjectAssignmentTaskPolicy;
 use App\Services\AI\AIClientInterface;
 use App\Services\AI\GeminiClient;
 use App\Services\AI\MockAIClient;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\ProjectAssignmentObserver;
+use App\Events\ProjectAssignmentStatusChanged;
+use App\Listeners\NotifyStudentProjectStatusChanged;
+use Illuminate\Support\Facades\Event;
+use App\Models\ProjectEvaluation;
+use App\Policies\ProjectEvaluationPolicy;
+use App\Events\ProjectAssignmentReadyForEvaluation;
+use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +50,37 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Gate::policy(
+            ProjectAssignment::class,
+            ProjectAssignmentPolicy::class
+        );
+
+        Gate::policy(
+            ProjectEvaluation::class,
+            ProjectEvaluationPolicy::class
+        );
+
+        ProjectAssignment::observe(ProjectAssignmentObserver::class);
+
+        Event::listen(
+        ProjectAssignmentStatusChanged::class,
+        NotifyStudentProjectStatusChanged::class
+        );
+
+        Event::listen(
+        ProjectAssignmentStatusChanged::class,
+        CreatePortfolioProjectWhenAssignmentCompleted::class
+        );
+
+        Event::listen(
+            ProjectAssignmentReadyForEvaluation::class,
+            NotifySupervisorProjectReadyForEvaluation::class
+        );
+
+        Gate::policy(
+            ProjectAssignmentTask::class,
+            ProjectAssignmentTaskPolicy::class
+        );
+
     }
 }

@@ -13,14 +13,14 @@ class ProjectTemplate extends Model
     }
 
     public function tasks()
-{
-    return $this->hasMany(ProjectTask::class)->orderBy('order_index');
-}
+    {
+        return $this->hasMany(ProjectTask::class, 'project_template_id')->orderBy('order_index');
+    }
 
-public function tags()
-{
-    return $this->belongsToMany(Tag::class)
-                ->withTimestamps();
-}
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class)
+                    ->withTimestamps();
+    }
 
 }

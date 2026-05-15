@@ -3,32 +3,71 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
 
 class ProjectAssignment extends Model
 {
-    protected $guarded = [];
-     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $fillable = [
+    'project_template_id',
+    'supervisor_id',
+    'status',
+    'progress_percentage',
+    'submission_url',
+    'github_link',
+    'assigned_at',
+    'submitted_at',
+    ];
+    protected $casts = [
+    'assigned_at' => 'datetime',
+    'submitted_at' => 'datetime',
+    'status' => ProjectAssignmentStatus::class,
+    ];
 
     public function supervisor()
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
-    public function template()
+    public function projectTemplate()
     {
-        return $this->belongsTo(ProjectTemplate::class, 'project_template_id');
+        return $this->belongsTo(ProjectTemplate::class);
     }
 
-    public function portfolioProject()
+    public function revisionRequests()
     {
-        return $this->hasOne(PortfolioProject::class);
+        return $this->hasMany(ProjectRevisionRequest::class, 'project_assignment_id');
+    }
+
+    public function latestRevisionRequest()
+    {
+        return $this->hasOne(ProjectRevisionRequest::class, 'project_assignment_id')->latestOfMany();
+    }
+
+    public function assignmentTasks()
+    {
+        return $this->hasMany(ProjectAssignmentTask::class, 'project_assignment_id');
     }
 
     public function evaluation()
+    {
+        return $this->hasOne(ProjectEvaluation::class, 'project_assignment_id');
+    }
+
+    public function members()
 {
-    return $this->hasOne(ProjectEvaluation::class);
+    return $this->hasMany(ProjectAssignmentMember::class, 'project_assignment_id');
 }
+
+    public function students()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'project_assignment_members',
+            'project_assignment_id',
+            'student_id'
+        )->withPivot([
+            'role',
+            'status',
+        ])->withTimestamps();
+    }
 }

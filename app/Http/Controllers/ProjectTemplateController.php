@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Supervisor\Actions\CreateProjectTemplateAction;
+use App\Domains\Supervisor\Requests\CreateProjectTemplateRequest;
+use App\Http\Resources\ProjectTemplateResource;
 use App\Models\ProjectTemplate;
+use App\Support\ApiResponse;
 use Illuminate\Http\Request;
 
 class ProjectTemplateController extends Controller
@@ -18,9 +22,18 @@ class ProjectTemplateController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
+    public function create(
+        CreateProjectTemplateRequest $request,
+        CreateProjectTemplateAction $createProjectTemplateAction
+    ) {
+        $template = $createProjectTemplateAction->execute(
+            $request->validated()
+        );
+
+        return ApiResponse::success('Project template created successfully',
+            new ProjectTemplateResource($template),
+            201
+        );
     }
 
     /**

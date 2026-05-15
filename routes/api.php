@@ -37,6 +37,8 @@ Route::get('/opportunities/{id}/top-candidates', [MatchingController::class, 'to
 
 require __DIR__ . '/MetricsResultAI/MetricsRoute.php';
 
+require __DIR__ .'/Supervisor/SupervisorRoute.php';
+
 Route::get('/dev/login-as-test', function () {
         $user = \App\Models\User::firstOrCreate(
             ['email' => 'dev@test.com'],

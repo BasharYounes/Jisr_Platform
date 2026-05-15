@@ -13,29 +13,25 @@ return new class extends Migration
     {
         Schema::create('project_assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-          ->constrained()
-          ->cascadeOnDelete();
 
-    $table->foreignId('project_template_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('project_template_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('supervisor_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+            $table->foreignId('supervisor_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->string('status', 32)->default('assigned');
+            $table->string('status', 32)->default('assigned');
 
-    $table->unsignedSmallInteger('progress_percentage')->default(0);
+            $table->unsignedSmallInteger('progress_percentage')->default(0);
 
-    
-    $table->text('submission_url')->nullable();
+            $table->text('submission_url')->nullable();
 
-    $table->string('github_link')->nullable();
+            $table->string('github_link')->nullable();
 
-    $table->timestamp('assigned_at')->useCurrent();
-    $table->timestamp('submitted_at')->nullable();
+            $table->timestamp('assigned_at')->useCurrent();
+            $table->timestamp('submitted_at')->nullable();
 
             $table->timestamps();
         });
