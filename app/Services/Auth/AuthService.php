@@ -52,32 +52,39 @@ public function register(string $role, array $data): array
 
 public function login(array $data): array
 {
-  $user = $this->userRepository->findByEmailOrFail($data['email']);
+    $user = $this->userRepository->findByEmailOrFail($data['email']);
+
     if (! Hash::check($data['password'], $user->password)) {
         throw ValidationException::withMessages([
-         'email' => 'Invalid email or password', 
-         ]);
-    }
-
-   if ($user->hasRole('company')) {
-    if ($user->is_verified_by_admin === 'pending') {
-        throw ValidationException::withMessages([
-            'email' => ['Your account is still pending admin verification.'],
+            'email' => ['Invalid email or password'],
         ]);
     }
 
-    if ($user->is_verified_by_admin === 'rejected') {
-        throw ValidationException::withMessages([
-            'email' => ['Your company account has been rejected. Please sign up again and upload valid verification documents.'],
-        ]);
-    }
-}
-    $otpData =$this->otpService->generateLoginOtp($user);
+    if ($user->hasRole('company')) {
 
-     event(new LoginOtpRequested(
-    user: $user,
-    code: $otpData['plain_code']
-));
+        if ($user->is_verified_by_admin === 'pending') {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Your account is still pending admin verification.'
+                ],
+            ]);
+        }
+
+        if ($user->is_verified_by_admin === 'rejected') {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Your company account has been rejected. Please sign up again and upload valid verification documents.'
+                ],
+            ]);
+        }
+    }
+
+    $otpData = $this->otpService->generateLoginOtp($user);
+
+    event(new LoginOtpRequested(
+        user: $user,
+        code: $otpData['plain_code']
+    ));
 
     return [
         'message' => 'OTP sent to your email',
@@ -98,7 +105,7 @@ public function verifyLoginOtp(array $data): array
     $token = $user->createToken('api-token')->plainTextToken;
 
     return [
-        'user' => $user->load('roles'),
+         'user' => $user->load('roles'),
         'token' => $token,
     ];
 }
@@ -108,7 +115,14 @@ public function forgetPassword(string $email): array
 {
     $user = $this->userRepository->findByEmailOrFail($email);
 
+    $attempts = $this->otpService->ensureCanRequestOtp($user);
+
     $otpData = $this->otpService->generateResetOtp($user);
+
+    $this->userRepository->updateOtpMeta($user, [
+        'otp_last_sent_at' => now(),
+        'otp_attempts' => $attempts + 1,
+    ]);
 
     event(new PasswordResetOtpRequested(
         user: $user,
@@ -148,7 +162,7 @@ $this->userRepository->updateOtpMeta($user, [
 $token = $user->createToken('api-token')->plainTextToken;
 
 return [
-    'user' => $user->load('roles'),
+    'message' => 'OTP verified successfully',
     'token' => $token,
 ];
 }
@@ -174,26 +188,7 @@ public function resendOtp(array $data): void
 {
     $user = $this->userRepository->findByEmailOrFail($data['email']);
 
-    $attempts = $user->otp_attempts ?? 0;
-
-    $waitMinutes = 5 * (2 ** max(0, $attempts - 1));
-
-    if ($user->otp_last_sent_at) {
-
-        $nextAllowedAt = Carbon::parse($user->otp_last_sent_at)
-            ->addMinutes($waitMinutes);
-
-        if (now()->lessThan($nextAllowedAt)) {
-
-            $remainingMinutes = now()->diffInMinutes($nextAllowedAt) + 1;
-
-            throw ValidationException::withMessages([
-                'otp' => [
-                    "Please wait {$remainingMinutes} minutes before requesting another OTP."
-                ],
-            ]);
-        }
-    }
+    $attempts = $this->otpService->ensureCanRequestOtp($user);
 
     $this->userRepository->updateOtpMeta($user, [
         'otp_last_sent_at' => now(),

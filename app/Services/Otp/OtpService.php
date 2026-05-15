@@ -3,6 +3,7 @@
 namespace App\Services\Otp;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 // use Nette\Schema\ValidationException;
@@ -73,6 +74,28 @@ public function generateResetOtp(User $user): array
         'plain_code' => $plainCode, 
         ]; 
     }
+    public function ensureCanRequestOtp(User $user): int
+{
+    $attempts = $user->otp_attempts ?? 0;
 
+    $waitMinutes = 2 ** max(0, $attempts - 1);
+
+    if ($user->otp_last_sent_at) {
+        $nextAllowedAt = Carbon::parse($user->otp_last_sent_at)
+            ->addMinutes($waitMinutes);
+
+        if (now()->lessThan($nextAllowedAt)) {
+            $remainingMinutes = now()->diffInMinutes($nextAllowedAt) + 1;
+
+            throw ValidationException::withMessages([
+                'otp' => [
+                    "Please wait {$remainingMinutes} minutes before requesting another OTP.",
+                ],
+            ]);
+        }
+    }
+
+    return $attempts;
+}
 
 }

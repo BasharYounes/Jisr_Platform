@@ -12,6 +12,13 @@ use App\Services\AI\GeminiClient;
 use App\Services\AI\MockAIClient;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+
+use App\Interfaces\CompanyTaskRepositoryInterface;
+use App\Interfaces\PortfolioProjectRepositoryInterface;
+use App\Interfaces\StudentSkillRepositoryInterface;
+use App\Repositories\CompanyTaskRepository;
+use App\Repositories\PortfolioProjectRepository;
+use App\Repositories\StudentSkillRepository;
 use App\Observers\ProjectAssignmentObserver;
 use App\Events\ProjectAssignmentStatusChanged;
 use App\Listeners\NotifyStudentProjectStatusChanged;
@@ -20,6 +27,7 @@ use App\Models\ProjectEvaluation;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,11 +43,25 @@ class AppServiceProvider extends ServiceProvider
         \App\Repositories\StudentRepository::class
     );
 
-
     $this->app->bind(
         \App\Interfaces\CompanyRepositoryInterface::class,
         \App\Repositories\CompanyRepository::class
     );
+
+     $this->app->bind(
+     CompanyTaskRepositoryInterface::class,
+     CompanyTaskRepository::class
+     );
+
+     $this->app->bind(
+    StudentSkillRepositoryInterface::class,
+    StudentSkillRepository::class
+);
+
+$this->app->bind(
+    PortfolioProjectRepositoryInterface::class,
+    PortfolioProjectRepository::class
+);
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'

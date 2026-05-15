@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StudentProfileRequest extends FormRequest
 {
@@ -27,7 +28,7 @@ class StudentProfileRequest extends FormRequest
             // users table
             'name' => ['sometimes', 'string', 'max:255'],
             'bio' => ['sometimes', 'nullable', 'string'],
-            'email' => ['sometimes', 'email', 'max:255'],
+            'email' => ['sometimes', 'email', 'max:255',Rule::unique('users', 'email')->ignore($this->user()->id)],
             'profile_picture' => [
                 'sometimes',
                 'nullable',

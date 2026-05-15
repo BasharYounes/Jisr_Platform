@@ -33,6 +33,11 @@ class ProjectAssignment extends Model
         return $this->belongsTo(ProjectTemplate::class);
     }
 
+public function portfolioProject()
+{
+    return $this->morphOne(PortfolioProject::class, 'portfolioable');
+}
+
     public function revisionRequests()
     {
         return $this->hasMany(ProjectRevisionRequest::class, 'project_assignment_id');
@@ -47,6 +52,7 @@ class ProjectAssignment extends Model
     {
         return $this->hasMany(ProjectAssignmentTask::class, 'project_assignment_id');
     }
+
 
     public function evaluation()
     {
