@@ -27,6 +27,8 @@ use App\Models\ProjectEvaluation;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
+use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
+use App\Repositories\CompanyTaskApplicationRepository;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -61,6 +63,11 @@ class AppServiceProvider extends ServiceProvider
 $this->app->bind(
     PortfolioProjectRepositoryInterface::class,
     PortfolioProjectRepository::class
+);
+
+$this->app->bind(
+    CompanyTaskApplicationRepositoryInterface::class,
+    CompanyTaskApplicationRepository::class
 );
 
         $this->app->bind(AIClientInterface::class, function () {
