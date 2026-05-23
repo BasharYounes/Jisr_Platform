@@ -36,14 +36,15 @@ class CompanyTaskApplicationRepository implements CompanyTaskApplicationReposito
 {
     return CompanyTaskApplication::query()
         ->with([
-            'student',
-            'task.company.users',
-            'task.skills',
+            'student' => function ($query) {
+                $query->withCount('portfolioProjects');
+            },
         ])
         ->where('company_task_id', $taskId)
         ->whereHas('task', function ($query) use ($companyId) {
             $query->where('company_id', $companyId);
         })
+        ->orderByDesc('match_score')
         ->latest('applied_at')
         ->get();
 }

@@ -14,10 +14,12 @@ use App\Http\Controllers\Api\AssessmentAnswerController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\CVAnalysisController;
 use App\Http\Controllers\Api\CVController;
+use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskController;
 use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Student\PortfolioProjectController;
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cvs/upload', [CVController::class, 'upload']);
@@ -86,20 +88,30 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 });
 
 
-//Company
-Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(function(){
-Route::get('profile',[UserController::class,'getProfileCompany']);
-Route::post('profile/edit',[UserController::class,'editProfile']);
-});
+    //============
+    //== Company
+    //============
+    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(function(){
+    Route::get('profile',[UserController::class,'getProfileCompany']);
+    Route::post('profile/edit',[UserController::class,'editProfile']);
+    });
 
 
-//Company Tasks
-Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
+
+    //Company Tasks
+    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::get('/{taskId}', 'show');
         Route::put('/{taskId}', 'update');
         Route::patch('/{taskId}/publish', 'publish');
+        Route::get('/{taskId}/applications', 'applications');
+    });
+
+    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->controller(CompanyTaskApplicationController::class)->group(function () {
+        Route::get('/tasks/{taskId}/applications', 'applications');
+        Route::post('/task-applications/{applicationId}/accept', 'accept');
+        Route::post('/task-applications/{applicationId}/reject', 'reject');
     });
 
     //============

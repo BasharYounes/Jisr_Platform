@@ -16,8 +16,8 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
     public function update(CompanyTask $task, array $data): CompanyTask
     {
         $task->update($data);
-
-        return $task->fresh(['company', 'skills']);
+        $task->fresh(['company', 'skills']);
+        return $task;
     }
 
     public function findCompanyTaskOrFail(int $companyId, int $taskId): CompanyTask

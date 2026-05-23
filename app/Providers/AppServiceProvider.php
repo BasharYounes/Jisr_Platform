@@ -29,6 +29,8 @@ use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Repositories\CompanyTaskApplicationRepository;
+use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
+use App\Repositories\CompanyTaskAssignmentRepository;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -65,10 +67,15 @@ $this->app->bind(
     PortfolioProjectRepository::class
 );
 
-$this->app->bind(
+    $this->app->bind(
     CompanyTaskApplicationRepositoryInterface::class,
     CompanyTaskApplicationRepository::class
-);
+    );
+
+    $this->app->bind(
+    CompanyTaskAssignmentRepositoryInterface::class,
+    CompanyTaskAssignmentRepository::class
+    );
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
