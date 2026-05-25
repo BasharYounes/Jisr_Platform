@@ -29,11 +29,6 @@ class CompanyTaskApplicantCardResource extends JsonResource
                 fn () => (float) $this->match_score
             ),
 
-            'match_reasons' => $this->when(
-                $this->match_reasons !== null,
-                fn () => $this->match_reasons
-            ),
-
             'applied_at' => $this->applied_at?->toISOString(),
         ];
     }

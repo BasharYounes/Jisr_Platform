@@ -55,8 +55,9 @@ public function findCompanyApplicationOrFail(
 ): CompanyTaskApplication {
     return CompanyTaskApplication::query()
         ->with([
-            'student',
-            'task.company.users',
+            'student.studentProfile.user',
+            'student.skills',
+            'student.portfolioProjects',
             'task.skills',
         ])
         ->where('id', $applicationId)
@@ -87,4 +88,22 @@ public function countAcceptedForTask(int $taskId): int
         ->count();
 }
     
+public function findCompanyApplicantDetailsOrFail(
+    int $companyId,
+    int $applicationId
+): CompanyTaskApplication {
+    return CompanyTaskApplication::query()
+        ->with([
+            'student.studentProfile.user',
+            'student.skills',
+            'student.portfolioProjects',
+            'task.skills',
+        ])
+        ->where('id', $applicationId)
+        ->whereHas('task', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
+        })
+        ->firstOrFail();
+}
+
 }

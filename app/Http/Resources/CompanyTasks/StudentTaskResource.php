@@ -19,7 +19,7 @@ class StudentTaskResource extends JsonResource
 
             'company' => [
                 'id' => $this->company?->id,
-                'name' => $this->task?->company?->users?->first()?->name,
+                'name' => $this->company?->users?->first()?->name,
                 'industry' => $this->company?->industry,
             ],
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyTasks\ReviewCompanyTaskApplicationRequest;
 use App\Http\Resources\CompanyTasks\CompanyTaskApplicantCardResource;
+use App\Http\Resources\CompanyTasks\CompanyTaskApplicantDetailsResource;
 use App\Services\CompanyTasks\CompanyTaskApplicationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -29,6 +30,20 @@ class CompanyTaskApplicationController extends Controller
 
         return CompanyTaskApplicantCardResource::collection($applications);
     }
+
+    public function show(int $applicationId): JsonResponse
+{
+    $companyId = Auth::user()->companies()->firstOrFail()->id;
+
+    $application = $this->companyTaskApplicationService->getApplicationDetails(
+        companyId: $companyId,
+        applicationId: $applicationId
+    );
+
+    return response()->json([
+         'data' => new CompanyTaskApplicantDetailsResource($application),
+    ]);
+}
 
     /**
      * Accept a student's application and create the official assignment.

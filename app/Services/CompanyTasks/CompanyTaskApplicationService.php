@@ -27,6 +27,16 @@ class CompanyTaskApplicationService
         );
     }
 
+    public function getApplicationDetails(
+    int $companyId,
+    int $applicationId
+): CompanyTaskApplication {
+    return $this->applicationRepository->findCompanyApplicantDetailsOrFail(
+        companyId: $companyId,
+        applicationId: $applicationId
+    );
+}
+
     public function acceptApplication(
         int $companyId,
         int $applicationId,

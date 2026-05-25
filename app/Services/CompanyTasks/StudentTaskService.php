@@ -13,12 +13,12 @@ use Illuminate\Validation\ValidationException;
 
 class StudentTaskService
 {
-    public function __construct(
-        private readonly CompanyTaskRepositoryInterface $companyTaskRepository,
-        private readonly TaskRecommendationService $taskRecommendationService,
-        private readonly CompanyTaskApplicationRepositoryInterface $companyTaskApplicationRepository
-
-    ) {}
+   public function __construct(
+    private readonly CompanyTaskRepositoryInterface $companyTaskRepository,
+    private readonly TaskRecommendationService $taskRecommendationService,
+    private readonly CompanyTaskApplicationRepositoryInterface $companyTaskApplicationRepository,
+    private readonly TaskCandidateRankingService $taskCandidateRankingService
+) {}
 
     public function getExploreTasks(?string $title = null): EloquentCollection
     {
@@ -40,7 +40,7 @@ class StudentTaskService
         return $this->companyTaskRepository->findAvailableTaskOrFail($taskId);
     }
 
-    public function applyToTask(
+  public function applyToTask(
     int $studentUserId,
     int $taskId,
     array $data
@@ -56,16 +56,22 @@ class StudentTaskService
             ]);
         }
 
+        $rankingSnapshot = $this->taskCandidateRankingService
+            ->calculateApplicationSnapshot(
+                task: $task,
+                studentUserId: $studentUserId
+            );
+
         return $this->companyTaskApplicationRepository->create([
             'company_task_id' => $task->id,
             'student_user_id' => $studentUserId,
             'message' => $data['message'] ?? null,
-            'portfolio_url' => $data['portfolio_url'] ?? null,
             'github_url' => $data['github_url'] ?? null,
             'status' => 'pending',
+            'match_score' => $rankingSnapshot['match_score'],
+            'match_reasons' => $rankingSnapshot['match_reasons'],
             'applied_at' => now(),
-        ])->fresh(['task.company.users', 'task.skills']);
+        ]);
     });
 }
-
 }

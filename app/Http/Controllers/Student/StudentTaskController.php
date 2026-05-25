@@ -46,8 +46,10 @@ class StudentTaskController extends Controller
         ]);
     }
 
-    public function apply(ApplyToCompanyTaskRequest $request, int $taskId): JsonResponse
-{
+   public function apply(
+    ApplyToCompanyTaskRequest $request,
+    int $taskId
+): JsonResponse {
     $application = $this->studentTaskService->applyToTask(
         studentUserId: Auth::id(),
         taskId: $taskId,
@@ -56,7 +58,10 @@ class StudentTaskController extends Controller
 
     return response()->json([
         'message' => 'تم إرسال طلب التقديم بنجاح. | Application submitted successfully.',
-        'data' => new CompanyTaskApplicationResource($application),
+        'data' => [
+            'application_id' => $application->id,
+            'status' => $application->status,
+        ],
     ], 201);
 }
 

@@ -98,20 +98,20 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
 
 
-    //Company Tasks
+    //Company Tasks Creation & Publish
     Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::get('/{taskId}', 'show');
         Route::put('/{taskId}', 'update');
         Route::patch('/{taskId}/publish', 'publish');
-        Route::get('/{taskId}/applications', 'applications');
     });
-
-    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->controller(CompanyTaskApplicationController::class)->group(function () {
-        Route::get('/tasks/{taskId}/applications', 'applications');
-        Route::post('/task-applications/{applicationId}/accept', 'accept');
-        Route::post('/task-applications/{applicationId}/reject', 'reject');
+    //Company Tasks Applications
+    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskApplicationController::class)->group(function () {
+        Route::get('/{taskId}/applications', 'applications');
+        Route::get('/applications/student/details/{applicationId}', 'show');
+        Route::post('/applications/{applicationId}/accept', 'accept');
+        Route::post('/applications/{applicationId}/reject', 'reject');
     });
 
     //============

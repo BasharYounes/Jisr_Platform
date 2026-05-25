@@ -21,6 +21,10 @@ interface CompanyTaskApplicationRepositoryInterface
     ): CompanyTaskApplication;
 
     public function countAcceptedForTask(int $taskId): int;
+    public function findCompanyApplicantDetailsOrFail(
+    int $companyId,
+    int $applicationId
+): CompanyTaskApplication;
 
     
 
