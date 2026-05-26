@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Conversation\Conversations;
+namespace App\Services\Conversations;
 
 use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;

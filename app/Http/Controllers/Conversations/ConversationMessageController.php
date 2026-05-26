@@ -6,17 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Conversation\StoreConversationMessageRequest;
 use App\Http\Requests\Conversations\StoreConversationMessageRequest as ConversationsStoreConversationMessageRequest;
 use App\Services\Conversations\ConversationMessageService;
-
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 
 class ConversationMessageController extends Controller
 {
-    use ApiResponse;
+     use ApiResponse;
      public function __construct(
         private readonly ConversationMessageService $conversationMessageService
-    ) {}   
-
+    ) {}
     public function index(Request $request, int $conversationId)
     {
         $messages = $this->conversationMessageService->getMessages(
@@ -41,7 +39,7 @@ class ConversationMessageController extends Controller
 
         return $this->success(
             message: 'Message sent successfully.',
-            data: $message,
+data: $message,
             statusCode: 201
         );
     }
