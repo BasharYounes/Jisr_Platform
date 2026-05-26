@@ -20,6 +20,10 @@ use App\Http\Controllers\CompanyHomeController;
 use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Student\PortfolioProjectController;
+use App\Http\Controllers\Conversations\ConversationController;
+use App\Http\Controllers\Conversations\ConversationMessageController;
+use App\Http\Controllers\Conversations\ConversationParticipantController;
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -116,6 +120,17 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
         Route::post('/applications/{applicationId}/accept', 'accept');
         Route::post('/applications/{applicationId}/reject', 'reject');
     });
+
+    //Conversation
+    Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/conversations', [ConversationController::class, 'index']);
+    Route::get('/conversations/{conversationId}', [ConversationController::class, 'show']);
+
+    Route::get('/conversations/{conversationId}/messages', [ConversationMessageController::class, 'index']);
+    Route::post('/conversations/{conversationId}/messages', [ConversationMessageController::class, 'store']);
+
+    Route::patch('/conversations/{conversationId}/read', [ConversationParticipantController::class, 'markAsRead']);
+});
 
     //============
     //== Student

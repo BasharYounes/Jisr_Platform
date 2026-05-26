@@ -48,34 +48,30 @@ class CompanyTaskApplicationController extends Controller
     /**
      * Accept a student's application and create the official assignment.
      */
-    // public function accept(
-    //     ReviewCompanyTaskApplicationRequest $request,
-    //     int $applicationId
-    // ): JsonResponse {
-    //     $companyId = $this->getAuthenticatedCompanyId();
+    public function accept(ReviewCompanyTaskApplicationRequest  $request, int $applicationId): JsonResponse {
+        $companyId = $this->getAuthenticatedCompanyId();
+        $assignment = $this->companyTaskApplicationService->acceptApplication(
+            companyId: $companyId,
+            applicationId: $applicationId,
+            data: $request->validated()
+        );
 
-    //     $assignment = $this->companyTaskApplicationService->acceptApplication(
-    //         companyId: $companyId,
-    //         applicationId: $applicationId,
-    //         data: $request->validated()
-    //     );
+        return response()->json([
+            'message' => 'تم قبول الطالب وبدء تنفيذ المهمة بنجاح. | Student accepted and task execution started successfully.',
+            'data' => [
+                'assignment_id' => $assignment->id,
+                'application_id' => $assignment->company_task_application_id,
+                'task_id' => $assignment->company_task_id,
+                'student_user_id' => $assignment->student_user_id,
+                'status' => $assignment->status,
+                'started_at' => $assignment->started_at?->toISOString(),
+            ],
+        ], 201);
+    }
 
-    //     return response()->json([
-    //         'message' => 'تم قبول الطالب وبدء تنفيذ المهمة بنجاح. | Student accepted and task execution started successfully.',
-    //         'data' => [
-    //             'assignment_id' => $assignment->id,
-    //             'application_id' => $assignment->company_task_application_id,
-    //             'task_id' => $assignment->company_task_id,
-    //             'student_user_id' => $assignment->student_user_id,
-    //             'status' => $assignment->status,
-    //             'started_at' => $assignment->started_at?->toISOString(),
-    //         ],
-    //     ], 201);
-    // }
-
-    // /**
-    //  * Reject a student's application.
-    //  */
+    /**
+     * Reject a student's application.
+     */
     // public function reject(
     //     ReviewCompanyTaskApplicationRequest $request,
     //     int $applicationId
@@ -98,14 +94,14 @@ class CompanyTaskApplicationController extends Controller
     //     ]);
     // }
 
-    // /**
-    //  * Get the company owned by the authenticated company user.
-    //  */
-    // private function getAuthenticatedCompanyId(): int
-    // {
-    //     return Auth::user()
-    //         ->companies()
-    //         ->firstOrFail()
-    //         ->id;
-    // }
+    /**
+     * Get the company owned by the authenticated company user.
+     */
+    private function getAuthenticatedCompanyId(): int
+    {
+        return Auth::user()
+            ->companies()
+            ->firstOrFail()
+            ->id;
+    }
 }

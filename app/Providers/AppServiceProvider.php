@@ -33,6 +33,12 @@ use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
 use App\Repositories\CompanyTaskAssignmentRepository;
 use App\Interfaces\CompanyHomeRepositoryInterface;
 use App\Repositories\CompanyHomeRepository;
+use App\Interfaces\ConversationRepositoryInterface;
+use App\Interfaces\MessageRepositoryInterface;
+use App\Interfaces\ConversationParticipantRepositoryInterface;
+use App\Repositories\ConversationRepository;
+use App\Repositories\MessageRepository;
+use App\Repositories\ConversationParticipantRepository;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -83,6 +89,11 @@ $this->app->bind(
     CompanyHomeRepositoryInterface::class,
     CompanyHomeRepository::class
     );
+  
+    $this->app->bind(ConversationRepositoryInterface::class, ConversationRepository::class);
+    $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
+    $this->app->bind(ConversationParticipantRepositoryInterface::class, ConversationParticipantRepository::class);
+
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'

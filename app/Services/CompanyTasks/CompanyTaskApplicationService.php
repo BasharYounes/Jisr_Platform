@@ -37,26 +37,28 @@ class CompanyTaskApplicationService
     );
 }
 
-    public function acceptApplication(
-        int $companyId,
-        int $applicationId,
-        array $data = []
-    ): CompanyTaskAssignment {
-        return DB::transaction(function () use ($companyId, $applicationId, $data) {
-            $application = $this->applicationRepository->findCompanyApplicationOrFail(
-                companyId: $companyId,
-                applicationId: $applicationId
-            );
+    public function acceptApplication(int $companyId,int $applicationId,array $data = []): CompanyTaskAssignment {
+       $assignment = DB::transaction(function () use ($companyId, $applicationId, $data) {
+       $application = $this->applicationRepository->findCompanyApplicationOrFail($companyId, $applicationId);
 
-            $this->ensureApplicationIsPending($application);
-            $this->ensureAcceptedLimitNotReached($application);
-            $this->ensureAssignmentDoesNotExist($application);
+    $this->ensureApplicationIsPending($application);
+    $this->ensureAcceptedLimitNotReached($application);
+    $this->ensureAssignmentDoesNotExist($application);
 
-            $this->applicationRepository->update($application, [
-                'status' => 'accepted',
-                'reviewed_at' => now(),
-                'company_notes' => $data['company_notes'] ?? null,
-            ]);
+    // $application = $this->applicationRepository->markAsAccepted($application, $data);
+
+    // $assignment = $this->assignmentRepository->createFromApplication($application);
+
+    // $this->taskAssignmentChatService->createForAssignment($assignment);
+
+    return $assignment;
+    });
+
+    DB::afterCommit(function () use ($assignment) {
+    // send notification
+    });
+
+    return $assignment;
 
             return $this->assignmentRepository->create([
                 'company_task_id' => $application->company_task_id,
@@ -65,8 +67,19 @@ class CompanyTaskApplicationService
                 'status' => 'in_progress',
                 'started_at' => now(),
             ]);
-        });
-    }
+        }
+        
+
+
+
+
+
+
+
+
+
+
+
 
     public function rejectApplication(
         int $companyId,
