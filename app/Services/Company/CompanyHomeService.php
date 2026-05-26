@@ -26,11 +26,6 @@ class CompanyHomeService
 
             'recent_activities' => $this->companyHomeRepository->getRecentActivities($companyId),
 
-            'quick_create' => [
-                ['type' => 'task', 'label' => 'Task'],
-                ['type' => 'internship', 'label' => 'Internship'],
-                ['type' => 'job', 'label' => 'Job'],
-            ],
         ];
     }
 }

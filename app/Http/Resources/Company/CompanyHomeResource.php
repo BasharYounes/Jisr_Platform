@@ -22,8 +22,6 @@ class CompanyHomeResource extends JsonResource
             'required_actions' => $this->resource['required_actions'],
 
             'recent_activities' => $this->resource['recent_activities'],
-
-            'quick_create' => $this->resource['quick_create'],
         ];
     }
 }
