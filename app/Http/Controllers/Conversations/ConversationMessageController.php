@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Api\Conversations;
+namespace App\Http\Controllers\Conversations;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Conversation\StoreConversationMessageRequest;
 use App\Http\Requests\Conversations\StoreConversationMessageRequest as ConversationsStoreConversationMessageRequest;
 use App\Services\Conversations\ConversationMessageService;
 use Illuminate\Http\Request;
