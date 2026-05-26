@@ -31,6 +31,8 @@ use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Repositories\CompanyTaskApplicationRepository;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
 use App\Repositories\CompanyTaskAssignmentRepository;
+use App\Interfaces\CompanyHomeRepositoryInterface;
+use App\Repositories\CompanyHomeRepository;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -75,6 +77,11 @@ $this->app->bind(
     $this->app->bind(
     CompanyTaskAssignmentRepositoryInterface::class,
     CompanyTaskAssignmentRepository::class
+    );
+
+    $this->app->bind(
+    CompanyHomeRepositoryInterface::class,
+    CompanyHomeRepository::class
     );
 
         $this->app->bind(AIClientInterface::class, function () {

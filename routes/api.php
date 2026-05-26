@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\CVAnalysisController;
 use App\Http\Controllers\Api\CVController;
 use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskController;
+use App\Http\Controllers\CompanyHomeController;
 use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Student\PortfolioProjectController;
@@ -91,13 +92,15 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     //============
     //== Company
     //============
+
+    // Profile
     Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(function(){
     Route::get('profile',[UserController::class,'getProfileCompany']);
     Route::post('profile/edit',[UserController::class,'editProfile']);
     });
 
-
-
+    ///Home
+    Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware(['auth:sanctum', 'role:company']);
     //Company Tasks Creation & Publish
     Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
         Route::get('/', 'index');
