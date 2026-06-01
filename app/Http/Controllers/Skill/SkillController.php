@@ -27,6 +27,6 @@ class SkillController extends Controller
             data: SkillResource::collection($skills),
             message: 'Skills retrieved successfully.'
         );
-        
+
     }   
 }

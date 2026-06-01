@@ -116,7 +116,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     });
 
      // Skill 
-    Route::middleware(['auth:sanctum','role:company'])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/skills', [SkillController::class, 'index']);
     });
 

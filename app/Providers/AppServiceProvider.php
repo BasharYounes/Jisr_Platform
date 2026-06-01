@@ -42,6 +42,7 @@ use App\Repositories\ConversationParticipantRepository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Models\CompanyTaskAssignment;
 use App\Interfaces\SkillRepositoryInterface;
+use App\Models\User;
 use App\Repositories\SkillRepository;
 
 class AppServiceProvider extends ServiceProvider
@@ -141,10 +142,9 @@ $this->app->bind(
             ProjectAssignmentTask::class,
             ProjectAssignmentTaskPolicy::class
         );
-
-
-      Relation::enforceMorphMap([
-        'company_task_assignment' => CompanyTaskAssignment::class,
+    Relation::enforceMorphMap([
+    'user' => User::class,
+    'company_task_assignment' => CompanyTaskAssignment::class,
     ]);
 
     }
