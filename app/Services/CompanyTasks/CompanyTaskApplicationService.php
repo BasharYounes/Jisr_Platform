@@ -9,12 +9,14 @@ use App\Models\CompanyTaskAssignment;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Services\Conversations\TaskAssignmentConversationService;
 
 class CompanyTaskApplicationService
 {
     public function __construct(
         private readonly CompanyTaskApplicationRepositoryInterface $applicationRepository,
-        private readonly CompanyTaskAssignmentRepositoryInterface $assignmentRepository
+        private readonly CompanyTaskAssignmentRepositoryInterface $assignmentRepository,
+        private readonly TaskAssignmentConversationService $taskAssignmentConversationService,
     ) {}
 
     public function getTaskApplications(
@@ -37,55 +39,40 @@ class CompanyTaskApplicationService
     );
 }
 
-    public function acceptApplication(int $companyId,int $applicationId,array $data = []): CompanyTaskAssignment {
-       $assignment = DB::transaction(function () use ($companyId, $applicationId, $data) {
-       $application = $this->applicationRepository->findCompanyApplicationOrFail($companyId, $applicationId);
+  public function acceptApplication(int $companyId,int $applicationId,array $data = []): CompanyTaskAssignment {
+    $assignment = DB::transaction(function () use ($companyId, $applicationId, $data) {
+        $application = $this->applicationRepository->findCompanyApplicationOrFail(
+            $companyId,
+            $applicationId
+        );
 
-    $this->ensureApplicationIsPending($application);
-    $this->ensureAcceptedLimitNotReached($application);
-    $this->ensureAssignmentDoesNotExist($application);
-
-    // $application = $this->applicationRepository->markAsAccepted($application, $data);
-
-    // $assignment = $this->assignmentRepository->createFromApplication($application);
-
-    // $this->taskAssignmentChatService->createForAssignment($assignment);
-
-    return $assignment;
+        $this->ensureApplicationIsPending($application);
+        $this->ensureAcceptedLimitNotReached($application);
+        $this->ensureAssignmentDoesNotExist($application);
+        $application = $this->applicationRepository->update($application, [
+            'status' => 'accepted',
+            'reviewed_at' => now(),
+            'company_notes' => $data['company_notes'] ?? null,
+        ]);
+        $assignment = $this->assignmentRepository->create([
+            'company_task_id' => $application->company_task_id,
+            'company_task_application_id' => $application->id,
+            'student_user_id' => $application->student_user_id,
+            'status' => 'working',
+            'started_at' => now(),
+        ]);
+        $this->taskAssignmentConversationService->createForAssignment($assignment);
+        return $assignment;
     });
 
     DB::afterCommit(function () use ($assignment) {
-    // send notification
+        // later: send notification
     });
 
     return $assignment;
-
-            return $this->assignmentRepository->create([
-                'company_task_id' => $application->company_task_id,
-                'company_task_application_id' => $application->id,
-                'student_user_id' => $application->student_user_id,
-                'status' => 'in_progress',
-                'started_at' => now(),
-            ]);
-        }
-        
-
-
-
-
-
-
-
-
-
-
-
-
-    public function rejectApplication(
-        int $companyId,
-        int $applicationId,
-        array $data = []
-    ): CompanyTaskApplication {
+}
+    public function rejectApplication(int $companyId,int $applicationId,array $data = []): CompanyTaskApplication 
+    {
         return DB::transaction(function () use ($companyId, $applicationId, $data) {
             $application = $this->applicationRepository->findCompanyApplicationOrFail(
                 companyId: $companyId,

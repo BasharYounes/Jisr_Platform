@@ -39,7 +39,10 @@ use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\ConversationParticipantRepository;
-
+use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Models\CompanyTaskAssignment;
+use App\Interfaces\SkillRepositoryInterface;
+use App\Repositories\SkillRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -94,6 +97,9 @@ $this->app->bind(
     $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
     $this->app->bind(ConversationParticipantRepositoryInterface::class, ConversationParticipantRepository::class);
 
+        $this->app->bind(
+        SkillRepositoryInterface::class,
+        SkillRepository::class);
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
@@ -135,6 +141,11 @@ $this->app->bind(
             ProjectAssignmentTask::class,
             ProjectAssignmentTaskPolicy::class
         );
+
+
+      Relation::enforceMorphMap([
+        'company_task_assignment' => CompanyTaskAssignment::class,
+    ]);
 
     }
 }

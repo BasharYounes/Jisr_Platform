@@ -23,6 +23,7 @@ use App\Http\Controllers\Student\PortfolioProjectController;
 use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
+use App\Http\Controllers\Skill\SkillController;
 
 
 
@@ -102,9 +103,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('profile',[UserController::class,'getProfileCompany']);
     Route::post('profile/edit',[UserController::class,'editProfile']);
     });
-
     ///Home
     Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware(['auth:sanctum', 'role:company']);
+   
     //Company Tasks Creation & Publish
     Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
         Route::get('/', 'index');
@@ -113,12 +114,18 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
         Route::put('/{taskId}', 'update');
         Route::patch('/{taskId}/publish', 'publish');
     });
+
+     // Skill 
+    Route::middleware(['auth:sanctum','role:company'])->group(function () {
+    Route::get('/skills', [SkillController::class, 'index']);
+    });
+
     //Company Tasks Applications
     Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskApplicationController::class)->group(function () {
         Route::get('/{taskId}/applications', 'applications');
         Route::get('/applications/student/details/{applicationId}', 'show');
-        Route::post('/applications/{applicationId}/accept', 'accept');
-        Route::post('/applications/{applicationId}/reject', 'reject');
+        Route::post('/applications/accept/{applicationId}', 'accept');
+        Route::post('/applications/reject/{applicationId}', 'reject');
     });
 
     //Conversation

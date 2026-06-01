@@ -38,7 +38,7 @@ class ConversationMessageController extends Controller
 
         return $this->success(
             message: 'Message sent successfully.',
-data: $message,
+            data: $message,
             statusCode: 201
         );
     }
