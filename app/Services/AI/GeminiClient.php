@@ -4,22 +4,45 @@ namespace App\Services\AI;
 
 use App\Exceptions\AIProviderException;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 class GeminiClient implements AIClientInterface
 {
-    public function generateJson(string $systemPrompt, string $userPrompt): array
-    {
+    public function generateJson(
+        string $systemPrompt,
+        string $userPrompt,
+        string $taskType = 'default'
+    ): array {
+        $primaryModel = $this->modelForTask($taskType);
+
+        try {
+            return $this->sendToGemini($systemPrompt, $userPrompt, $primaryModel);
+        } catch (AIProviderException $e) {
+            
+            if ($taskType === 'reasoning') {
+                return $this->sendToGemini(
+                    $systemPrompt,
+                    $userPrompt,
+                    config('services.gemini.default_model')
+                );
+            }
+
+            return $this->sendToGemini(
+                $systemPrompt,
+                $userPrompt,
+                config('services.gemini.fallback_model')
+            );
+        }
+    }
+
+    private function sendToGemini(
+        string $systemPrompt,
+        string $userPrompt,
+        string $model
+    ): array {
         $apiKey = config('services.gemini.api_key');
-        $model = config('services.gemini.model', 'gemini-2.5-flash-lite');
         $timeout = (int) config('services.gemini.timeout', 60);
 
-        if (blank($apiKey)) {
-            throw new RuntimeException('Gemini API key is missing.');
-        }
-
         $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
-
         $response = Http::timeout($timeout)
             ->retry(2, 500)
             ->withHeaders([
@@ -82,5 +105,13 @@ class GeminiClient implements AIClientInterface
         }
 
         throw new AIProviderException('Invalid JSON returned from Gemini: ' . $text);
+    }
+
+    private function modelForTask(string $taskType): string
+    {
+        return match ($taskType) {
+            'reasoning' => config('services.gemini.reasoning_model'),
+            default => config('services.gemini.default_model'),
+        };
     }
 }

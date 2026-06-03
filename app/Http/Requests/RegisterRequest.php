@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
        return [
-            'role' => 'required|in:student,company',
+            'role' => 'required|in:student,company,supervisor',
 
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -42,7 +42,11 @@ class RegisterRequest extends FormRequest
              'documentation_file' => 'required_if:role,company|file|max:2048|mimes:pdf,jpg,jpeg,png,doc,docx',
              'location' => 'required_if:role,company|string',
             // 'description' => 'nullable|string|max:1000',
-            
+
+            // supervisor fields
+            'specialization' => 'required_if:role,supervisor|string|max:128',
+            'is_volunteer' => 'nullable|boolean',
+
         ];
     }
 }

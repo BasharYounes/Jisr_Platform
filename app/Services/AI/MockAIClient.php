@@ -4,7 +4,7 @@ namespace App\Services\AI;
 
 class MockAIClient implements AIClientInterface
 {
-    public function generateJson(string $systemPrompt, string $userPrompt): array
+    public function generateJson(string $systemPrompt, string $userPrompt, string $taskType = 'default'): array
     {
         if (str_contains($systemPrompt, 'CV skill extraction')) {
             return [

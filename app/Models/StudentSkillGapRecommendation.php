@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentSkillGapRecommendation extends Model
 {
-    protected $guarded =[];
+    protected $fillable = [
+        'student_id',
+        'resource_id',
+        'gap_skill_id',
+        'priority',
+        'status',
+    ];
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');

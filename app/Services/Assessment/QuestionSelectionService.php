@@ -11,6 +11,7 @@ class QuestionSelectionService
     public function __construct(
         private AssessmentTelemetryService $telemetryService
     ) {}
+
     public function selectNextQuestion(AssessmentSkillSession $skillSession): ?QuestionBank
     {
         $usedQuestionIds = $skillSession->attempts()
@@ -19,27 +20,23 @@ class QuestionSelectionService
 
         $targetLevel = $this->resolveAdaptiveLevel($skillSession);
 
-        // 1) Try exact level first
-        $question = $this->queryBase($skillSession, $usedQuestionIds)
-            ->where('Level', $targetLevel)
-            ->inRandomOrder()
-            ->first();
+        $usedTopics = $this->usedTopics($skillSession);
+
+        // 1) Try exact level first with topic diversity
+        $question = $this->pickQuestionWithTopicDiversity(
+            query: $this->queryBase($skillSession, $usedQuestionIds)->where('Level', $targetLevel),
+            usedTopics: $usedTopics
+        );
 
         if ($question) {
-            $this->telemetryService->record([
-                'assessment_session_id' => $skillSession->AssessmentSessionID ?? null,
-                'assessment_skill_session_id' => $skillSession->AssessmentSkillSessionID ?? null,
-                'question_id' => $question->QuestionID ?? null,
-                'event_type' => 'question_selected',
-                'level_before' => $skillSession->CurrentEstimatedLevel ?? null,
-                'payload' => [
-                    'selected_question_level' => $question->Level ?? null,
-                    'difficulty_weight' => $question->DifficultyWeight ?? null,
-                    'selection_strategy' => 'closest_estimated_level',
-                    'current_estimated_level' => $skillSession->CurrentEstimatedLevel ?? null,
-                    'used_questions_count' => count($usedQuestionIds) ?? null,
-                ],
-            ]);
+            $this->recordQuestionSelectedTelemetry(
+                skillSession: $skillSession,
+                question: $question,
+                usedQuestionIds: $usedQuestionIds,
+                usedTopics: $usedTopics,
+                strategy: 'exact_estimated_level'
+            );
+
             return $question;
         }
 
@@ -47,32 +44,27 @@ class QuestionSelectionService
         $fallbackLevels = $this->fallbackLevels($targetLevel);
 
         foreach ($fallbackLevels as $level) {
-            $question = $this->queryBase($skillSession, $usedQuestionIds)
-                ->where('Level', $level)
-                ->inRandomOrder()
-                ->first();
+            $question = $this->pickQuestionWithTopicDiversity(
+                query: $this->queryBase($skillSession, $usedQuestionIds)->where('Level', $level),
+                usedTopics: $usedTopics
+            );
 
             if ($question) {
-                $this->telemetryService->record([
-                'assessment_session_id' => $skillSession->assessment_session_id ?? null,
-                'assessment_skill_session_id' => $skillSession->id,
-                'question_id' => $question->id,
-                'event_type' => 'question_selected',
-                'level_before' => $skillSession->CurrentEstimatedLevel ?? null,
-                'payload' => [
-                    'selected_question_level' => $question->Level ?? null,
-                    'difficulty_weight' => $question->DifficultyWeight ?? null,
-                    'selection_strategy' => 'closest_estimated_level',
-                    'current_estimated_level' => $skillSession->CurrentEstimatedLevel ?? null,
-                    'used_questions_count' => count($usedQuestionIds) ?? null,
-                ],
-            ]);
+                $this->recordQuestionSelectedTelemetry(
+                    skillSession: $skillSession,
+                    question: $question,
+                    usedQuestionIds: $usedQuestionIds,
+                    usedTopics: $usedTopics,
+                    strategy: 'fallback_nearby_level'
+                );
+
                 return $question;
             }
         }
 
         return null;
     }
+
     private function resolveAdaptiveLevel(AssessmentSkillSession $skillSession): int
     {
         $currentLevel = (float) $skillSession->CurrentEstimatedLevel;
@@ -82,7 +74,7 @@ class QuestionSelectionService
             ->latest('AnsweredAt')
             ->first();
 
-        if (!$lastAttempt) {
+        if (! $lastAttempt) {
             return $this->resolveTargetLevel($currentLevel);
         }
 
@@ -99,8 +91,7 @@ class QuestionSelectionService
         return $this->resolveTargetLevel($currentLevel);
     }
 
-
-    private function queryBase(AssessmentSkillSession $skillSession, array $usedQuestionIds)
+    private function queryBase(AssessmentSkillSession $skillSession, array $usedQuestionIds): \Illuminate\Database\Eloquent\Builder
     {
         $careerPathId = $skillSession->assessmentSession->CareerPathID;
 
@@ -111,7 +102,7 @@ class QuestionSelectionService
                 $query->where('CareerPathID', $careerPathId)
                     ->orWhereNull('CareerPathID');
             })
-            ->when(!empty($usedQuestionIds), function ($query) use ($usedQuestionIds) {
+            ->when(! empty($usedQuestionIds), function ($query) use ($usedQuestionIds) {
                 $query->whereNotIn('QuestionID', $usedQuestionIds);
             });
     }
@@ -131,6 +122,84 @@ class QuestionSelectionService
             return abs($a - $targetLevel) <=> abs($b - $targetLevel);
         });
 
-        return array_values(array_filter($levels, fn ($level) => $level !== $targetLevel));
+        return array_values(array_filter(
+            $levels,
+            fn ($level) => $level !== $targetLevel
+        ));
+    }
+
+    /**
+     * Record telemetry for a selected question.
+     *
+     * @param AssessmentSkillSession $skillSession
+     * @param QuestionBank $question
+     * @param array $usedQuestionIds
+     * @param array $usedTopics
+     * @param string $strategy
+     */
+    private function recordQuestionSelectedTelemetry(
+        AssessmentSkillSession $skillSession,
+        QuestionBank $question,
+        array $usedQuestionIds,
+        array $usedTopics,
+        string $strategy
+    ): void {
+        $this->telemetryService->record([
+            'assessment_session_id' => $skillSession->AssessmentSessionID ?? null,
+            'assessment_skill_session_id' => $skillSession->AssessmentSkillSessionID ?? null,
+            'question_id' => $question->QuestionID ?? null,
+            'event_type' => 'question_selected',
+            'level_before' => $skillSession->CurrentEstimatedLevel ?? null,
+            'payload' => [
+                'selected_question_level' => $question->Level ?? null,
+                'difficulty_weight' => $question->DifficultyWeight ?? null,
+                'selection_strategy' => $strategy,
+                'current_estimated_level' => $skillSession->CurrentEstimatedLevel ?? null,
+                'used_questions_count' => count($usedQuestionIds),
+                'selected_topic' => $question->Topic ?? null,
+                'used_topics' => $usedTopics,
+                'topic_diversity_applied' => ! empty($usedTopics)
+                    && ! in_array($question->Topic, $usedTopics, true),
+            ],
+        ]);
+    }
+
+    public function usedTopics(AssessmentSkillSession $skillSession): array
+    {
+        return $skillSession->questionAttempts()
+            ->with('questionBank')
+            ->get()
+            ->pluck('questionBank.Topic')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Prefer questions from topics that have not been tested yet.
+     *
+     * This improves assessment fairness by avoiding repeated questions
+     * from the same sub-area of a skill when other topics are available.
+     */
+    private function pickQuestionWithTopicDiversity($query, array $usedTopics): ?QuestionBank
+    {
+        $queryWithoutUsedTopics = clone $query;
+
+        if (! empty($usedTopics)) {
+            $question = $queryWithoutUsedTopics
+                ->whereNotNull('Topic')
+                ->whereNotIn('Topic', $usedTopics)
+                ->inRandomOrder()
+                ->first();
+
+            if ($question) {
+                return $question;
+            }
+        }
+
+        return $query
+            ->inRandomOrder()
+            ->first();
     }
 }

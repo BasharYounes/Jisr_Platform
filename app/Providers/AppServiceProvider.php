@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
+use App\Interfaces\NotificationRepositoryInterface;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Policies\ProjectAssignmentPolicy;
@@ -10,15 +11,18 @@ use App\Policies\ProjectAssignmentTaskPolicy;
 use App\Services\AI\AIClientInterface;
 use App\Services\AI\GeminiClient;
 use App\Services\AI\MockAIClient;
+use App\Repositories\NotificationRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 use App\Interfaces\CompanyTaskRepositoryInterface;
 use App\Interfaces\PortfolioProjectRepositoryInterface;
 use App\Interfaces\StudentSkillRepositoryInterface;
+use App\Interfaces\SupervisorRepositoryInterface;
 use App\Repositories\CompanyTaskRepository;
 use App\Repositories\PortfolioProjectRepository;
 use App\Repositories\StudentSkillRepository;
+use App\Repositories\SupervisorRepository;
 use App\Observers\ProjectAssignmentObserver;
 use App\Events\ProjectAssignmentStatusChanged;
 use App\Listeners\NotifyStudentProjectStatusChanged;
@@ -33,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+         $this->app->bind(
+        NotificationRepositoryInterface::class,
+        NotificationRepository::class
+    );
+
          $this->app->bind(
         \App\Interfaces\UserRepositoryInterface::class,
         \App\Repositories\UserRepository::class
@@ -62,6 +71,11 @@ $this->app->bind(
     PortfolioProjectRepositoryInterface::class,
     PortfolioProjectRepository::class
 );
+
+        $this->app->bind(
+        SupervisorRepositoryInterface::class,
+        SupervisorRepository::class
+    );
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'

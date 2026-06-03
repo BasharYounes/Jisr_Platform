@@ -34,9 +34,18 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    // 'gemini' => [
+    //     'api_key' => env('GEMINI_API_KEY'),
+    //     'model' => env('GEMINI_MODEL', 'gemini-2.5-flash-lite'),
+    //     'timeout' => env('GEMINI_TIMEOUT', 60),
+    // ],
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
-        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash-lite'),
+
+        'default_model' => env('GEMINI_DEFAULT_MODEL', 'gemini-3.5-flash'),
+        'reasoning_model' => env('GEMINI_REASONING_MODEL', 'gemini-2.5-pro'),
+        'fallback_model' => env('GEMINI_FALLBACK_MODEL', 'gemini-2.5-flash-lite'),
+
         'timeout' => env('GEMINI_TIMEOUT', 60),
     ],
 

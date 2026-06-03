@@ -19,6 +19,12 @@ use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Student\PortfolioProjectController;
 
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::routes([
+    'middleware' => ['auth:sanctum'],
+]);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cvs/upload', [CVController::class, 'upload']);
     Route::post('/cvs/{cv}/analyze', [CVAnalysisController::class, 'analyze']);
@@ -42,6 +48,8 @@ Route::get('/opportunities/{id}/top-candidates', [MatchingController::class, 'to
 require __DIR__ . '/MetricsResultAI/MetricsRoute.php';
 
 require __DIR__ .'/Supervisor/SupervisorRoute.php';
+
+require __DIR__.'/Notification/NotificationsRoutes.php';
 
 Route::get('/dev/login-as-test', function () {
         $user = \App\Models\User::firstOrCreate(
@@ -116,7 +124,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
         Route::get('/recommended', 'recommended');
         Route::get('/{taskId}', 'show');
         Route::post('/{taskId}/apply', 'apply');
-    }); 
+    });
 
     // Student Portfolio Projects
     Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-projects')->controller(PortfolioProjectController::class)->group(function () {
