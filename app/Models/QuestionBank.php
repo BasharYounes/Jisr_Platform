@@ -14,6 +14,7 @@ class QuestionBank extends Model
         'CareerPathID',
         'Level',
         'QuestionType',
+        'Topic',
         'QuestionText',
         'ExpectedAnswerType',
         'DifficultyWeight',

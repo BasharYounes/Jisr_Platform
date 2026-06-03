@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Jisr Reverb Test</title>
+    <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f8fb;
+            padding: 30px;
+            direction: rtl;
+        }
+
+        .card {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 16px;
+            border-radius: 12px;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .success {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc2626;
+            font-weight: bold;
+        }
+        .toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    min-width: 320px;
+    max-width: 420px;
+    background: #ffffff;
+    border-right: 5px solid #2563eb;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    border-radius: 14px;
+    padding: 16px;
+    z-index: 9999;
+    display: none;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast-title {
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #111827;
+}
+
+.toast-body {
+    color: #4b5563;
+    font-size: 14px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+    </style>
+</head>
+
+<body>
+    <div id="toast" class="toast">
+    <div id="toastTitle" class="toast-title"></div>
+    <div id="toastBody" class="toast-body"></div>
+</div>
+<div class="card">
+    <h2>اختبار Jisr Reverb Notifications</h2>
+
+    <label>ضع User ID</label>
+    <input id="userId" placeholder="مثال: 1" />
+
+    <label>ضع Sanctum Token</label>
+    <input id="token" placeholder="Bearer token بدون كلمة Bearer" />
+
+    <button onclick="connect()">اتصال بالقناة</button>
+
+    <h3>الحالة</h3>
+    <div id="status">لم يتم الاتصال بعد</div>
+
+    <h3>الإشعارات المستقبلة</h3>
+    <pre id="logs">لا يوجد إشعارات بعد...</pre>
+</div>
+
+<script>
+    let pusher = null;
+
+    function log(message, data = null) {
+        const logs = document.getElementById('logs');
+        const time = new Date().toLocaleTimeString();
+
+        logs.textContent =
+            `[${time}] ${message}\n` +
+            (data ? JSON.stringify(data, null, 2) + '\n\n' : '\n') +
+            logs.textContent;
+    }
+
+    function setStatus(message, type = '') {
+        const status = document.getElementById('status');
+        status.className = type;
+        status.textContent = message;
+    }
+
+    function connect() {
+        const userId = document.getElementById('userId').value.trim();
+        const token = document.getElementById('token').value.trim();
+
+        if (!userId || !token) {
+            setStatus('أدخل userId و token أولاً', 'error');
+            return;
+        }
+
+        if (pusher) {
+            pusher.disconnect();
+        }
+
+        Pusher.logToConsole = true;
+
+        pusher = new Pusher('jisr-key', {
+            wsHost: '127.0.0.1',
+            wsPort: 8080,
+            forceTLS: false,
+            enabledTransports: ['ws'],
+            cluster: 'mt1',
+
+            authEndpoint: 'http://127.0.0.1:8000/api/broadcasting/auth',
+            auth: {
+                headers: {
+                    Authorization: 'Bearer ' + token,
+                    Accept: 'application/json',
+                }
+            }
+        });
+
+        pusher.connection.bind('connected', function () {
+            setStatus('تم الاتصال بـ Reverb بنجاح', 'success');
+            log('Connected to Reverb');
+        });
+
+        pusher.connection.bind('error', function (error) {
+            setStatus('حدث خطأ في الاتصال', 'error');
+            log('Connection error', error);
+        });
+
+        const channelName = 'private-users.' + userId;
+        const channel = pusher.subscribe(channelName);
+
+        channel.bind('pusher:subscription_succeeded', function () {
+            setStatus('تم الاشتراك في القناة: ' + channelName, 'success');
+            log('Subscribed to ' + channelName);
+        });
+
+        channel.bind('pusher:subscription_error', function (error) {
+            setStatus('فشل الاشتراك في القناة', 'error');
+            log('Subscription error', error);
+        });
+
+        channel.bind('notification.created', function (data) {
+            setStatus('وصل إشعار جديد', 'success');
+            log('Notification received', data);
+
+            showToast(
+                data.notification?.title,
+                data.notification?.body
+            );
+        });
+    }
+    function showToast(title, body) {
+    const toast = document.getElementById('toast');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastBody = document.getElementById('toastBody');
+
+    toastTitle.textContent = title || 'إشعار جديد';
+    toastBody.textContent = body || '';
+
+    toast.style.display = 'block';
+
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 5000);
+}
+</script>
+</body>
+</html>
