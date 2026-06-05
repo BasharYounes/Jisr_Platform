@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('ConfidenceScore', 4, 2)->nullable();
             $table->unsignedInteger('QuestionCount')->default(0);
             $table->string('Status', 32)->default('pending');
+            $table->timestamp('CompletedAt')->nullable();
             $table->timestamps();
 
             $table->unique(['AssessmentSessionID', 'SkillID']);

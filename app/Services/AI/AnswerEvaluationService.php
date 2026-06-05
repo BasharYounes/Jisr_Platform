@@ -73,6 +73,10 @@ class AnswerEvaluationService
             }
         PROMPT;
 
-        return $this->aiClient->generateJson($systemPrompt, $userPrompt);
+        return $this->aiClient->generateJson(
+            $systemPrompt,
+            $userPrompt,
+            'reasoning'
+        );
     }
 }

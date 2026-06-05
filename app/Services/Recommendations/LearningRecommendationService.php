@@ -8,7 +8,8 @@ class LearningRecommendationService
 {
     public function recommend(int $skillId, float $currentLevel, float $targetLevel): array
     {
-        $neededLevel = ceil($currentLevel + 1);
+        $neededLevel = min(5, (int) floor($currentLevel) + 1);
+        $targetLevel = max($neededLevel, (int) ceil($targetLevel));
 
         return LearningResource::query()
             ->where('SkillID', $skillId)

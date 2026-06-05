@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
+
     protected $guarded=[];
      protected $casts = [
         'data' => 'array',
@@ -13,24 +15,20 @@ class Notification extends Model
         'read_at' => 'datetime',
     ];
 
-     public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function actor()
+    public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');
     }
 
-    public function application()
+    public function markAsRead(): void
     {
-        return $this->hasOne(NotificationApplication::class);
+        if ($this->read_at === null) {
+            $this->forceFill(['read_at' => now()])->save();
+        }
     }
-
-    public function comment()
-    {
-        return $this->hasOne(NotificationComment::class);
-    }
-    
 }

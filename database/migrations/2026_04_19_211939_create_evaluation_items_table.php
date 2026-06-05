@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('evaluation_items', function (Blueprint $table) {
             $table->id();
     $table->foreignId('project_evaluation_id')
-          ->constrained('project_evaluations')
+            ->constrained('project_evaluations')
           ->cascadeOnDelete();
 
     $table->foreignId('evaluation_criteria_id')
-          ->constrained('evaluation_criteria')
+            ->constrained('evaluation_criteria')
+
           ->cascadeOnDelete();
 
     $table->decimal('score', 5, 2);
