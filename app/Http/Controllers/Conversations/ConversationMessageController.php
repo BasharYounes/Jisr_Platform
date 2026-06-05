@@ -8,6 +8,7 @@ use App\Http\Resources\Conversation\MessageResource;
 use App\Services\Conversations\ConversationMessageService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use App\Http\Requests\Conversations\UpdateMessageRequest;
 
 class ConversationMessageController extends Controller
 {
@@ -63,4 +64,22 @@ class ConversationMessageController extends Controller
             data: new MessageResource($message)
         );
     }
+
+    public function update(
+    UpdateMessageRequest $request,
+    int $conversationId,
+    int $messageId
+) {
+    $message = $this->conversationMessageService->updateMessage(
+        conversationId: $conversationId,
+        messageId: $messageId,
+        userId: $request->user()->id,
+        data: $request->validated(),
+    );
+
+    return $this->success(
+        message: 'Message updated successfully.',
+        data: new MessageResource($message)
+    );
+}
 }

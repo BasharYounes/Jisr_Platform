@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Models\Message;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Models\ConversationParticipant;
 
 class MessageRepository implements MessageRepositoryInterface
 {
@@ -36,4 +37,31 @@ class MessageRepository implements MessageRepositoryInterface
             'content' => $content,
         ]);
     }
+
+    public function findMessageInConversationOrFail(int $messageId,int $conversationId): Message {
+    return Message::query()
+        ->whereKey($messageId)
+        ->where('conversation_id', $conversationId)
+        ->firstOrFail();
+    }
+
+    public function wasReadByAnotherParticipant(int $conversationId,int $senderId,$messageCreatedAt): bool {
+    return ConversationParticipant::query()
+        ->where('conversation_id', $conversationId)
+        ->where('user_id', '!=', $senderId)
+        ->whereNotNull('last_read_at')
+        ->where('last_read_at', '>=', $messageCreatedAt)
+        ->exists();
+    }
+
+    public function updateContent(Message $message,string $content): Message {
+    $message->update([
+        'content' => $content,
+    ]);
+
+    $message->conversation?->touch();
+
+    return $message->fresh(['sender']);
+    }
+
 }

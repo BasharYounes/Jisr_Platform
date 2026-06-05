@@ -38,4 +38,56 @@ class ConversationMessageService
             content: $data['content'],
         );
     }
+
+    public function updateMessage(
+    int $conversationId,
+    int $messageId,
+    int $userId,
+    array $data
+): Message {
+    $conversation = $this->conversationRepository
+        ->findUserConversationOrFail($conversationId, $userId);
+
+    if ($conversation->status === 'closed') {
+        throw new AuthorizationException(
+            'This conversation is closed.'
+        );
+    }
+
+    $message = $this->messageRepository
+        ->findMessageInConversationOrFail(
+            messageId: $messageId,
+            conversationId: $conversationId,
+        );
+
+    if ($message->sender_id !== $userId) {
+        throw new AuthorizationException(
+            'You can only edit your own messages.'
+        );
+    }
+
+    if ($message->type !== 'text') {
+        throw new AuthorizationException(
+            'Only text messages can be edited.'
+        );
+    }
+
+    $wasRead = $this->messageRepository
+        ->wasReadByAnotherParticipant(
+            conversationId: $conversationId,
+            senderId: $userId,
+            messageCreatedAt: $message->created_at,
+        );
+
+    if ($wasRead) {
+        throw new AuthorizationException(
+            'This message cannot be edited because it has already been read.'
+        );
+    }
+
+    return $this->messageRepository->updateContent(
+        message: $message,
+        content: $data['content'],
+    );
+}
 }
