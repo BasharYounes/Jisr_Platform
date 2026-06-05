@@ -31,7 +31,25 @@ use App\Models\ProjectEvaluation;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
-
+use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
+use App\Repositories\CompanyTaskApplicationRepository;
+use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
+use App\Repositories\CompanyTaskAssignmentRepository;
+use App\Interfaces\CompanyHomeRepositoryInterface;
+use App\Repositories\CompanyHomeRepository;
+use App\Interfaces\ConversationRepositoryInterface;
+use App\Interfaces\MessageRepositoryInterface;
+use App\Interfaces\ConversationParticipantRepositoryInterface;
+use App\Repositories\ConversationRepository;
+use App\Repositories\MessageRepository;
+use App\Repositories\ConversationParticipantRepository;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Models\CompanyTaskAssignment;
+use App\Interfaces\SkillRepositoryInterface;
+use App\Models\User;
+use App\Repositories\SkillRepository;
+use App\Interfaces\StudentTaskApplicationRepositoryInterface;
+use App\Repositories\StudentTaskApplicationRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -72,10 +90,39 @@ $this->app->bind(
     PortfolioProjectRepository::class
 );
 
+
+    $this->app->bind(
+    CompanyTaskApplicationRepositoryInterface::class,
+    CompanyTaskApplicationRepository::class
+    );
+
+    $this->app->bind(
+    CompanyTaskAssignmentRepositoryInterface::class,
+    CompanyTaskAssignmentRepository::class
+    );
+
+    $this->app->bind(
+    CompanyHomeRepositoryInterface::class,
+    CompanyHomeRepository::class
+    );
+  
+    $this->app->bind(ConversationRepositoryInterface::class, ConversationRepository::class);
+    $this->app->bind(MessageRepositoryInterface::class, MessageRepository::class);
+    $this->app->bind(ConversationParticipantRepositoryInterface::class, ConversationParticipantRepository::class);
+
+        $this->app->bind(
+        SkillRepositoryInterface::class,
+        SkillRepository::class);
+      
+      $this->app->bind(
+      StudentTaskApplicationRepositoryInterface::class,
+      StudentTaskApplicationRepository::class );
+
         $this->app->bind(
         SupervisorRepositoryInterface::class,
         SupervisorRepository::class
     );
+
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
@@ -118,5 +165,11 @@ $this->app->bind(
             ProjectAssignmentTaskPolicy::class
         );
 
+    Relation::enforceMorphMap([
+    'user' => User::class,
+    'company_task_assignment' => CompanyTaskAssignment::class,
+    ]);
+    
+  
     }
 }

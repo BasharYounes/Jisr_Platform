@@ -9,15 +9,15 @@ class CompanyTaskResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+         $companyUser = $this->company?->users?->first();
         return [
             'id' => $this->id,
 
             'company' => [
-                'id' => $this->company?->id,
-                'name' => $this->company?->name,
-                'industry' => $this->company?->industry,
-            ],
-
+            'id' => $this->company?->id,
+            'name' => $companyUser?->name,
+            'industry' => $this->company?->industry,
+            ],  
             'title' => $this->title,
             'description' => $this->description,
             'difficulty_level' => $this->difficulty_level,

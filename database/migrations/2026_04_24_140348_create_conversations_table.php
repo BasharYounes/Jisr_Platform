@@ -13,19 +13,28 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('conversation_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->morphs('conversationable'); 
+            // conversationable_type
+            // conversationable_id
+            $table->enum('status', ['open', 'closed'])->default('open');
+            $table->timestamp('closed_at')->nullable();
+            $table->timestamps();
 
-    $table->foreignId('user_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->index(['status', 'created_at']);
 
-    $table->string('role')->nullable();
+    //         $table->foreignId('conversation_id')
+    //       ->constrained()
+    //       ->cascadeOnDelete();
 
-    $table->timestamps();
+    // $table->foreignId('user_id')
+    //       ->constrained()
+    //       ->cascadeOnDelete();
 
-    $table->unique(['conversation_id', 'user_id']);
+    // $table->string('role')->nullable();
+
+    // $table->timestamps();
+
+    // $table->unique(['conversation_id', 'user_id']);
         });
     }
 

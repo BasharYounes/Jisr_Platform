@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
                 SkillAliasSeeder::class,
                 SkillLevelDefinitionSeeder::class,
                 BackendQuestionBankSeeder::class,
-                SupervisorWorkflowTestSeeder::class,
+               // SupervisorWorkflowTestSeeder::class,
             ]);
 
 

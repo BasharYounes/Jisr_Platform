@@ -19,6 +19,7 @@ return new class extends Migration
 
     $table->foreignId('evaluation_criteria_id')
             ->constrained('evaluation_criteria')
+
           ->cascadeOnDelete();
 
     $table->decimal('score', 5, 2);
