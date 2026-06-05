@@ -67,11 +67,10 @@ class ConversationMessageController extends Controller
 
     public function update(
     UpdateMessageRequest $request,
-    int $conversationId,
     int $messageId
-) {
+) 
+{
     $message = $this->conversationMessageService->updateMessage(
-        conversationId: $conversationId,
         messageId: $messageId,
         userId: $request->user()->id,
         data: $request->validated(),

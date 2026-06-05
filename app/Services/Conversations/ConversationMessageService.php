@@ -40,25 +40,24 @@ class ConversationMessageService
     }
 
     public function updateMessage(
-    int $conversationId,
     int $messageId,
     int $userId,
     array $data
 ): Message {
+    $message = $this->messageRepository
+        ->findByIdOrFail($messageId);
+
     $conversation = $this->conversationRepository
-        ->findUserConversationOrFail($conversationId, $userId);
+        ->findUserConversationOrFail(
+            conversationId: $message->conversation_id,
+            userId: $userId,
+        );
 
     if ($conversation->status === 'closed') {
         throw new AuthorizationException(
             'This conversation is closed.'
         );
     }
-
-    $message = $this->messageRepository
-        ->findMessageInConversationOrFail(
-            messageId: $messageId,
-            conversationId: $conversationId,
-        );
 
     if ($message->sender_id !== $userId) {
         throw new AuthorizationException(
@@ -74,7 +73,7 @@ class ConversationMessageService
 
     $wasRead = $this->messageRepository
         ->wasReadByAnotherParticipant(
-            conversationId: $conversationId,
+            conversationId: $message->conversation_id,
             senderId: $userId,
             messageCreatedAt: $message->created_at,
         );

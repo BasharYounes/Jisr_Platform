@@ -64,4 +64,9 @@ class MessageRepository implements MessageRepositoryInterface
     return $message->fresh(['sender']);
     }
 
+    public function findByIdOrFail(int $messageId): Message
+{
+    return Message::query()->findOrFail($messageId);
+}
+
 }

@@ -18,5 +18,7 @@ interface MessageRepositoryInterface
     public function wasReadByAnotherParticipant(int $conversationId,int $senderId,$messageCreatedAt): bool;
 
     public function updateContent(Message $message,string $content):Message;
+
+    public function findByIdOrFail(int $messageId): Message;
     
   }

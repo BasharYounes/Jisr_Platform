@@ -139,7 +139,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::middleware('auth:sanctum')->prefix('conversations/messages')->controller(ConversationMessageController::class)->group(function () {
     Route::get('/{conversationId}', 'index');
     Route::post('/{conversationId}', 'store');
-    Route::patch('/update/{conversationId}', 'update');
+    Route::post('/update/{messageId}', 'update');
     });
     //Marks As Read
     Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationParticipantController::class)->group(function () {
