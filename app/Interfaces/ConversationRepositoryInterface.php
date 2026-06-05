@@ -17,4 +17,7 @@ interface ConversationRepositoryInterface
     public function createForConversationable(Model $conversationable): Conversation;
     public function getUserTaskAssignmentConversations(int $userId, int $perPage = 15);
 
+    public function getUserOpenConversations(int $userId, int $perPage = 15);
+
+    public function getUserClosedConversations(int $userId, int $perPage = 15);
 }

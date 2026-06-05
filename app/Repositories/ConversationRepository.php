@@ -55,6 +55,7 @@ class ConversationRepository implements ConversationRepositoryInterface
     $type = (new \App\Models\CompanyTaskAssignment())->getMorphClass();
 
     return Conversation::query()
+      ->where('status', 'open')
         ->where('conversationable_type', $type)
         ->whereHas('participants', fn ($query) =>
             $query->where('user_id', $userId)
@@ -86,4 +87,87 @@ class ConversationRepository implements ConversationRepositoryInterface
         ->latest()
         ->paginate($perPage);
 }
+
+public function getUserOpenConversations(int $userId, int $perPage = 15)
+{
+    return Conversation::query()
+        ->where('status', 'open')
+        ->whereHas('participants', function ($query) use ($userId) {
+            $query->where('users.id', $userId);
+        })
+        ->with([
+            'participants:id,name,email,profile_picture_url',
+            'latestMessage.sender:id,name,email,profile_picture_url',
+            'conversationable',
+        ])
+        ->withCount([
+            'messages as unread_messages_count' => function ($query) use ($userId) {
+                $query
+                    ->where('sender_id', '!=', $userId)
+                    ->whereExists(function ($subQuery) use ($userId) {
+                        $subQuery
+                            ->selectRaw('1')
+                            ->from('conversation_participants as cp')
+                            ->whereColumn(
+                                'cp.conversation_id',
+                                'messages.conversation_id'
+                            )
+                            ->where('cp.user_id', $userId)
+                            ->where(function ($readQuery) {
+                                $readQuery
+                                    ->whereNull('cp.last_read_at')
+                                    ->orWhereColumn(
+                                        'messages.created_at',
+                                        '>',
+                                        'cp.last_read_at'
+                                    );
+                            });
+                    });
+            },
+        ])
+        ->latest('updated_at')
+        ->paginate($perPage);
+}
+
+public function getUserClosedConversations(int $userId, int $perPage = 15)
+{
+    return Conversation::query()
+        ->where('status', 'closed')
+        ->whereHas('participants', function ($query) use ($userId) {
+            $query->where('users.id', $userId);
+        })
+        ->with([
+            'participants:id,name,email,profile_picture_url',
+            'latestMessage.sender:id,name,email,profile_picture_url',
+            'conversationable',
+        ])
+        ->withCount([
+            'messages as unread_messages_count' => function ($query) use ($userId) {
+                $query
+                    ->where('sender_id', '!=', $userId)
+                    ->whereExists(function ($subQuery) use ($userId) {
+                        $subQuery
+                            ->selectRaw('1')
+                            ->from('conversation_participants as cp')
+                            ->whereColumn(
+                                'cp.conversation_id',
+                                'messages.conversation_id'
+                            )
+                            ->where('cp.user_id', $userId)
+                            ->where(function ($readQuery) {
+                                $readQuery
+                                    ->whereNull('cp.last_read_at')
+                                    ->orWhereColumn(
+                                        'messages.created_at',
+                                        '>',
+                                        'cp.last_read_at'
+                                    );
+                            });
+                    });
+            },
+        ])
+        ->latest('closed_at')
+        ->paginate($perPage);
+}
+
 }

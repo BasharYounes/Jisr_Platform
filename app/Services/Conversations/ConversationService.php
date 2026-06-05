@@ -44,4 +44,32 @@ class ConversationService
 
         return $messages;
     }
+
+    public function getUserOpenConversations(int $userId, int $perPage = 15)
+{
+    return $this->conversationRepository
+        ->getUserOpenConversations($userId, $perPage);
+}
+
+public function getUserClosedConversations(int $userId, int $perPage = 15)
+{
+    return $this->conversationRepository
+        
+    ->getUserClosedConversations($userId, $perPage);
+}
+
+public function markAsRead(int $conversationId, int $userId): void
+{
+    $this->conversationRepository
+        ->findUserConversationOrFail($conversationId, $userId);
+
+    $updated = $this->participantRepository
+        ->markAsRead($conversationId, $userId);
+
+    if (! $updated) {
+        throw new \RuntimeException(
+            'Conversation participant could not be updated.'
+        );
+    }
+}
 }

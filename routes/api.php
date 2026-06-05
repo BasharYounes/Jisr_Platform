@@ -126,15 +126,18 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
         Route::post('/applications/reject/{applicationId}', 'reject');
     });
     //Conversation
-    Route::middleware('auth:sanctum')->prefix('conversations')->group(function () {
-    Route::get('/all', [ConversationController::class, 'index']);
-    Route::get('/task-conversations', [ConversationController::class, 'taskConversations']);
-    Route::get('/{conversationId}', [ConversationController::class, 'show']);
-    Route::get('/{conversationId}/messages', [ConversationMessageController::class, 'index']);
-    Route::post('/{conversationId}/messages', [ConversationMessageController::class, 'store']);
-    Route::patch('/{conversationId}/read', [ConversationParticipantController::class, 'markAsRead']);
-});
+    Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationController::class)->group(function () {
+    Route::get('/all', 'index');
+    Route::get('/task-conversations', 'taskConversations');
+    Route::get('/closed', 'closedConversations');
 
+    Route::get('/{conversationId}', 'show');
+    Route::get('/{conversationId}/messages', 'index');
+    Route::post('/{conversationId}/messages', 'store');
+});
+    Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationParticipantController::class)->group(function () {
+    Route::patch('/{conversationId}/read', 'markAsRead');
+    });
     //============
     //== Student
     //============
