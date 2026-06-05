@@ -14,7 +14,7 @@ class ConversationRepository implements ConversationRepositoryInterface
         return Conversation::query()
             ->whereHas('participants', fn ($query) => $query->where('user_id', $userId))
             ->with([
-                'participants.user:id,name,email',
+                'participants:id,name,email,profile_picture_url',
                 'latestMessage',
             ])
             ->latest()
@@ -27,8 +27,8 @@ class ConversationRepository implements ConversationRepositoryInterface
             ->whereKey($conversationId)
             ->whereHas('participants', fn ($query) => $query->where('user_id', $userId))
             ->with([
-                'participants.user:id,name,email',
-                'conversationable',
+            'participants:id,name,email,profile_picture_url',                
+            'conversationable',
             ])
             ->firstOrFail();
     }
@@ -60,7 +60,7 @@ class ConversationRepository implements ConversationRepositoryInterface
             $query->where('user_id', $userId)
         )
         ->with([
-            'participants.user:id,name,email',
+            'participants:id,name,email,profile_picture_url',
             'latestMessage',
             'conversationable',
         ])
