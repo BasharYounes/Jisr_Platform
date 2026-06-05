@@ -44,6 +44,8 @@ use App\Models\CompanyTaskAssignment;
 use App\Interfaces\SkillRepositoryInterface;
 use App\Models\User;
 use App\Repositories\SkillRepository;
+use App\Interfaces\StudentTaskApplicationRepositoryInterface;
+use App\Repositories\StudentTaskApplicationRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -101,6 +103,10 @@ $this->app->bind(
         $this->app->bind(
         SkillRepositoryInterface::class,
         SkillRepository::class);
+      
+      $this->app->bind(
+      StudentTaskApplicationRepositoryInterface::class,
+      StudentTaskApplicationRepository::class );
 
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
@@ -142,10 +148,12 @@ $this->app->bind(
             ProjectAssignmentTask::class,
             ProjectAssignmentTaskPolicy::class
         );
+
     Relation::enforceMorphMap([
     'user' => User::class,
     'company_task_assignment' => CompanyTaskAssignment::class,
     ]);
-
+    
+  
     }
 }

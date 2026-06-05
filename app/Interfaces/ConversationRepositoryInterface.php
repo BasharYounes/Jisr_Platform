@@ -15,4 +15,7 @@ interface ConversationRepositoryInterface
     public function findByConversationable(string $type, int $id): ?Conversation;
 
     public function createForConversationable(Model $conversationable): Conversation;
+    public function getUserTaskAssignmentConversations(int $userId, int $perPage = 15);
+
+    public function findUserConversationOrFail(int $conversationId, int $userId);
 }

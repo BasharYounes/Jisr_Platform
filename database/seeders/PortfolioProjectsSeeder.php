@@ -16,7 +16,7 @@ class PortfolioProjectsSeeder extends Seeder
             ->where('roles.name', 'student')
             ->select('users.id')
             ->orderBy('users.id')
-            ->skip(3)
+           // ->skip(3)
             ->first();
 
         if (! $student) {

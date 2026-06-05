@@ -4,8 +4,6 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-// use App\Http\Controllers\UserController;
-
 use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\LearningController;
 use App\Http\Controllers\Api\RecommendationController;
@@ -24,7 +22,7 @@ use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
 use App\Http\Controllers\Skill\SkillController;
-
+use App\Http\Controllers\Student\StudentTaskApplicationController;
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -116,7 +114,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     });
 
      // Skill 
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:sanctum','role:company'])->group(function () {
     Route::get('/skills', [SkillController::class, 'index']);
     });
 
@@ -127,16 +125,14 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
         Route::post('/applications/accept/{applicationId}', 'accept');
         Route::post('/applications/reject/{applicationId}', 'reject');
     });
-
     //Conversation
-    Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/conversations', [ConversationController::class, 'index']);
-    Route::get('/conversations/{conversationId}', [ConversationController::class, 'show']);
-
-    Route::get('/conversations/{conversationId}/messages', [ConversationMessageController::class, 'index']);
-    Route::post('/conversations/{conversationId}/messages', [ConversationMessageController::class, 'store']);
-
-    Route::patch('/conversations/{conversationId}/read', [ConversationParticipantController::class, 'markAsRead']);
+    Route::middleware('auth:sanctum')->prefix('conversations')->group(function () {
+    Route::get('/all', [ConversationController::class, 'index']);
+    Route::get('/task-conversations', [ConversationController::class, 'taskConversations']);
+    Route::get('/{conversationId}', [ConversationController::class, 'show']);
+    Route::get('/{conversationId}/messages', [ConversationMessageController::class, 'index']);
+    Route::post('/{conversationId}/messages', [ConversationMessageController::class, 'store']);
+    Route::patch('/{conversationId}/read', [ConversationParticipantController::class, 'markAsRead']);
 });
 
     //============
@@ -145,6 +141,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::middleware(['auth:sanctum', 'role:student'])->prefix('student')->group(function(){
     Route::get('profile',[UserController::class,'getProfileStudent']);
     Route::post('profile/edit',[UserController::class,'editProfileStudent']);
+    });
+
+     // Get Tasks for student
+    Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskApplicationController::class)->group(function () {
+        Route::get('/applied', [StudentTaskApplicationController::class, 'applied']);
+        Route::get('/accepted', [StudentTaskApplicationController::class, 'accepted']);
+        Route::get('/rejected', [StudentTaskApplicationController::class, 'rejected']);
     });
 
     // Student Tasks
