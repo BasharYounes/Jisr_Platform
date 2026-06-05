@@ -6,6 +6,7 @@ use App\Interfaces\MessageRepositoryInterface;
 use App\Models\Message;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\ConversationParticipant;
+use Carbon\CarbonInterface;
 
 class MessageRepository implements MessageRepositoryInterface
 {
@@ -67,6 +68,24 @@ class MessageRepository implements MessageRepositoryInterface
     public function findByIdOrFail(int $messageId): Message
 {
     return Message::query()->findOrFail($messageId);
+}
+
+public function markUnreadMessagesAsRead(
+    int $conversationId,
+    int $readerId,
+    CarbonInterface $readAt
+): int {
+    return Message::query()
+        ->where('conversation_id', $conversationId)
+        ->where(function ($query) use ($readerId) {
+            $query
+                ->whereNull('sender_id')
+                ->orWhere('sender_id', '!=', $readerId);
+        })
+        ->whereNull('read_at')
+        ->update([
+            'read_at' => $readAt,
+        ]);
 }
 
 }

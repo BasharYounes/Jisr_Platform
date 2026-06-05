@@ -20,4 +20,5 @@ interface ConversationRepositoryInterface
     public function getUserOpenConversations(int $userId, int $perPage = 15);
 
     public function getUserClosedConversations(int $userId, int $perPage = 15);
+    
 }

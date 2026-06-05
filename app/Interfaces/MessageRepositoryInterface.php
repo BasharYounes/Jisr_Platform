@@ -4,6 +4,7 @@ namespace App\Interfaces;
 
 use App\Models\Message;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Carbon\CarbonInterface;
 
 interface MessageRepositoryInterface
 {
@@ -20,5 +21,11 @@ interface MessageRepositoryInterface
     public function updateContent(Message $message,string $content):Message;
 
     public function findByIdOrFail(int $messageId): Message;
+
+    public function markUnreadMessagesAsRead(
+    int $conversationId,
+    int $readerId,
+    CarbonInterface $readAt
+): int;
     
   }
