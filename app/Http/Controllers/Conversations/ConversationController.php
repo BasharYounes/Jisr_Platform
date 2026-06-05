@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Conversations;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Conversation\MessageResource;
+use App\Http\Resources\Conversation\TaskConversationResource;
 use App\Services\Conversations\ConversationService;
-use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
-
+use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
@@ -18,27 +19,28 @@ class ConversationController extends Controller
 
     public function index(Request $request)
     {
-        $conversations = $this->conversationService->getUserConversations(
+        $conversations = $this->conversationService->getUserTaskConversations(
             userId: $request->user()->id,
             perPage: (int) $request->get('per_page', 15),
         );
 
         return $this->success(
             message: 'Conversations retrieved successfully.',
-            data: $conversations
+            data: TaskConversationResource::collection($conversations)->resolve()
         );
     }
 
-    public function show(Request $request, int $conversationId)
+    public function messages(Request $request, int $conversationId)
     {
-        $conversation = $this->conversationService->getUserConversation(
+        $messages = $this->conversationService->getMessages(
             conversationId: $conversationId,
             userId: $request->user()->id,
+            perPage: (int) $request->get('per_page', 30),
         );
 
         return $this->success(
-            message: 'Conversation retrieved successfully.',
-            data: $conversation
+            message: 'Messages retrieved successfully.',
+            data: MessageResource::collection($messages)->resolve()
         );
     }
 }

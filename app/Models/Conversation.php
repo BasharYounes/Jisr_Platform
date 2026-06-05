@@ -3,21 +3,38 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Message;
+use App\Models\ConversationParticipant;
 
 class Conversation extends Model
 {
     protected $guarded=[];
 
-    public function participants()
-    {
-        return $this->belongsToMany(User::class, 'conversation_participants')
-                    ->withPivot('role')
-                    ->withTimestamps();
-    }
+   public function conversationable()
+{
+    return $this->morphTo();
+}
 
-    public function messages()
-    {
-        return $this->hasMany(Message::class);
-    }
-    
+public function messages()
+{
+    return $this->hasMany(Message::class);
+}
+
+public function latestMessage()
+{
+    return $this->hasOne(Message::class)->latestOfMany();
+}
+
+public function participants()
+{
+    return $this->belongsToMany(User::class, 'conversation_participants')
+        ->withPivot(['role', 'last_read_at'])
+        ->withTimestamps();
+}
+
+public function participantRecords()
+{
+    return $this->hasMany(ConversationParticipant::class);
+}
+
 }
