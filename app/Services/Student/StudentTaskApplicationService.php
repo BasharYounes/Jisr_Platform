@@ -11,6 +11,15 @@ class StudentTaskApplicationService
         private readonly StudentTaskApplicationRepositoryInterface $studentTaskApplicationRepository
     ) {}
 
+    public function getAllStudentTaskApplications(int $studentUserId): array
+{
+    return [
+        'applied' => $this->getAppliedTasks($studentUserId),
+        'accepted' => $this->getAcceptedTasks($studentUserId),
+        'rejected' => $this->getRejectedTasks($studentUserId),
+    ];
+    }
+
     public function getAppliedTasks(int $studentUserId): Collection
     {
         return $this->studentTaskApplicationRepository
