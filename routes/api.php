@@ -163,10 +163,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
      // Get Tasks for student
     Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskApplicationController::class)->group(function () {
-        Route::get('/applied', [StudentTaskApplicationController::class, 'applied']);
+        Route::get('/applied', 'applied');
         Route::get('/accepted', [StudentTaskApplicationController::class, 'accepted']);
         Route::get('/rejected', [StudentTaskApplicationController::class, 'rejected']);
-    });
+        Route::get('/allMyTask', [StudentTaskApplicationController::class, 'all']);
+        });
 
     // Student Tasks
     Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskController::class)->group(function () {
