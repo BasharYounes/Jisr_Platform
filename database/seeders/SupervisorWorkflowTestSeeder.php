@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Log;
 
 class SupervisorWorkflowTestSeeder extends Seeder
 {
@@ -62,6 +63,10 @@ class SupervisorWorkflowTestSeeder extends Seeder
                 'password' => Hash::make('password'),
             ]
         );
+
+        Log::info('Student Backend Token: ' . $studentOne->createToken('test-token')->plainTextToken);
+        Log::info('Student Frontend Token: ' . $studentTwo->createToken('test-token')->plainTextToken);
+        Log::info('Student QA Token: ' . $studentThree->createToken('test-token')->plainTextToken);
 
         if (method_exists($supervisor, 'assignRole')) {
             $supervisor->assignRole('supervisor');
