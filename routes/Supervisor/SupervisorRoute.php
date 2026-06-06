@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         [ProjectAssignmentController::class, 'startTask']
     );
 
+    // Submit student task
     Route::patch(
         'assignment-tasks/{projectAssignmentTask}/submit',
         [ProjectAssignmentController::class, 'submitTask']
@@ -55,11 +56,13 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         [ProjectAssignmentController::class, 'startTaskReview']
     );
 
+    // Approve student task
     Route::patch(
         'assignment-tasks/{projectAssignmentTask}/approve',
         [ProjectAssignmentController::class, 'approveTask']
     );
 
+    // Request revision for student task
     Route::patch(
         'assignment-tasks/{projectAssignmentTask}/request-revision',
         [ProjectAssignmentController::class, 'requestTaskRevision']
@@ -71,11 +74,13 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         [ProjectEvaluationController::class, 'store']
     );
 
+    // Get project evaluation
     Route::get(
         'project-evaluations/{projectEvaluation}',
         [ProjectEvaluationController::class, 'show']
     );
 
+    // Approve project evaluation
     Route::patch(
         'project-evaluations/{projectEvaluation}/approve',
         [ProjectEvaluationController::class, 'approve']
