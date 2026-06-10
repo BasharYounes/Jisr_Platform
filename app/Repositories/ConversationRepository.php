@@ -6,33 +6,59 @@ use App\Interfaces\ConversationRepositoryInterface;
 use App\Models\Conversation;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\CompanyTaskAssignment;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 class ConversationRepository implements ConversationRepositoryInterface
 {
-    public function getUserConversations(int $userId, int $perPage = 15): LengthAwarePaginator
-    {
-        return Conversation::query()
-            ->whereHas('participants', fn ($query) => $query->where('user_id', $userId))
-            ->with([
-                'participants:id,name,email,profile_picture_url',
-                'latestMessage',
-            ])
-            ->latest()
-            ->paginate($perPage);
-    }
+   public function getUserConversations(int $userId, int $perPage = 15)
+{
+    return Conversation::query()
+        ->whereHas('participants', fn ($query) =>
+            $query->where('user_id', $userId)
+        )
+        ->with([
+            'participants:id,name,email,profile_picture_url',
+            'latestMessage',
 
-    public function findUserConversationOrFail(int $conversationId, int $userId): Conversation
-    {
-        return Conversation::query()
-            ->whereKey($conversationId)
-            ->whereHas('participants', fn ($query) => $query->where('user_id', $userId))
-            ->with([
-            'participants:id,name,email,profile_picture_url',                
-            'conversationable',
-            ])
-            ->firstOrFail();
-    }
+            'conversationable' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([
+                    CompanyTaskAssignment::class => [
+                        'task.company.users:id,name',
+                        'task.skills:id,name',
+                        'student:id,name,email,profile_picture_url',
+                    ],
+                ]);
+            },
+        ])
+        ->latest()
+        ->paginate($perPage);
+}
 
+   public function findUserConversationOrFail(
+    int $conversationId,
+    int $userId
+): Conversation {
+    return Conversation::query()
+        ->whereKey($conversationId)
+        ->whereHas('participants', fn ($query) =>
+            $query->where('user_id', $userId)
+        )
+        ->with([
+            'participants:id,name,email,profile_picture_url',
+            'latestMessage',
+
+            'conversationable' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([
+                    CompanyTaskAssignment::class => [
+                        'task.company.users:id,name',
+                        'task.skills:id,name',
+                        'student:id,name,email,profile_picture_url',
+                    ],
+                ]);
+            },
+        ])
+        ->firstOrFail();
+    }
     public function findByConversationable(string $type, int $id): ?Conversation
     {
         return Conversation::query()
@@ -52,7 +78,7 @@ class ConversationRepository implements ConversationRepositoryInterface
 
     public function getUserTaskAssignmentConversations(int $userId, int $perPage = 15)
 {
-    $type = (new \App\Models\CompanyTaskAssignment())->getMorphClass();
+    $type = (new CompanyTaskAssignment())->getMorphClass();
 
     return Conversation::query()
       ->where('status', 'open')
@@ -61,10 +87,19 @@ class ConversationRepository implements ConversationRepositoryInterface
             $query->where('user_id', $userId)
         )
         ->with([
-            'participants:id,name,email,profile_picture_url',
-            'latestMessage',
-            'conversationable',
-        ])
+    'participants:id,name,email,profile_picture_url',
+    'latestMessage',
+
+    'conversationable' => function (MorphTo $morphTo) {
+        $morphTo->morphWith([
+            CompanyTaskAssignment::class => [
+                'task.company.users:id,name',
+                'task.skills:id,name',
+                'student:id,name,email,profile_picture_url',
+            ],
+        ]);
+    },
+    ])
         ->withCount([
             'messages as unread_messages_count' => function ($query) use ($userId) {
                 $query

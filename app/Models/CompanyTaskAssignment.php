@@ -63,4 +63,9 @@ class CompanyTaskAssignment extends Model
 {
     return $this->morphOne(PortfolioProject::class, 'portfolioable');
 }
+
+public function conversation()
+{
+    return $this->morphOne(Conversation::class, 'conversationable');
+}
 }

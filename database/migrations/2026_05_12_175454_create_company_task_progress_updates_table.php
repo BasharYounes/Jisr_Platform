@@ -21,7 +21,7 @@ return new class extends Migration
             ->constrained('users')
             ->cascadeOnDelete();
 
-        $table->string('title', 255)->nullable();
+        $table->string('title', 255);
 
         $table->text('description');
 
@@ -30,7 +30,7 @@ return new class extends Migration
         $table->string('github_url')->nullable();
         $table->string('demo_url')->nullable();
 
-        $table->json('attachments')->nullable();
+        $table->json('attachments');
 
         $table->timestamps();
         $table->softDeletes();
