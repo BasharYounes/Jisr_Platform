@@ -111,7 +111,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     });
     ///Home
     Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware(['auth:sanctum', 'role:company']);
-   
+  
     //Company Tasks Creation & Publish
     Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
         Route::get('/', 'index');
@@ -121,7 +121,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
         Route::patch('/{taskId}/publish', 'publish');
     });
 
-     // Skill 
+     //Get Skill for task 
     Route::middleware(['auth:sanctum','role:company'])->group(function () {
     Route::get('/skills', [SkillController::class, 'index']);
     });
@@ -133,6 +133,18 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
         Route::post('/applications/accept/{applicationId}', 'accept');
         Route::post('/applications/reject/{applicationId}', 'reject');
     });
+    //
+    use App\Http\Controllers\Company\CompanyTaskProgressController;
+
+Route::middleware(['auth:sanctum', 'role:company'])
+    ->prefix('company/task-assignments')
+    ->group(function () {
+        Route::get(
+            '/{assignmentId}/progress',
+            [CompanyTaskProgressController::class, 'index']
+        )->whereNumber('assignmentId');
+    });
+    
     //Conversation
     Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationController::class)->group(function () {
     Route::get('/all', 'index');
@@ -184,4 +196,21 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
         Route::get('/{portfolioProjectId}', 'show');
         Route::put('/{portfolioProjectId}', 'update');
         Route::delete('/{portfolioProjectId}', 'destroy');
+    });
+
+    //student Tsasks Assignment Progress
+    use App\Http\Controllers\Student\StudentTaskProgressController;
+
+Route::middleware(['auth:sanctum', 'role:student'])
+    ->prefix('student/task-assignments')
+    ->group(function () {
+        Route::get(
+            '/{assignmentId}/progress',
+            [StudentTaskProgressController::class, 'index']
+        )->whereNumber('assignmentId');
+
+        Route::post(
+            '/{assignmentId}/progress',
+            [StudentTaskProgressController::class, 'store']
+        )->whereNumber('assignmentId');
     });
