@@ -9,6 +9,12 @@ class AssessmentSession extends Model
     protected $table = 'assessment_sessions';
     protected $primaryKey = 'AssessmentSessionID';
 
+    public const STATUS_IN_PROGRESS = 'in_progress';
+
+    public const STATUS_COMPLETED = 'completed';
+
+    public const STATUS_NEEDS_REVIEW = 'needs_review';
+
     protected $fillable = [
         'UserID',
         'CvID',

@@ -9,7 +9,7 @@ use App\Models\CVExtractedSkill;
 use App\Models\UserSkill;
 use App\Services\AI\SkillExtractionService;
 use App\Services\CV\CVTextExtractionService;
-use App\Services\Skills\SkillNormalizationService;
+use App\Services\Skill\SkillNormalizationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
