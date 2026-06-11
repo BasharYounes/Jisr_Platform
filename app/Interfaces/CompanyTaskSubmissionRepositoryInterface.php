@@ -3,10 +3,9 @@
 namespace App\Interfaces;
 
 use App\Models\CompanyTaskAssignment;
-use App\Models\CompanyTaskProgressUpdate;
-use Illuminate\Support\Collection;
+use App\Models\CompanyTaskSubmission;
 
-interface CompanyTaskProgressRepositoryInterface
+interface CompanyTaskSubmissionRepositoryInterface
 {
     public function findStudentAssignmentOrFail(
         int $assignmentId,
@@ -18,15 +17,13 @@ interface CompanyTaskProgressRepositoryInterface
         int $companyId
     ): CompanyTaskAssignment;
 
-    public function getAssignmentProgressUpdates(
+    public function findLatestByAssignment(
         int $assignmentId
-    ): Collection;
+    ): ?CompanyTaskSubmission;
 
-    public function getLatestProgressPercentage(
-        int $assignmentId
-    ): int;
+    public function create(array $data): CompanyTaskSubmission;
 
-    public function create(
-        array $data
-    ): CompanyTaskProgressUpdate;
+    public function markAssignmentAsSubmitted(
+        CompanyTaskAssignment $assignment
+    ): CompanyTaskAssignment;
 }
