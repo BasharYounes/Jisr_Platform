@@ -13,38 +13,38 @@ return new class extends Migration
     {
         Schema::create('company_task_applications', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('company_task_id')->constrained('company_tasks')->cascadeOnDelete();
+            $table->foreignId('company_task_id')->constrained('company_tasks')->cascadeOnDelete();
 
             $table->foreignId('student_user_id')->constrained('users')->cascadeOnDelete();
-         $table->text('message')->nullable();
+            $table->text('message')->nullable();
 
-          $table->string('portfolio_url')->nullable();
-         $table->string('github_url')->nullable();
+            $table->string('portfolio_url')->nullable();
+            $table->string('github_url')->nullable();
 
             $table->enum('status', [
-            'pending',
-            'accepted',
-            'rejected',
-            'withdrawn',
+                'pending',
+                'accepted',
+                'rejected',
+                'withdrawn',
             ])->default('pending');
 
             $table->decimal('match_score', 5, 2)->nullable();
 
-            $table->json('match_reasons')->nullable();  
+            $table->json('match_reasons')->nullable();
 
             $table->timestamp('applied_at')->nullable();
             $table->timestamp('reviewed_at')->nullable();
 
-          $table->text('company_notes')->nullable();
+            $table->text('company_notes')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
-         $table->unique(['company_task_id', 'student_user_id']);
-         $table->index(['company_task_id', 'status']);
-         $table->index(['student_user_id', 'status']);
-         $table->index('match_score');
-      });
+            $table->unique(['company_task_id', 'student_user_id']);
+            $table->index(['company_task_id', 'status']);
+            $table->index(['student_user_id', 'status']);
+            $table->index('match_score');
+        });
     }
 
     /**

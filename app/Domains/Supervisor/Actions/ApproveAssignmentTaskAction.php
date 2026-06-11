@@ -5,15 +5,13 @@ namespace App\Domains\Supervisor\Actions;
 use App\Domains\Supervisor\Enums\ProjectAssignmentTaskStatus;
 use App\Models\ProjectAssignmentTask;
 use DomainException;
-use App\Domains\Supervisor\Actions\RecalculateProjectAssignmentProgressAction;
 
 class ApproveAssignmentTaskAction
 {
     public function execute(
         ProjectAssignmentTask $task,
         RecalculateProjectAssignmentProgressAction $recalculateProgress
-    ): ProjectAssignmentTask
-    {
+    ): ProjectAssignmentTask {
         $assignment = $task->assignment;
 
         if ($assignment->supervisor_id !== auth()->id()) {

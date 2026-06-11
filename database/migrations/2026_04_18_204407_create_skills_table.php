@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->string('name',128);
-            $table->string('category',128);
-            $table->string('normalized_name',128);
+            $table->string('name', 128);
+            $table->string('category', 128);
+            $table->string('normalized_name', 128);
             $table->timestamps();
         });
     }

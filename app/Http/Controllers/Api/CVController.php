@@ -12,8 +12,7 @@ class CVController extends Controller
 {
     public function __construct(
         private readonly CVStorageService $storageService
-    ) {
-    }
+    ) {}
 
     public function upload(UploadCVRequest $request): JsonResponse
     {

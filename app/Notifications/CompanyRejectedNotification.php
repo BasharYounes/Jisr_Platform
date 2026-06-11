@@ -2,11 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Models\Company;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\Company;
 
 class CompanyRejectedNotification extends Notification implements ShouldQueue
 {
@@ -35,13 +35,13 @@ class CompanyRejectedNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-           return (new MailMessage)
-                    ->subject('Company Rejected Notification')
-                    ->greeting('Hello ' . $notifiable->name)
-                    ->line('Sorry, your company has been rejected. Because it does not have the required documentation 
+        return (new MailMessage)
+            ->subject('Company Rejected Notification')
+            ->greeting('Hello '.$notifiable->name)
+            ->line('Sorry, your company has been rejected. Because it does not have the required documentation 
                     and We Can Not Approve Your Company At this time.Try Again Later.Sign up again and make sure to upload the required documentation.')
-                    ->action('View Company', url('/company/' . $this->company->id))
-                    ->line('Thank you for using our platform!');
+            ->action('View Company', url('/company/'.$this->company->id))
+            ->line('Thank you for using our platform!');
     }
 
     /**

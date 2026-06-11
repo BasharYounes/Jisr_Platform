@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SkillAlias extends Model
 {
     protected $table = 'skill_aliases';
+
     protected $primaryKey = 'SkillAliasID';
 
     protected $fillable = [

@@ -7,11 +7,11 @@ use App\Http\Requests\SubmitAnswerRequest;
 use App\Models\AssessmentAnswer;
 use App\Models\AssessmentQuestionAttempt;
 use App\Services\AI\AnswerEvaluationService;
+use App\Services\Assessment\AssessmentTelemetryService;
 use App\Services\Assessment\LevelEstimationService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use App\Support\ApiResponse;
-use App\Services\Assessment\AssessmentTelemetryService;
 
 class AssessmentAnswerController extends Controller
 {
@@ -19,8 +19,7 @@ class AssessmentAnswerController extends Controller
         private readonly AnswerEvaluationService $answerEvaluationService,
         private readonly LevelEstimationService $levelEstimationService,
         private AssessmentTelemetryService $telemetryService,
-    ) {
-    }
+    ) {}
 
     public function submit(SubmitAnswerRequest $request, $session, AssessmentQuestionAttempt $attempt): JsonResponse
     {

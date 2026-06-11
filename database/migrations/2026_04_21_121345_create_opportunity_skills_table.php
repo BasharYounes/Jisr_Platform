@@ -14,23 +14,20 @@ return new class extends Migration
         Schema::create('opportunity_skills', function (Blueprint $table) {
             $table->id();
             $table->foreignId('opportunity_id')
-          ->constrained()
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('skill_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('skill_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    
-    $table->unsignedSmallInteger('required_level')->default(1);
+            $table->unsignedSmallInteger('required_level')->default(1);
 
- 
-    $table->boolean('mandatory')->default(true);
+            $table->boolean('mandatory')->default(true);
 
-    $table->decimal('weight', 3, 2)->default(1);
+            $table->decimal('weight', 3, 2)->default(1);
 
-
-    $table->unique(['opportunity_id', 'skill_id']);
+            $table->unique(['opportunity_id', 'skill_id']);
             $table->timestamps();
         });
     }

@@ -64,9 +64,9 @@ class SupervisorWorkflowTestSeeder extends Seeder
             ]
         );
 
-        Log::info('Student Backend Token: ' . $studentOne->createToken('test-token')->plainTextToken);
-        Log::info('Student Frontend Token: ' . $studentTwo->createToken('test-token')->plainTextToken);
-        Log::info('Student QA Token: ' . $studentThree->createToken('test-token')->plainTextToken);
+        Log::info('Student Backend Token: '.$studentOne->createToken('test-token')->plainTextToken);
+        Log::info('Student Frontend Token: '.$studentTwo->createToken('test-token')->plainTextToken);
+        Log::info('Student QA Token: '.$studentThree->createToken('test-token')->plainTextToken);
 
         if (method_exists($supervisor, 'assignRole')) {
             $supervisor->assignRole('supervisor');

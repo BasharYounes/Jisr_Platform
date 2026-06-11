@@ -8,18 +8,15 @@ class Company extends Model
 {
     protected $guarded = [];
 
-
     public function users()
     {
         return $this->belongsToMany(User::class, 'company_users')
-                    ->withPivot('role')
-                    ->withTimestamps();
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     public function reviews()
-{
-    return $this->hasMany(CompanyReview::class);
-}
-
-
+    {
+        return $this->hasMany(CompanyReview::class);
+    }
 }

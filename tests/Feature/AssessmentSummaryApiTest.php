@@ -54,7 +54,7 @@ class AssessmentSummaryApiTest extends TestCase
 
         $otherUser = User::query()->create([
             'name' => 'Other Student',
-            'email' => 'other_' . uniqid() . '@example.com',
+            'email' => 'other_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
@@ -89,19 +89,19 @@ class AssessmentSummaryApiTest extends TestCase
     {
         $user = User::query()->create([
             'name' => 'Test Student',
-            'email' => 'student_' . uniqid() . '@example.com',
+            'email' => 'student_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
         $careerPath = CareerPath::query()->create([
-            'Name' => 'Backend Developer ' . uniqid(),
+            'Name' => 'Backend Developer '.uniqid(),
             'Description' => 'Backend development path',
         ]);
 
         $skill = Skill::query()->create([
-            'name' => 'Laravel ' . uniqid(),
+            'name' => 'Laravel '.uniqid(),
             'category' => 'Backend',
-            'normalized_name' => 'laravel_' . uniqid(),
+            'normalized_name' => 'laravel_'.uniqid(),
         ]);
 
         $session = AssessmentSession::query()->create([

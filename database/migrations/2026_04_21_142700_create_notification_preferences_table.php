@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('notification_preferences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
-          ->constrained()                                     
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->boolean('email_notifications')->default(true);
-    $table->boolean('push_notifications')->default(true);
+            $table->boolean('email_notifications')->default(true);
+            $table->boolean('push_notifications')->default(true);
 
-    $table->json('opt_out_types')->nullable();
+            $table->json('opt_out_types')->nullable();
         });
     }
 

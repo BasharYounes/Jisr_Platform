@@ -14,22 +14,18 @@ return new class extends Migration
         Schema::create('opportunity_tags', function (Blueprint $table) {
             $table->id();
             $table->foreignId('opportunity_id')
-          ->constrained()
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('tag_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('tag_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-   
-    $table->decimal('weight', 3, 2)->default(1);
+            $table->decimal('weight', 3, 2)->default(1);
 
+            $table->boolean('mandatory')->default(false);
 
-    $table->boolean('mandatory')->default(false);
-
-
-
-    $table->unique(['opportunity_id', 'tag_id']);
+            $table->unique(['opportunity_id', 'tag_id']);
             $table->timestamps();
         });
     }

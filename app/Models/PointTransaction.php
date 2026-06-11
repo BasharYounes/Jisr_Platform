@@ -6,19 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class PointTransaction extends Model
 {
- protected $guarded = [];
+    protected $guarded = [];
+
     public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    {
+        return $this->belongsTo(User::class);
+    }
 
-public function reference()
-{
-    return $this->morphTo();
-}
-public function actionType()
-{
-    return $this->belongsTo(PointActionType::class, 'point_action_type_id');
-}
+    public function reference()
+    {
+        return $this->morphTo();
+    }
 
+    public function actionType()
+    {
+        return $this->belongsTo(PointActionType::class, 'point_action_type_id');
+    }
 }

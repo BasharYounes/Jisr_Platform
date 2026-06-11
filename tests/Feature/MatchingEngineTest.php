@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
+use App\Domain\Matching\Handlers\GetTopCandidatesForOpportunityHandler;
+use App\Domain\Matching\Queries\GetTopCandidatesForOpportunity;
+use App\Models\User;
+use Database\Seeders\MatchingTestSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
-use App\Domain\Matching\Queries\GetTopCandidatesForOpportunity;
-use App\Domain\Matching\Handlers\GetTopCandidatesForOpportunityHandler;
+use Tests\TestCase;
 
 class MatchingEngineTest extends TestCase
 {
@@ -15,7 +16,7 @@ class MatchingEngineTest extends TestCase
 
     public function test_candidates_are_ranked_correctly()
     {
-        $this->seed(\Database\Seeders\MatchingTestSeeder::class);
+        $this->seed(MatchingTestSeeder::class);
 
         // أحمد
         $ahmed = User::factory()->create(['UserID' => 1]);
@@ -41,7 +42,7 @@ class MatchingEngineTest extends TestCase
             ['UserId' => 3, 'SkillId' => 1, 'ProficiencyLevel' => 5],
         ]);
 
-        $handler = new GetTopCandidatesForOpportunityHandler();
+        $handler = new GetTopCandidatesForOpportunityHandler;
 
         $result = $handler->handle(
             new GetTopCandidatesForOpportunity(1, 10)

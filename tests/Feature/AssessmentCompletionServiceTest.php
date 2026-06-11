@@ -10,6 +10,7 @@ use App\Models\QuestionBank;
 use App\Models\Skill;
 use App\Models\User;
 use App\Services\Assessment\AssessmentCompletionService;
+use App\Services\Assessment\LevelEstimationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -176,7 +177,7 @@ class AssessmentCompletionServiceTest extends TestCase
 
         $attempts = $this->extractAttemptsForTest($skillSession);
 
-        $baseConfidence = app(\App\Services\Assessment\LevelEstimationService::class)
+        $baseConfidence = app(LevelEstimationService::class)
             ->calculateConfidenceFromAttempts($attempts);
 
         $adjustedConfidence = $this->service
@@ -210,7 +211,7 @@ class AssessmentCompletionServiceTest extends TestCase
 
         $attempts = $this->extractAttemptsForTest($skillSession);
 
-        $baseConfidence = app(\App\Services\Assessment\LevelEstimationService::class)
+        $baseConfidence = app(LevelEstimationService::class)
             ->calculateConfidenceFromAttempts($attempts);
 
         $adjustedConfidence = $this->service
@@ -266,19 +267,19 @@ class AssessmentCompletionServiceTest extends TestCase
     private function createSkillSession(array $overrides = []): AssessmentSkillSession
     {
         $skill = Skill::query()->create([
-            'name' => 'Laravel ' . uniqid(),
+            'name' => 'Laravel '.uniqid(),
             'category' => 'Backend',
-            'normalized_name' => 'laravel_' . uniqid(),
+            'normalized_name' => 'laravel_'.uniqid(),
         ]);
 
         $user = User::query()->create([
             'name' => 'Test Student',
-            'email' => 'student_' . uniqid() . '@example.com',
+            'email' => 'student_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
         $careerPath = CareerPath::query()->create([
-            'Name' => 'Backend Developer ' . uniqid(),
+            'Name' => 'Backend Developer '.uniqid(),
             'Description' => 'Backend development path',
         ]);
 

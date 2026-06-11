@@ -13,7 +13,7 @@ class SkillRepository implements SkillRepositoryInterface
         return Skill::query()
             ->select(['id', 'name', 'category'])
             ->when($search, function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
+                $query->where('name', 'like', '%'.$search.'%');
             })
             ->orderBy('name')
             ->get();

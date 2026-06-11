@@ -11,8 +11,7 @@ class AILearningPlanService
     public function __construct(
         private readonly LearningPathService $learningPathService,
         private readonly AIClientInterface $aiClient
-    ) {
-    }
+    ) {}
 
     public function generate(
         AssessmentSession $session,

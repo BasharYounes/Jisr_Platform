@@ -14,15 +14,14 @@ return new class extends Migration
         Schema::create('point_action_types', function (Blueprint $table) {
             $table->id();
             $table->foreignId('point_rule_id')
-          ->constrained()
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->string('description');
+            $table->string('description');
 
-   
-    $table->foreignId('point_category_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('point_category_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }

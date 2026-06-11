@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyResource extends JsonResource
 {
-     protected $adminService;
+    protected $adminService;
 
     /**
      * Transform the resource into an array.
@@ -21,8 +21,8 @@ class CompanyResource extends JsonResource
             'industry' => $this->industry,
             'location' => $this->location,
             'website' => $this->website,
-            'documentation_file' => url('storage/' . $this->documentation_file),
-            'users' => UserResource::collection($this->users), 
+            'documentation_file' => url('storage/'.$this->documentation_file),
+            'users' => UserResource::collection($this->users),
         ];
     }
 }

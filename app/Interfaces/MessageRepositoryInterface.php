@@ -3,8 +3,8 @@
 namespace App\Interfaces;
 
 use App\Models\Message;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Carbon\CarbonInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface MessageRepositoryInterface
 {
@@ -14,18 +14,17 @@ interface MessageRepositoryInterface
 
     public function createSystemMessage(int $conversationId, string $content): Message;
 
-    public function findMessageInConversationOrFail(int $messageId,int $conversationId):Message;
+    public function findMessageInConversationOrFail(int $messageId, int $conversationId): Message;
 
-    public function wasReadByAnotherParticipant(int $conversationId,int $senderId,$messageCreatedAt): bool;
+    public function wasReadByAnotherParticipant(int $conversationId, int $senderId, $messageCreatedAt): bool;
 
-    public function updateContent(Message $message,string $content):Message;
+    public function updateContent(Message $message, string $content): Message;
 
     public function findByIdOrFail(int $messageId): Message;
 
     public function markUnreadMessagesAsRead(
-    int $conversationId,
-    int $readerId,
-    CarbonInterface $readAt
-): int;
-    
-  }
+        int $conversationId,
+        int $readerId,
+        CarbonInterface $readAt
+    ): int;
+}

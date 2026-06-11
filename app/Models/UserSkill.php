@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserSkill extends Model
 {
+    protected $guarded = [];
 
-        protected $guarded = [];
     protected $table = 'user_skills';
+
     protected $primaryKey = 'UserSkillID';
 
     protected $fillable = [
@@ -36,5 +37,4 @@ class UserSkill extends Model
     {
         return $this->belongsTo(User::class, 'UserId', 'id');
     }
-
 }

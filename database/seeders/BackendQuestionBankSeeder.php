@@ -13,7 +13,7 @@ class BackendQuestionBankSeeder extends Seeder
             ->where('Name', 'Backend Developer')
             ->value('CareerPathID');
 
-        if (!$careerPathId) {
+        if (! $careerPathId) {
             return;
         }
 
@@ -24,7 +24,7 @@ class BackendQuestionBankSeeder extends Seeder
                 ->where('name', $item['skill'])
                 ->value('id');
 
-            if (!$skillId) {
+            if (! $skillId) {
                 continue;
             }
 

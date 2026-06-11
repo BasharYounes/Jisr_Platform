@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('project_tags', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('project_template_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('project_template_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('tag_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('tag_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->timestamps();
+            $table->timestamps();
 
-    $table->unique(['project_template_id', 'tag_id']);
+            $table->unique(['project_template_id', 'tag_id']);
         });
     }
 

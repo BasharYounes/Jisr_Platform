@@ -4,6 +4,7 @@ namespace App\Domains\Supervisor\Actions;
 
 use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
 use App\Domains\Supervisor\Enums\ProjectAssignmentTaskStatus;
+use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Models\ProjectAssignment;
 
 class RecalculateProjectAssignmentProgressAction
@@ -39,7 +40,7 @@ class RecalculateProjectAssignmentProgressAction
         $assignment->update($updates);
 
         if ($progress === 100 && $wasNotReady) {
-            event(new \App\Events\ProjectAssignmentReadyForEvaluation(
+            event(new ProjectAssignmentReadyForEvaluation(
                 $assignment->refresh()
             ));
         }

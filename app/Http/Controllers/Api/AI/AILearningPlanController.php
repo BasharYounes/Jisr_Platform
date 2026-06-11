@@ -13,8 +13,7 @@ class AILearningPlanController extends Controller
 {
     public function __construct(
         private readonly AILearningPlanService $aiLearningPlanService
-    ) {
-    }
+    ) {}
 
     public function generate(
         GenerateAILearningPlanRequest $request,
@@ -48,7 +47,7 @@ class AILearningPlanController extends Controller
             ->latest('AILearningPlanID')
             ->first();
 
-        if (!$plan) {
+        if (! $plan) {
             return ApiResponse::error('No AI learning plan found for this assessment session.', 404);
         }
 

@@ -16,7 +16,7 @@ class LearningController extends Controller
     {
         if ($session->UserID !== auth()->id()) {
             return response()->json([
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 

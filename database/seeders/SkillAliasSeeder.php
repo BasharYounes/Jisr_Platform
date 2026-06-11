@@ -11,15 +11,15 @@ class SkillAliasSeeder extends Seeder
     {
         $aliases = [
             'Python' => ['python3', 'py'],
-            'Flask'  => ['flask framework'],
-            'SQL'    => ['mysql', 'postgresql', 'postgres', 'sqlite', 'sql database'],
-            'Git'    => ['github', 'git version control'],
+            'Flask' => ['flask framework'],
+            'SQL' => ['mysql', 'postgresql', 'postgres', 'sqlite', 'sql database'],
+            'Git' => ['github', 'git version control'],
         ];
 
         foreach ($aliases as $skillName => $skillAliases) {
             $skillId = DB::table('skills')->where('name', $skillName)->value('id');
 
-            if (!$skillId) {
+            if (! $skillId) {
                 continue;
             }
 

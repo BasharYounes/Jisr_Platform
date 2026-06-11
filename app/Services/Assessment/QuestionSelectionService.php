@@ -4,7 +4,7 @@ namespace App\Services\Assessment;
 
 use App\Models\AssessmentSkillSession;
 use App\Models\QuestionBank;
-use App\Services\Assessment\AssessmentTelemetryService;
+use Illuminate\Database\Eloquent\Builder;
 
 class QuestionSelectionService
 {
@@ -91,7 +91,7 @@ class QuestionSelectionService
         return $this->resolveTargetLevel($currentLevel);
     }
 
-    private function queryBase(AssessmentSkillSession $skillSession, array $usedQuestionIds): \Illuminate\Database\Eloquent\Builder
+    private function queryBase(AssessmentSkillSession $skillSession, array $usedQuestionIds): Builder
     {
         $careerPathId = $skillSession->assessmentSession->CareerPathID;
 
@@ -130,12 +130,6 @@ class QuestionSelectionService
 
     /**
      * Record telemetry for a selected question.
-     *
-     * @param AssessmentSkillSession $skillSession
-     * @param QuestionBank $question
-     * @param array $usedQuestionIds
-     * @param array $usedTopics
-     * @param string $strategy
      */
     private function recordQuestionSelectedTelemetry(
         AssessmentSkillSession $skillSession,

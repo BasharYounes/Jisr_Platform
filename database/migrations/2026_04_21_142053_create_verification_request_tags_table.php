@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('verification_request_tags', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('verification_request_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('verification_request_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('tag_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('tag_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->timestamps();
+            $table->timestamps();
 
-    $table->unique(['verification_request_id', 'tag_id']);
+            $table->unique(['verification_request_id', 'tag_id']);
         });
     }
 

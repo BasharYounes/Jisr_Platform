@@ -16,7 +16,7 @@ class CompanyTaskApplicantCardResource extends JsonResource
                 'id' => $this->student?->id,
                 'name' => $this->student?->name,
                 'profile_picture_url' => $this->student?->profile_picture_url
-                    ? asset('storage/' . $this->student->profile_picture_url)
+                    ? asset('storage/'.$this->student->profile_picture_url)
                     : null,
             ],
 

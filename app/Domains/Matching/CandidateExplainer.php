@@ -24,14 +24,14 @@ class CandidateExplainer
         }
 
         if ($data['project_score'] >= 80) {
-            $reasons[] = "Projects rated highly by supervisors";
+            $reasons[] = 'Projects rated highly by supervisors';
         }
 
         if ($data['fresh_days'] <= 7) {
-            $reasons[] = "Active recently";
+            $reasons[] = 'Active recently';
         }
 
-        if (!empty($data['missing_skills'])) {
+        if (! empty($data['missing_skills'])) {
             $missing = $data['missing_skills'];
         }
 

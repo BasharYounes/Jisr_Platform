@@ -32,7 +32,7 @@ class LearningResourceSeeder extends Seeder
                 'EstimatedHours' => 10,
                 'Provider' => 'Coursera',
             ],
-            //Flask
+            // Flask
             [
                 'SkillID' => 2,
                 'Title' => 'Flask Web Development',
@@ -42,7 +42,7 @@ class LearningResourceSeeder extends Seeder
                 'EstimatedHours' => 3,
                 'Provider' => 'YouTube',
             ],
-             [
+            [
                 'SkillID' => 2,
                 'Title' => 'Building Web Apps with Flask',
                 'Url' => 'https://coursera.org/...',
@@ -50,9 +50,9 @@ class LearningResourceSeeder extends Seeder
                 'Level' => 4,
                 'EstimatedHours' => 12,
                 'Provider' => 'Coursera',
-             ],
-             //SQL
-             [
+            ],
+            // SQL
+            [
                 'SkillID' => 3,
                 'Title' => 'SQL for Data Analysis',
                 'Url' => 'https://youtube.com/...',
@@ -60,8 +60,8 @@ class LearningResourceSeeder extends Seeder
                 'Level' => 1,
                 'EstimatedHours' => 2,
                 'Provider' => 'YouTube',
-             ],
-             [
+            ],
+            [
                 'SkillID' => 3,
                 'Title' => 'Advanced SQL Queries',
                 'Url' => 'https://coursera.org/...',
@@ -69,9 +69,9 @@ class LearningResourceSeeder extends Seeder
                 'Level' => 4,
                 'EstimatedHours' => 8,
                 'Provider' => 'Coursera',
-             ],
-             // Git
-             [
+            ],
+            // Git
+            [
                 'SkillID' => 4,
                 'Title' => 'Git and GitHub for Beginners',
                 'Url' => 'https://youtube.com/...',
@@ -79,8 +79,8 @@ class LearningResourceSeeder extends Seeder
                 'Level' => 1,
                 'EstimatedHours' => 1.5,
                 'Provider' => 'YouTube',
-             ],
-             [
+            ],
+            [
                 'SkillID' => 4,
                 'Title' => 'Mastering Git and GitHub',
                 'Url' => 'https://coursera.org/...',
@@ -88,7 +88,7 @@ class LearningResourceSeeder extends Seeder
                 'Level' => 3,
                 'EstimatedHours' => 6,
                 'Provider' => 'Coursera',
-             ],
+            ],
         ]);
     }
 }

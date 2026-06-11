@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CompanyTaskProgressUpdate extends Model
 {
-      use SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'company_task_assignment_id',

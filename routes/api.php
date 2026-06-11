@@ -1,31 +1,29 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\AI\AILearningPlanController;
-use App\Http\Controllers\Api\LearningController;
-use App\Http\Controllers\Api\RecommendationController;
-use App\Http\Controllers\Matching\MatchingController;
 use App\Http\Controllers\Api\AssessmentAnswerController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\CVAnalysisController;
 use App\Http\Controllers\Api\CVController;
+use App\Http\Controllers\Api\LearningController;
+use App\Http\Controllers\Api\RecommendationController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskController;
 use App\Http\Controllers\CompanyHomeController;
-use App\Http\Controllers\Student\StudentTaskController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\Student\PortfolioProjectController;
 use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
+use App\Http\Controllers\Matching\MatchingController;
 use App\Http\Controllers\Skill\SkillController;
+use App\Http\Controllers\Student\PortfolioProjectController;
 use App\Http\Controllers\Student\StudentTaskApplicationController;
-
-
+use App\Http\Controllers\Student\StudentTaskController;
+use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Route;
 
 Broadcast::routes([
     'middleware' => ['auth:sanctum'],
@@ -51,22 +49,23 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 Route::get('/opportunities/{id}/top-candidates', [MatchingController::class, 'topCandidates']);
 
-require __DIR__ . '/MetricsResultAI/MetricsRoute.php';
+require __DIR__.'/MetricsResultAI/MetricsRoute.php';
 
-require __DIR__ .'/Supervisor/SupervisorRoute.php';
+require __DIR__.'/Supervisor/SupervisorRoute.php';
 
 require __DIR__.'/Notification/NotificationsRoutes.php';
 
 Route::get('/dev/login-as-test', function () {
-        $user = \App\Models\User::firstOrCreate(
-            ['email' => 'dev@test.com'],
-            ['name' => 'Dev User', 'password' => bcrypt('123456')]
-        );
-        $token = $user->createToken('dev-token')->plainTextToken;
-        return response()->json(['token' => $token]);
-    });
+    $user = User::firstOrCreate(
+        ['email' => 'dev@test.com'],
+        ['name' => 'Dev User', 'password' => bcrypt('123456')]
+    );
+    $token = $user->createToken('dev-token')->plainTextToken;
 
-Route::get('/dev/test-gemini', function (\App\Services\AI\AIClientInterface $ai) {
+    return response()->json(['token' => $token]);
+});
+
+Route::get('/dev/test-gemini', function (AIClientInterface $ai) {
     return $ai->generateJson(
         'Return valid JSON only.',
         'Return this exact JSON: {"status":"ok","provider":"gemini"}'
@@ -76,14 +75,14 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-//Auth
+// Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/login/verify-otp', [AuthController::class, 'verifyLoginOtp']);
 Route::post('/password/forgot', [AuthController::class, 'forgetPassword']);
 Route::post('/password/reset/verify-otp', [AuthController::class, 'verifyOTPresetPassword']);
 Route::post('/password/reset', [AuthController::class, 'resetPassword'])->middleware('auth:sanctum,role:admin');
-Route::post('/otp/resend',[AuthController::class,'resendOtp']);
+Route::post('/otp/resend', [AuthController::class, 'resendOtp']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
@@ -99,42 +98,53 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Route::post('/users/{id}/assign-role', [AdminController::class, 'assignRole']);
 });
 
+// ============
+// == Company
+// ============
 
-    //============
-    //== Company
-    //============
+// Profile
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(function () {
+    Route::get('profile', [UserController::class, 'getProfileCompany']);
+    Route::post('profile/edit', [UserController::class, 'editProfile']);
+});
+// /Home
+Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware(['auth:sanctum', 'role:company']);
 
-    // Profile
-    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(function(){
-    Route::get('profile',[UserController::class,'getProfileCompany']);
-    Route::post('profile/edit',[UserController::class,'editProfile']);
-    });
-    ///Home
-    Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware(['auth:sanctum', 'role:company']);
-   
-    //Company Tasks Creation & Publish
-    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/', 'store');
-        Route::get('/{taskId}', 'show');
-        Route::put('/{taskId}', 'update');
-        Route::patch('/{taskId}/publish', 'publish');
-    });
+// Company Tasks Creation & Publish
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+    Route::get('/{taskId}', 'show');
+    Route::put('/{taskId}', 'update');
+    Route::patch('/{taskId}/publish', 'publish');
+});
 
-     // Skill 
-    Route::middleware(['auth:sanctum','role:company'])->group(function () {
+// Get Skill for task
+Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
     Route::get('/skills', [SkillController::class, 'index']);
+});
+
+// Company Tasks Applications
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskApplicationController::class)->group(function () {
+    Route::get('/{taskId}/applications', 'applications');
+    Route::get('/applications/student/details/{applicationId}', 'show');
+    Route::post('/applications/accept/{applicationId}', 'accept');
+    Route::post('/applications/reject/{applicationId}', 'reject');
+});
+//
+use App\Http\Controllers\Company\CompanyTaskProgressController;
+
+Route::middleware(['auth:sanctum', 'role:company'])
+    ->prefix('company/task-assignments')
+    ->group(function () {
+        Route::get(
+            '/{assignmentId}/progress',
+            [CompanyTaskProgressController::class, 'index']
+        )->whereNumber('assignmentId');
     });
 
-    //Company Tasks Applications
-    Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskApplicationController::class)->group(function () {
-        Route::get('/{taskId}/applications', 'applications');
-        Route::get('/applications/student/details/{applicationId}', 'show');
-        Route::post('/applications/accept/{applicationId}', 'accept');
-        Route::post('/applications/reject/{applicationId}', 'reject');
-    });
-    //Conversation
-    Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationController::class)->group(function () {
+// Conversation
+Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationController::class)->group(function () {
     Route::get('/all', 'index');
     Route::get('/task-conversations', 'taskConversations');
     Route::get('/closed', 'closedConversations');
@@ -143,45 +153,64 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/{conversationId}/messages', 'index');
     Route::post('/{conversationId}/messages', 'store');
 });
-    // Messages
-    Route::middleware('auth:sanctum')->prefix('conversations/messages')->controller(ConversationMessageController::class)->group(function () {
+// Messages
+Route::middleware('auth:sanctum')->prefix('conversations/messages')->controller(ConversationMessageController::class)->group(function () {
     Route::get('/{conversationId}', 'index');
     Route::post('/{conversationId}', 'store');
     Route::post('/update/{messageId}', 'update');
-    });
-    //Marks As Read
-    Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationParticipantController::class)->group(function () {
+});
+// Marks As Read
+Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationParticipantController::class)->group(function () {
     Route::patch('/{conversationId}/read', 'markAsRead');
-    });
-    //============
-    //== Student
-    //============
-    Route::middleware(['auth:sanctum', 'role:student'])->prefix('student')->group(function(){
-    Route::get('profile',[UserController::class,'getProfileStudent']);
-    Route::post('profile/edit',[UserController::class,'editProfileStudent']);
-    });
+});
+// ============
+// == Student
+// ============
+Route::middleware(['auth:sanctum', 'role:student'])->prefix('student')->group(function () {
+    Route::get('profile', [UserController::class, 'getProfileStudent']);
+    Route::post('profile/edit', [UserController::class, 'editProfileStudent']);
+});
 
-     // Get Tasks for student
-    Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskApplicationController::class)->group(function () {
-        Route::get('/applied', 'applied');
-        Route::get('/accepted', [StudentTaskApplicationController::class, 'accepted']);
-        Route::get('/rejected', [StudentTaskApplicationController::class, 'rejected']);
-        Route::get('/allMyTask', [StudentTaskApplicationController::class, 'all']);
-        });
+// Get Tasks for student
+Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskApplicationController::class)->group(function () {
+    Route::get('/applied', 'applied');
+    Route::get('/accepted', [StudentTaskApplicationController::class, 'accepted']);
+    Route::get('/rejected', [StudentTaskApplicationController::class, 'rejected']);
+    Route::get('/allMyTask', [StudentTaskApplicationController::class, 'all']);
+});
 
-    // Student Tasks
-    Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskController::class)->group(function () {
-        Route::get('/explore', 'explore');
-        Route::get('/recommended', 'recommended');
-        Route::get('/{taskId}', 'show');
-        Route::post('/{taskId}/apply', 'apply');
-    });
+// Student Tasks
+Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskController::class)->group(function () {
+    Route::get('/explore', 'explore');
+    Route::get('/recommended', 'recommended');
+    Route::get('/{taskId}', 'show');
+    Route::post('/{taskId}/apply', 'apply');
+});
 
-    // Student Portfolio Projects
-    Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-projects')->controller(PortfolioProjectController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/', 'store');
-        Route::get('/{portfolioProjectId}', 'show');
-        Route::put('/{portfolioProjectId}', 'update');
-        Route::delete('/{portfolioProjectId}', 'destroy');
+// Student Portfolio Projects
+Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-projects')->controller(PortfolioProjectController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+    Route::get('/{portfolioProjectId}', 'show');
+    Route::put('/{portfolioProjectId}', 'update');
+    Route::delete('/{portfolioProjectId}', 'destroy');
+});
+
+// student Tsasks Assignment Progress
+use App\Http\Controllers\Student\StudentTaskProgressController;
+use App\Models\User;
+use App\Services\AI\AIClientInterface;
+
+Route::middleware(['auth:sanctum', 'role:student'])
+    ->prefix('student/task-assignments')
+    ->group(function () {
+        Route::get(
+            '/{assignmentId}/progress',
+            [StudentTaskProgressController::class, 'index']
+        )->whereNumber('assignmentId');
+
+        Route::post(
+            '/{assignmentId}/progress',
+            [StudentTaskProgressController::class, 'store']
+        )->whereNumber('assignmentId');
     });

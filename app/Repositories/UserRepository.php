@@ -2,10 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\OtpCode;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
 class UserRepository implements UserRepositoryInterface
@@ -16,54 +15,52 @@ class UserRepository implements UserRepositoryInterface
     }
 
     public function findByEmailOrFail(string $email): User
-  {
-   return User::where('email', $email)->firstOrFail();
-  }
-
-   public function listUsers()
-  {
-    return User::all();
-  }
-    public function getUserByOTP(string $OTP,string $type): User
-  {
-   $otp = OtpCode::where('type', 'password_reset')
-    ->where('used', false)
-    ->get()
-    ->first();
-     
-
-     if (!$otp) {
-    throw ValidationException::withMessages([
-        'code' => ['Invalid OTP'],
-    ]);
+    {
+        return User::where('email', $email)->firstOrFail();
     }
 
-    $user = User::find($otp->user_id);
-     return $user;
-  }
+    public function listUsers()
+    {
+        return User::all();
+    }
 
-  public function updateOtpMeta(User $user, array $data): bool
-{
-    return $user->update($data);
-}
+    public function getUserByOTP(string $OTP, string $type): User
+    {
+        $otp = OtpCode::where('type', 'password_reset')
+            ->where('used', false)
+            ->get()
+            ->first();
 
+        if (! $otp) {
+            throw ValidationException::withMessages([
+                'code' => ['Invalid OTP'],
+            ]);
+        }
 
-  public function findByEmail(string $email): ?User
-{
-    return User::where('email', $email)->first();
-}
+        $user = User::find($otp->user_id);
 
-public function updateOtp(User $user, array $data): bool
-{
-    return $user->update($data);
-}
+        return $user;
+    }
 
-public function update(User $user, array $data): User
-{
-    $user->update($data);
+    public function updateOtpMeta(User $user, array $data): bool
+    {
+        return $user->update($data);
+    }
 
-    return $user->fresh();
-}
+    public function findByEmail(string $email): ?User
+    {
+        return User::where('email', $email)->first();
+    }
 
+    public function updateOtp(User $user, array $data): bool
+    {
+        return $user->update($data);
+    }
 
+    public function update(User $user, array $data): User
+    {
+        $user->update($data);
+
+        return $user->fresh();
+    }
 }

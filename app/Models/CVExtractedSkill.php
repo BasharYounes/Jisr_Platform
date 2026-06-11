@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CVExtractedSkill extends Model
 {
     protected $table = 'cv_extracted_skills';
+
     protected $primaryKey = 'CVExtractedSkillID';
 
     protected $fillable = [
@@ -28,9 +29,9 @@ class CVExtractedSkill extends Model
     {
         return $this->belongsTo(Skill::class, 'SkillID', 'id');
     }
+
     public function analysis()
     {
         return $this->belongsTo(CVAnalysis::class, 'CVAnalysisID', 'CVAnalysisID');
     }
-
 }

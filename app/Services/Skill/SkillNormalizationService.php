@@ -47,7 +47,7 @@ class SkillNormalizationService
 
         // 4) fallback: loose partial match in aliases
         $alias = SkillAlias::query()
-            ->whereRaw('LOWER(Alias) LIKE ?', ['%' . $normalizedInput . '%'])
+            ->whereRaw('LOWER(Alias) LIKE ?', ['%'.$normalizedInput.'%'])
             ->first();
 
         if ($alias) {
@@ -56,7 +56,7 @@ class SkillNormalizationService
 
         // 5) fallback: loose partial match in names
         $skill = Skill::query()
-            ->whereRaw('LOWER(name) LIKE ?', ['%' . $normalizedInput . '%'])
+            ->whereRaw('LOWER(name) LIKE ?', ['%'.$normalizedInput.'%'])
             ->first();
 
         return $skill;

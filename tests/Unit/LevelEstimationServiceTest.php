@@ -13,7 +13,7 @@ class LevelEstimationServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new LevelEstimationService();
+        $this->service = new LevelEstimationService;
     }
 
     public function test_excellent_score_increases_level(): void

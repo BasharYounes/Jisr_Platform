@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class PointCategory extends Model
 {
     protected $guarded = [];
-      public function actionTypes()
+
+    public function actionTypes()
     {
         return $this->hasMany(PointActionType::class);
     }

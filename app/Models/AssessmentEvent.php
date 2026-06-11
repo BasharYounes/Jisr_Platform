@@ -30,5 +30,4 @@ class AssessmentEvent extends Model
         'confidence_score' => 'decimal:4',
         'created_at' => 'datetime',
     ];
-    
 }

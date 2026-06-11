@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\VerifyLoginOtpRequest;
-use App\Models\User;
 use App\Services\Auth\AuthService;
 use App\Services\Otp\OtpService;
 use Illuminate\Http\Request;
-
-
 
 class AuthController extends Controller
 {
@@ -19,7 +16,7 @@ class AuthController extends Controller
         private OtpService $otpService
     ) {}
 
-    public function register(RegisterRequest  $request)
+    public function register(RegisterRequest $request)
     {
         return response()->json(
             $this->authService->registerFromRequest($request),
@@ -28,21 +25,20 @@ class AuthController extends Controller
     }
 
     public function login(LoginRequest $request)
-{
-    return response()->json(
-        $this->authService->login($request->validated())
-    );
-}
+    {
+        return response()->json(
+            $this->authService->login($request->validated())
+        );
+    }
 
-public function verifyLoginOtp(VerifyLoginOtpRequest $request)
-{
-    return response()->json(
-        $this->authService->verifyLoginOtp($request->validated())
-    );
-}
+    public function verifyLoginOtp(VerifyLoginOtpRequest $request)
+    {
+        return response()->json(
+            $this->authService->verifyLoginOtp($request->validated())
+        );
+    }
 
-
-public function forgetPassword(Request $request)
+    public function forgetPassword(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
@@ -53,8 +49,7 @@ public function forgetPassword(Request $request)
         return response()->json($response);
     }
 
-
-public function verifyOTPresetPassword(Request $request)
+    public function verifyOTPresetPassword(Request $request)
     {
         $request->validate([
             'code' => ['required', 'digits:6'],
@@ -62,7 +57,6 @@ public function verifyOTPresetPassword(Request $request)
         ]);
 
         $response = $this->authService->verifyPasswordResetOtp($request->all());
-      
 
         return $response;
     }
@@ -77,19 +71,19 @@ public function verifyOTPresetPassword(Request $request)
 
         return response()->json($response);
     }
-        public function resendOtp(Request $request)
-{
-     $data = $request->validate([
-        'email' => ['required', 'email', 'exists:users,email'],
-    ]);
-    $this->authService->resendOtp($data);
 
-    return response()->json([
-        'status' => true,
-        'message' => 'OTP resent successfully.',
-    ]);
-}
+    public function resendOtp(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+        ]);
+        $this->authService->resendOtp($data);
 
+        return response()->json([
+            'status' => true,
+            'message' => 'OTP resent successfully.',
+        ]);
+    }
 
     public function logout()
     {
@@ -104,7 +98,4 @@ public function verifyOTPresetPassword(Request $request)
             $this->authService->logoutAll()
         );
     }
-
-
-
 }

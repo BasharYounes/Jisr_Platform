@@ -13,18 +13,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-            $this->call([
-                RoleSeeder::class,
-                AdminSeeder::class,
-                CareerPathSeeder::class,
-                SprintOneFoundationSeeder::class,
-                SkillAliasSeeder::class,
-                SkillLevelDefinitionSeeder::class,
-                BackendQuestionBankSeeder::class,
-               // SupervisorWorkflowTestSeeder::class,
-            ]);
-
-
+        $this->call([
+            RoleSeeder::class,
+            AdminSeeder::class,
+            CareerPathSeeder::class,
+            SprintOneFoundationSeeder::class,
+            SkillAliasSeeder::class,
+            SkillLevelDefinitionSeeder::class,
+            BackendQuestionBankSeeder::class,
+            // SupervisorWorkflowTestSeeder::class,
+        ]);
 
     }
 }

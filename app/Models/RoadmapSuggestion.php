@@ -14,7 +14,7 @@ class RoadmapSuggestion extends Model
     }
 
     public function aiTests()
-{
-    return $this->hasMany(AITest::class, 'student_id');
-}
+    {
+        return $this->hasMany(AITest::class, 'student_id');
+    }
 }

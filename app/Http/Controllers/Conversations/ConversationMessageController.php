@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Conversations;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Conversations\SendMessageRequest;
+use App\Http\Requests\Conversations\UpdateMessageRequest;
 use App\Http\Resources\Conversation\MessageResource;
 use App\Services\Conversations\ConversationMessageService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\Conversations\UpdateMessageRequest;
 
 class ConversationMessageController extends Controller
 {
@@ -66,19 +66,18 @@ class ConversationMessageController extends Controller
     }
 
     public function update(
-    UpdateMessageRequest $request,
-    int $messageId
-) 
-{
-    $message = $this->conversationMessageService->updateMessage(
-        messageId: $messageId,
-        userId: $request->user()->id,
-        data: $request->validated(),
-    );
+        UpdateMessageRequest $request,
+        int $messageId
+    ) {
+        $message = $this->conversationMessageService->updateMessage(
+            messageId: $messageId,
+            userId: $request->user()->id,
+            data: $request->validated(),
+        );
 
-    return $this->success(
-        message: 'Message updated successfully.',
-        data: new MessageResource($message)
-    );
-}
+        return $this->success(
+            message: 'Message updated successfully.',
+            data: new MessageResource($message)
+        );
+    }
 }

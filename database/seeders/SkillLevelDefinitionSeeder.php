@@ -123,7 +123,7 @@ class SkillLevelDefinitionSeeder extends Seeder
         foreach ($definitions as $skillName => $levels) {
             $skillId = DB::table('skills')->where('name', $skillName)->value('id');
 
-            if (!$skillId) {
+            if (! $skillId) {
                 continue;
             }
 

@@ -20,7 +20,7 @@ class StorePortfolioProjectRequest extends FormRequest
             'project_url' => ['required', 'url', 'max:2048'],
 
             'completion_date' => ['nullable', 'date'],
-            
+
             'grade' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
     }

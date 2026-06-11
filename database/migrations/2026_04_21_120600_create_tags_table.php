@@ -16,13 +16,11 @@ return new class extends Migration
 
             $table->string('name');
 
+            $table->string('type', 32);
 
-    $table->string('type', 32);
-   
+            $table->timestamps();
 
-    $table->timestamps();
-
-    $table->unique(['name', 'type']);
+            $table->unique(['name', 'type']);
         });
     }
 
