@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AssessmentSession extends Model
 {
     protected $table = 'assessment_sessions';
+
     protected $primaryKey = 'AssessmentSessionID';
 
     protected $fillable = [
@@ -51,5 +52,4 @@ class AssessmentSession extends Model
     {
         return 'AssessmentSessionID';
     }
-
 }

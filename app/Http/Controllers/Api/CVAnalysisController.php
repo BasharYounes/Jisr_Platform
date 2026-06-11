@@ -10,10 +10,10 @@ use App\Models\UserSkill;
 use App\Services\AI\SkillExtractionService;
 use App\Services\CV\CVTextExtractionService;
 use App\Services\Skills\SkillNormalizationService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Support\ApiResponse;
 
 class CVAnalysisController extends Controller
 {
@@ -21,8 +21,7 @@ class CVAnalysisController extends Controller
         private readonly CVTextExtractionService $textExtractionService,
         private readonly SkillExtractionService $skillExtractionService,
         private readonly SkillNormalizationService $skillNormalizationService
-    ) {
-    }
+    ) {}
 
     public function analyze(CV $cv): JsonResponse
     {
@@ -30,7 +29,7 @@ class CVAnalysisController extends Controller
         $text = $this->textExtractionService->extractFromPath($absolutePath);
 
         if (blank($text)) {
-            return  ApiResponse::error('Could not extract text from the CV.', 422);
+            return ApiResponse::error('Could not extract text from the CV.', 422);
         }
 
         try {
@@ -97,7 +96,6 @@ class CVAnalysisController extends Controller
 
     }
 
-
     public function show(CV $cv): JsonResponse
     {
         if ($cv->UserId !== auth()->id()) {
@@ -110,7 +108,7 @@ class CVAnalysisController extends Controller
             ->latest('CVAnalysisID')
             ->first();
 
-        if (!$analysis) {
+        if (! $analysis) {
             return ApiResponse::error('No analysis found for this CV.', 404);
         }
 

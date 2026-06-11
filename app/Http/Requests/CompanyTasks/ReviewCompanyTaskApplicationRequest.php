@@ -23,18 +23,18 @@ class ReviewCompanyTaskApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company_notes' => ['nullable', 'string', 'max:1000'], 
+            'company_notes' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
-     public function messages(): array
+    public function messages(): array
     {
-         return [
+        return [
             'company_notes.string' => [
                 'ar' => 'ملاحظات الشركة يجب أن تكون نصاً.',
-                'en' => 'Company notes must be a string.',   
+                'en' => 'Company notes must be a string.',
             ],
-        
+
             'company_notes.max' => [
                 'ar' => 'ملاحظات الشركة يجب ألا تتجاوز 1000 حرف.',
                 'en' => 'Company notes must not exceed 1000 characters.',

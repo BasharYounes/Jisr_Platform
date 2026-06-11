@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Services\Auth;
 
-use App\Services\Auth\Strategies\StudentRegisterStrategy;
 use App\Services\Auth\Strategies\CompanyRegisterStrategy;
-use App\Services\Auth\Strategies\SupervisorRegisterStrategy;
 use App\Services\Auth\Strategies\RegisterStrategyInterface;
+use App\Services\Auth\Strategies\StudentRegisterStrategy;
+use App\Services\Auth\Strategies\SupervisorRegisterStrategy;
 
 class RegisterStrategyFactory
 {
@@ -14,7 +15,7 @@ class RegisterStrategyFactory
             'student' => app(StudentRegisterStrategy::class),
             'company' => app(CompanyRegisterStrategy::class),
             'supervisor' => app(SupervisorRegisterStrategy::class),
-            default => throw new \Exception("Invalid role"),
+            default => throw new \Exception('Invalid role'),
         };
     }
 }

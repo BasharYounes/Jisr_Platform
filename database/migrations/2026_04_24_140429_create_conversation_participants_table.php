@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
             $table->unique(['conversation_id', 'user_id']);
             $table->index(['user_id', 'conversation_id']);
-            });
+        });
     }
 
     /**

@@ -32,7 +32,7 @@ class ProjectEvaluationResource extends JsonResource
                 'status' => $this->assignment?->status,
                 'progress_percentage' => $this->assignment?->progress_percentage,
 
-                'members' =>[
+                'members' => [
                     'student' => [
                         'id' => $this->assignment?->student?->id,
                         'name' => $this->assignment?->student?->name,

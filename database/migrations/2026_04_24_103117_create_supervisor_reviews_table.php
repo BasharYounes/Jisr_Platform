@@ -14,21 +14,21 @@ return new class extends Migration
         Schema::create('supervisor_reviews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('supervisor_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->foreignId('user_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->unsignedSmallInteger('rating');
+            $table->unsignedSmallInteger('rating');
 
-    $table->text('review_text')->nullable();
+            $table->text('review_text')->nullable();
 
-    $table->timestamps();
+            $table->timestamps();
 
-    $table->unique(['supervisor_id', 'user_id']);
-    
+            $table->unique(['supervisor_id', 'user_id']);
+
         });
     }
 

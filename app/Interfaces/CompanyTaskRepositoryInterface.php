@@ -18,6 +18,7 @@ interface CompanyTaskRepositoryInterface
     public function syncSkills(CompanyTask $task, array $skills): void;
 
     public function publish(CompanyTask $task): CompanyTask;
+
     public function getExploreTasks(?string $title = null): Collection;
 
     public function getAvailableTasksWithSkills(): Collection;

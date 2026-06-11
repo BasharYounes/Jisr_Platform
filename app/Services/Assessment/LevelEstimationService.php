@@ -5,6 +5,7 @@ namespace App\Services\Assessment;
 class LevelEstimationService
 {
     private const MIN_LEVEL = 1.0;
+
     private const MAX_LEVEL = 5.0;
 
     private const SIGMOID_SCALE = 1.15;

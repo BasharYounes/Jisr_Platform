@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 
 class CompanyHomeController extends Controller
 {
-     public function __construct(
+    public function __construct(
         private readonly CompanyHomeService $companyHomeService
     ) {}
-    
-     public function index(Request $request): JsonResponse  
+
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -27,4 +27,3 @@ class CompanyHomeController extends Controller
         ]);
     }
 }
-

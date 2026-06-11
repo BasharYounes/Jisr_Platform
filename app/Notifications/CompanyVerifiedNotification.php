@@ -27,18 +27,17 @@ class CompanyVerifiedNotification extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-
     /**
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('Company Verified Notification')
-                    ->greeting('Hello ' . $notifiable->name)
-                    ->line('Your company has been verified successfully.')
-                    ->action('View Company', url('/company/' . $this->company->id))
-                    ->line('Thank you for using our platform!');
+            ->subject('Company Verified Notification')
+            ->greeting('Hello '.$notifiable->name)
+            ->line('Your company has been verified successfully.')
+            ->action('View Company', url('/company/'.$this->company->id))
+            ->line('Thank you for using our platform!');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 // use App\Models\AssessmentEvent;
+use App\Models\AssessmentEvent;
 use App\Models\AssessmentQuestionAttempt;
 use App\Models\AssessmentSession;
 use App\Models\AssessmentSkillSession;
@@ -232,7 +233,7 @@ class QuestionSelectionServiceTest extends TestCase
 
         $selectedQuestion = $this->service->selectNextQuestion($skillSession);
 
-        $event = \App\Models\AssessmentEvent::query()
+        $event = AssessmentEvent::query()
             ->where('assessment_skill_session_id', $skillSession->AssessmentSkillSessionID)
             ->where('event_type', 'question_selected')
             ->latest('id')
@@ -251,19 +252,19 @@ class QuestionSelectionServiceTest extends TestCase
     private function createSkillSession(array $overrides = []): AssessmentSkillSession
     {
         $skill = Skill::query()->create([
-            'name' => 'Laravel ' . uniqid(),
+            'name' => 'Laravel '.uniqid(),
             'category' => 'Backend',
-            'normalized_name' => 'laravel_' . uniqid(),
+            'normalized_name' => 'laravel_'.uniqid(),
         ]);
 
         $user = User::query()->create([
             'name' => 'Test Student',
-            'email' => 'student_' . uniqid() . '@example.com',
+            'email' => 'student_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
         $careerPath = CareerPath::query()->create([
-            'Name' => 'Backend Developer ' . uniqid(),
+            'Name' => 'Backend Developer '.uniqid(),
             'Description' => 'Backend development path',
         ]);
 

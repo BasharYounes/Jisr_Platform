@@ -19,20 +19,21 @@ class StudentTaskApplicationController extends Controller
     ) {}
 
     public function all(Request $request): JsonResponse
-{
-    $tasks = $this->studentTaskApplicationService->getAllStudentTaskApplications(
-        $request->user()->id
-    );
+    {
+        $tasks = $this->studentTaskApplicationService->getAllStudentTaskApplications(
+            $request->user()->id
+        );
 
-    return $this->success(
-        'تم جلب جميع حالات مهام الطالب بنجاح. | Student task applications retrieved successfully.',
-        [
-            'applied' => StudentTaskApplicationResource::collection($tasks['applied']),
-            'accepted' => StudentTaskAssignmentResource::collection($tasks['accepted']),
-            'rejected' => StudentTaskApplicationResource::collection($tasks['rejected']),
-        ]
-    );
-}
+        return $this->success(
+            'تم جلب جميع حالات مهام الطالب بنجاح. | Student task applications retrieved successfully.',
+            [
+                'applied' => StudentTaskApplicationResource::collection($tasks['applied']),
+                'accepted' => StudentTaskAssignmentResource::collection($tasks['accepted']),
+                'rejected' => StudentTaskApplicationResource::collection($tasks['rejected']),
+            ]
+        );
+    }
+
     public function applied(Request $request): JsonResponse
     {
         $applications = $this->studentTaskApplicationService->getAppliedTasks(

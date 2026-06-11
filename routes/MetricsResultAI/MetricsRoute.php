@@ -1,8 +1,7 @@
 <?php
 
-
-use Illuminate\Support\Facades\Route;
 use App\Services\Assessment\AssessmentMetricsService;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/assessment/metrics/questions', function (
     AssessmentMetricsService $metricsService

@@ -5,11 +5,10 @@ namespace App\Events;
 use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 // use Illuminate\Foundation\Events\Dispatchable;
 // use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-
+use Illuminate\Queue\SerializesModels;
 
 class NotificationCreated implements ShouldBroadcast
 {
@@ -21,7 +20,7 @@ class NotificationCreated implements ShouldBroadcast
 
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('users.' . $this->notification->user_id);
+        return new PrivateChannel('users.'.$this->notification->user_id);
     }
 
     public function broadcastAs(): string

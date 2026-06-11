@@ -9,11 +9,12 @@ use App\Traits\ApiResponse;
 class AdminController extends Controller
 {
     use ApiResponse;
+
     protected $adminService;
 
     public function __construct(AdminService $adminService)
     {
-        $this->adminService = $adminService; 
+        $this->adminService = $adminService;
     }
 
     public function listUsers()
@@ -40,7 +41,7 @@ class AdminController extends Controller
     {
         $companyDetails = $this->adminService->getCompanyDetailsByUserId($companyId);
 
-        if (!$companyDetails) {
+        if (! $companyDetails) {
             return $this->error('Company not found', [], 404);
         }
 
@@ -48,7 +49,7 @@ class AdminController extends Controller
             'Company details retrieved successfully.',
             [
                 'company' => $companyDetails['company'],
-                'documentation_file' => $companyDetails['documentation_file']
+                'documentation_file' => $companyDetails['documentation_file'],
             ]
         );
     }
@@ -57,7 +58,7 @@ class AdminController extends Controller
     {
         $result = $this->adminService->verifyCompany($id);
 
-        if (!$result['status']) {
+        if (! $result['status']) {
             return $this->error(
                 $result['message'],
                 [],
@@ -73,12 +74,11 @@ class AdminController extends Controller
         );
     }
 
-
-     public function rejectCompany(int $id)
+    public function rejectCompany(int $id)
     {
         $result = $this->adminService->rejectCompany($id);
 
-        if (!$result['status']) {
+        if (! $result['status']) {
             return $this->error(
                 $result['message'],
                 [],

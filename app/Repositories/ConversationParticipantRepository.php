@@ -29,12 +29,13 @@ class ConversationParticipantRepository implements ConversationParticipantReposi
             ->exists();
     }
 
-  public function markAsRead( int $conversationId,int $userId,CarbonInterface $readAt): bool {
-    return ConversationParticipant::query()
-        ->where('conversation_id', $conversationId)
-        ->where('user_id', $userId)
-        ->update([
-            'last_read_at' => $readAt,
-        ]) > 0;
-}
+    public function markAsRead(int $conversationId, int $userId, CarbonInterface $readAt): bool
+    {
+        return ConversationParticipant::query()
+            ->where('conversation_id', $conversationId)
+            ->where('user_id', $userId)
+            ->update([
+                'last_read_at' => $readAt,
+            ]) > 0;
+    }
 }

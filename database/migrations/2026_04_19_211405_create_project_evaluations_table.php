@@ -13,20 +13,20 @@ return new class extends Migration
     {
         Schema::create('project_evaluations', function (Blueprint $table) {
             $table->id();
-    $table->foreignId('project_assignment_id')
-          ->constrained('project_assignments')
-          ->cascadeOnDelete();
+            $table->foreignId('project_assignment_id')
+                ->constrained('project_assignments')
+                ->cascadeOnDelete();
 
-    $table->foreignId('supervisor_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+            $table->foreignId('supervisor_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->decimal('total_score', 5, 2)->nullable();
-    $table->decimal('final_grade', 5, 2)->nullable();
+            $table->decimal('total_score', 5, 2)->nullable();
+            $table->decimal('final_grade', 5, 2)->nullable();
 
-    $table->text('general_comment')->nullable();
+            $table->text('general_comment')->nullable();
 
-    $table->timestamp('evaluated_at')->nullable();
+            $table->timestamp('evaluated_at')->nullable();
             $table->timestamps();
         });
     }

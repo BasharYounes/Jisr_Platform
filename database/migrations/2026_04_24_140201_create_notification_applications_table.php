@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('notification_applications', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('notification_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('notification_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('application_id')
-          ->constrained()
-          ->cascadeOnDelete();
-          
+            $table->foreignId('application_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

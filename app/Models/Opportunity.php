@@ -16,20 +16,19 @@ class Opportunity extends Model
     public function skills()
     {
         return $this->belongsToMany(Skill::class)
-                    ->withPivot(['required_level', 'mandatory', 'weight'])
-                    ->withTimestamps();
+            ->withPivot(['required_level', 'mandatory', 'weight'])
+            ->withTimestamps();
     }
 
     public function tags()
-{
-    return $this->belongsToMany(Tag::class)
-                ->withPivot(['weight', 'mandatory'])
-                ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(Tag::class)
+            ->withPivot(['weight', 'mandatory'])
+            ->withTimestamps();
+    }
 
-public function applications()
-{
-    return $this->hasMany(Application::class);
-}
-
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
 }

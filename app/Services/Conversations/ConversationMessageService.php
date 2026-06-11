@@ -40,53 +40,53 @@ class ConversationMessageService
     }
 
     public function updateMessage(
-    int $messageId,
-    int $userId,
-    array $data
-): Message {
-    $message = $this->messageRepository
-        ->findByIdOrFail($messageId);
+        int $messageId,
+        int $userId,
+        array $data
+    ): Message {
+        $message = $this->messageRepository
+            ->findByIdOrFail($messageId);
 
-    $conversation = $this->conversationRepository
-        ->findUserConversationOrFail(
-            conversationId: $message->conversation_id,
-            userId: $userId,
-        );
+        $conversation = $this->conversationRepository
+            ->findUserConversationOrFail(
+                conversationId: $message->conversation_id,
+                userId: $userId,
+            );
 
-    if ($conversation->status === 'closed') {
-        throw new AuthorizationException(
-            'This conversation is closed.'
+        if ($conversation->status === 'closed') {
+            throw new AuthorizationException(
+                'This conversation is closed.'
+            );
+        }
+
+        if ($message->sender_id !== $userId) {
+            throw new AuthorizationException(
+                'You can only edit your own messages.'
+            );
+        }
+
+        if ($message->type !== 'text') {
+            throw new AuthorizationException(
+                'Only text messages can be edited.'
+            );
+        }
+
+        $wasRead = $this->messageRepository
+            ->wasReadByAnotherParticipant(
+                conversationId: $message->conversation_id,
+                senderId: $userId,
+                messageCreatedAt: $message->created_at,
+            );
+
+        if ($wasRead) {
+            throw new AuthorizationException(
+                'This message cannot be edited because it has already been read.'
+            );
+        }
+
+        return $this->messageRepository->updateContent(
+            message: $message,
+            content: $data['content'],
         );
     }
-
-    if ($message->sender_id !== $userId) {
-        throw new AuthorizationException(
-            'You can only edit your own messages.'
-        );
-    }
-
-    if ($message->type !== 'text') {
-        throw new AuthorizationException(
-            'Only text messages can be edited.'
-        );
-    }
-
-    $wasRead = $this->messageRepository
-        ->wasReadByAnotherParticipant(
-            conversationId: $message->conversation_id,
-            senderId: $userId,
-            messageCreatedAt: $message->created_at,
-        );
-
-    if ($wasRead) {
-        throw new AuthorizationException(
-            'This message cannot be edited because it has already been read.'
-        );
-    }
-
-    return $this->messageRepository->updateContent(
-        message: $message,
-        content: $data['content'],
-    );
-}
 }

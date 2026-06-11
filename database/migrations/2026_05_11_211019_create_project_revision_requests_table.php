@@ -12,21 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('project_revision_requests', function (Blueprint $table) {
-        $table->id();
+            $table->id();
 
-        $table->foreignId('project_assignment_id')
-            ->constrained('project_assignments')
-            ->cascadeOnDelete();
+            $table->foreignId('project_assignment_id')
+                ->constrained('project_assignments')
+                ->cascadeOnDelete();
 
-        $table->foreignId('supervisor_id')
-            ->constrained('users')
-            ->cascadeOnDelete();
+            $table->foreignId('supervisor_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-        $table->text('comment');
+            $table->text('comment');
 
-        $table->string('status')->default('pending');
+            $table->string('status')->default('pending');
 
-        $table->timestamps();
+            $table->timestamps();
         });
     }
 

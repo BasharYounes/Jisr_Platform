@@ -14,19 +14,19 @@ return new class extends Migration
         Schema::create('student_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
-          ->constrained()
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->string('university')->nullable();
-    $table->string('major', 128)->nullable();
+            $table->string('university')->nullable();
+            $table->string('major', 128)->nullable();
 
-    $table->year('graduation_year')->nullable();
+            $table->year('graduation_year')->nullable();
 
-    $table->string('phone', 32)->nullable();
+            $table->string('phone', 32)->nullable();
 
-    $table->timestamps();
+            $table->timestamps();
 
-    $table->unique('user_id');
+            $table->unique('user_id');
         });
     }
 
@@ -37,6 +37,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('student_profiles');
     }
-
-    
 };

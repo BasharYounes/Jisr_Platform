@@ -10,6 +10,7 @@ class CreateProjectTemplateAction
     {
         $data['created_by_type'] = 'supervisor';
         $data['created_by_id'] = auth()->id();
+
         return ProjectTemplate::create($data);
     }
 }

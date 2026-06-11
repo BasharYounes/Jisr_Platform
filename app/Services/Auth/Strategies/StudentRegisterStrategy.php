@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Services\Auth\Strategies;
 
 use App\Events\UserRegistered;
-use App\Interfaces\UserRepositoryInterface;
 use App\Interfaces\StudentRepositoryInterface;
+use App\Interfaces\UserRepositoryInterface;
 use App\Services\ImageService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -21,14 +22,13 @@ class StudentRegisterStrategy implements RegisterStrategyInterface
     public function register(array $data): array
     {
         return DB::transaction(function () use ($data) {
-                    
-//             $imagePath = null;
-// if (!empty($data['profile_picture']) && $data['profile_picture'] instanceof UploadedFile) {
-//     $imagePath = $this->imageService->uploadImage(
-//         $data['profile_picture'],
-//         'profiles'
-//     );
 
+            //             $imagePath = null;
+            // if (!empty($data['profile_picture']) && $data['profile_picture'] instanceof UploadedFile) {
+            //     $imagePath = $this->imageService->uploadImage(
+            //         $data['profile_picture'],
+            //         'profiles'
+            //     );
 
             $user = $this->userRepo->create([
                 'name' => $data['name'],
@@ -49,16 +49,16 @@ class StudentRegisterStrategy implements RegisterStrategyInterface
             ]);
 
             $token = $user->createToken('api-token')->plainTextToken;
-         
+
             DB::afterCommit(function () use ($user, $student) {
-    
-            event(new UserRegistered(
-                user: $user,
-                profile: $student,
-                role: 'student'
-            ));
-            
-        });
+
+                event(new UserRegistered(
+                    user: $user,
+                    profile: $student,
+                    role: 'student'
+                ));
+
+            });
 
             return [
                 'user' => $user,

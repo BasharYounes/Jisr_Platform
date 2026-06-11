@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('action_type');
 
-    $table->integer('points');
+            $table->integer('points');
 
-    $table->integer('max_per_day')->nullable();
+            $table->integer('max_per_day')->nullable();
 
-    $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectAssignmentMember extends Model
 {
     protected $table = 'project_assignment_members';
+
     protected $fillable = [
         'project_assignment_id',
         'student_id',

@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\PasswordResetOtpRequested;
 use App\Notifications\SendOtpNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class SendResetOtpListener
 {
@@ -20,7 +18,7 @@ class SendResetOtpListener
     /**
      * Handle the event.
      */
-   public function handle(PasswordResetOtpRequested $event): void
+    public function handle(PasswordResetOtpRequested $event): void
     {
         $event->user->notify(
             new SendOtpNotification(
@@ -28,6 +26,6 @@ class SendResetOtpListener
                 type: 'password_reset'
             )
         );
-    
+
     }
 }

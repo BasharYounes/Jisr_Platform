@@ -5,13 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-
 class CompanyTaskAssignment extends Model
 {
-      use SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'company_task_id',
@@ -60,12 +56,12 @@ class CompanyTaskAssignment extends Model
     }
 
     public function portfolioProject()
-{
-    return $this->morphOne(PortfolioProject::class, 'portfolioable');
-}
+    {
+        return $this->morphOne(PortfolioProject::class, 'portfolioable');
+    }
 
-public function conversation()
-{
-    return $this->morphOne(Conversation::class, 'conversationable');
-}
+    public function conversation()
+    {
+        return $this->morphOne(Conversation::class, 'conversationable');
+    }
 }

@@ -3,9 +3,8 @@
 namespace App\Services\Auth\Strategies;
 
 use App\Events\UserRegistered;
-use App\Interfaces\UserRepositoryInterface;
 use App\Interfaces\CompanyRepositoryInterface;
-use App\Notifications\WelcomeNotification;
+use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -32,7 +31,6 @@ class CompanyRegisterStrategy implements RegisterStrategyInterface
                 $documentationFile = $data['documentation_file']->store('docs', 'public');
             }
 
-
             $company = $this->companyRepo->create([
                 'industry' => $data['industry'],
                 'website' => $data['website'] ?? null,
@@ -41,19 +39,18 @@ class CompanyRegisterStrategy implements RegisterStrategyInterface
                 // 'description' => $data['description'] ?? null,
             ]);
             $user->companies()->attach($company->id, [
-    'role' => 'owner'
-]);
+                'role' => 'owner',
+            ]);
 
             $token = $user->createToken('api-token')->plainTextToken;
 
-          DB::afterCommit(function () use ($user, $company) {
-        event(new UserRegistered(
-        user: $user,
-        profile: $company,
-        role: 'company'
-    ));
-});
-
+            DB::afterCommit(function () use ($user, $company) {
+                event(new UserRegistered(
+                    user: $user,
+                    profile: $company,
+                    role: 'company'
+                ));
+            });
 
             return [
                 'user' => $user,

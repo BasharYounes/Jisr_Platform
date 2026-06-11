@@ -6,6 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class ResourceSkillMapping extends Model
 {
-    protected $guarded=[];
-    
+    protected $guarded = [];
 }

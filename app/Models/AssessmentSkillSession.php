@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AssessmentSkillSession extends Model
 {
     protected $table = 'assessment_skill_sessions';
+
     protected $primaryKey = 'AssessmentSkillSessionID';
 
     protected $fillable = [

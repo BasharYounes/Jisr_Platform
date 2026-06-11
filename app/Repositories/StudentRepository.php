@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Repositories;
 
-use App\Models\StudentProfile;
 use App\Interfaces\StudentRepositoryInterface;
+use App\Models\StudentProfile;
 use App\Models\User;
 
 class StudentRepository implements StudentRepositoryInterface
@@ -12,7 +13,7 @@ class StudentRepository implements StudentRepositoryInterface
         return StudentProfile::create($data);
     }
 
-   public function findByUser(User $user): ?StudentProfile
+    public function findByUser(User $user): ?StudentProfile
     {
         return $user->studentProfile()
             ->with('user')
@@ -25,5 +26,4 @@ class StudentRepository implements StudentRepositoryInterface
 
         return $studentProfile->fresh('user');
     }
-    
 }

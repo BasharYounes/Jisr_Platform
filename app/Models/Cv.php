@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CV extends Model
 {
     protected $table = 'c_v_s';
+
     protected $primaryKey = 'CvID';
 
     protected $fillable = [
@@ -43,5 +44,4 @@ class CV extends Model
     {
         return 'CvID';
     }
-
 }

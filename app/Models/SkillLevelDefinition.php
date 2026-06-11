@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SkillLevelDefinition extends Model
 {
     protected $table = 'skill_level_definitions';
+
     protected $primaryKey = 'SkillLevelDefinitionID';
 
     protected $fillable = [

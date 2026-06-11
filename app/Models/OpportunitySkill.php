@@ -6,6 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class OpportunitySkill extends Model
 {
-        protected $guarded = [];
-
+    protected $guarded = [];
 }

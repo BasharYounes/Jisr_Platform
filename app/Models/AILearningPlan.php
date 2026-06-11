@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AILearningPlan extends Model
 {
     protected $table = 'a_i_learning_plans';
+
     protected $primaryKey = 'AILearningPlanID';
 
     protected $fillable = [

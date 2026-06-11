@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('point_transactions', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
-             $table->integer('points');
+            $table->integer('points');
 
-             $table->foreignId('point_action_type_id')
-                ->constrained()->cascadeOnDelete();          
+            $table->foreignId('point_action_type_id')
+                ->constrained()->cascadeOnDelete();
             $table->morphs('reference');
 
             $table->text('description')->nullable();

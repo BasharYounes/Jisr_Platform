@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('project_templates', function (Blueprint $table) {
-        $table->id();
-        $table->string('title');
+            $table->id();
+            $table->string('title');
 
-        $table->text('description')->nullable();
+            $table->text('description')->nullable();
 
-        $table->string('level', 32);
+            $table->string('level', 32);
 
-        $table->text('expected_outcome')->nullable();
-        $table->string('created_by_type', 32);
+            $table->text('expected_outcome')->nullable();
+            $table->string('created_by_type', 32);
 
-        $table->unsignedBigInteger('created_by_id');
+            $table->unsignedBigInteger('created_by_id');
 
             $table->timestamps();
         });

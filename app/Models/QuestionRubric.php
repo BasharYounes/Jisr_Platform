@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QuestionRubric extends Model
 {
     protected $table = 'question_rubrics';
+
     protected $primaryKey = 'QuestionRubricID';
 
     protected $fillable = [

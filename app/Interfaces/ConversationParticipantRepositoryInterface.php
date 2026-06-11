@@ -11,4 +11,5 @@ interface ConversationParticipantRepositoryInterface
 
     public function exists(int $conversationId, int $userId): bool;
 
-public function markAsRead(int $conversationId,int $userId,CarbonInterface $readAt): bool;}
+    public function markAsRead(int $conversationId, int $userId, CarbonInterface $readAt): bool;
+}

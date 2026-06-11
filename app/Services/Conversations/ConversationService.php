@@ -2,11 +2,12 @@
 
 namespace App\Services\Conversations;
 
+use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
-use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Models\Conversation;
 use Illuminate\Support\Facades\DB;
+
 class ConversationService
 {
     public function __construct(
@@ -46,45 +47,44 @@ class ConversationService
     }
 
     public function getUserOpenConversations(int $userId, int $perPage = 15)
-{
-    return $this->conversationRepository
-        ->getUserOpenConversations($userId, $perPage);
-}
+    {
+        return $this->conversationRepository
+            ->getUserOpenConversations($userId, $perPage);
+    }
 
-public function getUserClosedConversations(int $userId, int $perPage = 15)
-{
-    return $this->conversationRepository
-        
-    ->getUserClosedConversations($userId, $perPage);
-}
+    public function getUserClosedConversations(int $userId, int $perPage = 15)
+    {
+        return $this->conversationRepository
+            ->getUserClosedConversations($userId, $perPage);
+    }
 
-public function markAsRead(
-    int $conversationId,
-    int $userId
-): void {
-    $this->conversationRepository
-        ->findUserConversationOrFail($conversationId, $userId);
+    public function markAsRead(
+        int $conversationId,
+        int $userId
+    ): void {
+        $this->conversationRepository
+            ->findUserConversationOrFail($conversationId, $userId);
 
-    DB::transaction(function () use ($conversationId, $userId) {
-        $readAt = now();
+        DB::transaction(function () use ($conversationId, $userId) {
+            $readAt = now();
 
-        $updated = $this->participantRepository->markAsRead(
-            conversationId: $conversationId,
-            userId: $userId,
-            readAt: $readAt,
-        );
-
-        if (! $updated) {
-            throw new \RuntimeException(
-                'Conversation participant could not be updated.'
+            $updated = $this->participantRepository->markAsRead(
+                conversationId: $conversationId,
+                userId: $userId,
+                readAt: $readAt,
             );
-        }
 
-        $this->messageRepository->markUnreadMessagesAsRead(
-            conversationId: $conversationId,
-            readerId: $userId,
-            readAt: $readAt,
-        );
-    });
-}
+            if (! $updated) {
+                throw new \RuntimeException(
+                    'Conversation participant could not be updated.'
+                );
+            }
+
+            $this->messageRepository->markUnreadMessagesAsRead(
+                conversationId: $conversationId,
+                readerId: $userId,
+                readAt: $readAt,
+            );
+        });
+    }
 }

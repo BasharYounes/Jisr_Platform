@@ -14,7 +14,7 @@ class StudentTaskCardResource extends JsonResource
 
             'company' => [
                 'id' => $this->company?->id,
-                 'name' => $this->company->users->first()?->name,
+                'name' => $this->company->users->first()?->name,
                 'industry' => $this->company?->industry,
             ],
 

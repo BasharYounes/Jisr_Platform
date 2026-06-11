@@ -8,5 +8,5 @@ interface AIClientInterface
         string $systemPrompt,
         string $userPrompt,
         string $taskType = 'default'
-        ): array;
+    ): array;
 }

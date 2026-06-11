@@ -8,8 +8,7 @@ class AnswerEvaluationService
 {
     public function __construct(
         private readonly AIClientInterface $aiClient
-    ) {
-    }
+    ) {}
 
     public function evaluate(QuestionBank $question, string $studentAnswer): array
     {
@@ -25,7 +24,7 @@ class AnswerEvaluationService
             ];
         })->values()->toJson(JSON_UNESCAPED_UNICODE);
 
-        $systemPrompt = <<<PROMPT
+        $systemPrompt = <<<'PROMPT'
             You are a strict technical assessor.
 
             Your task is to evaluate a student's answer to a technical question using the provided rubric.

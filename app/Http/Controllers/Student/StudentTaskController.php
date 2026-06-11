@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CompanyTasks\ApplyToCompanyTaskRequest;
 use App\Http\Resources\CompanyTasks\StudentTaskCardResource;
 use App\Http\Resources\CompanyTasks\StudentTaskResource;
 use App\Services\CompanyTasks\StudentTaskService;
@@ -10,8 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\CompanyTasks\ApplyToCompanyTaskRequest;
-use App\Http\Resources\CompanyTasks\CompanyTaskApplicationResource;
 
 class StudentTaskController extends Controller
 {
@@ -34,6 +33,7 @@ class StudentTaskController extends Controller
         $tasks = $this->studentTaskService->getRecommendedTasks(
             studentUserId: $userId
         );
+
         return StudentTaskCardResource::collection($tasks);
     }
 
@@ -46,23 +46,22 @@ class StudentTaskController extends Controller
         ]);
     }
 
-   public function apply(
-    ApplyToCompanyTaskRequest $request,
-    int $taskId
-): JsonResponse {
-    $application = $this->studentTaskService->applyToTask(
-        studentUserId: Auth::id(),
-        taskId: $taskId,
-        data: $request->validated()
-    );
+    public function apply(
+        ApplyToCompanyTaskRequest $request,
+        int $taskId
+    ): JsonResponse {
+        $application = $this->studentTaskService->applyToTask(
+            studentUserId: Auth::id(),
+            taskId: $taskId,
+            data: $request->validated()
+        );
 
-    return response()->json([
-        'message' => 'تم إرسال طلب التقديم بنجاح. | Application submitted successfully.',
-        'data' => [
-            'application_id' => $application->id,
-            'status' => $application->status,
-        ],
-    ], 201);
-}
-
+        return response()->json([
+            'message' => 'تم إرسال طلب التقديم بنجاح. | Application submitted successfully.',
+            'data' => [
+                'application_id' => $application->id,
+                'status' => $application->status,
+            ],
+        ], 201);
+    }
 }

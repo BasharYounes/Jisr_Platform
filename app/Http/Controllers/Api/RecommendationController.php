@@ -5,15 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentSession;
 use App\Services\Recommendations\SkillGapService;
-use Illuminate\Http\JsonResponse;
 use App\Support\ApiResponse;
+use Illuminate\Http\JsonResponse;
 
 class RecommendationController extends Controller
 {
     public function __construct(
         private readonly SkillGapService $skillGapService
-    ) {
-    }
+    ) {}
 
     public function skillGaps(AssessmentSession $session): JsonResponse
     {

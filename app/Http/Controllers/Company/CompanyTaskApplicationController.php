@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 class CompanyTaskApplicationController extends Controller
 {
     use ApiResponse;
+
     public function __construct(
         private readonly CompanyTaskApplicationService $companyTaskApplicationService
     ) {}
@@ -34,23 +35,24 @@ class CompanyTaskApplicationController extends Controller
     }
 
     public function show(int $applicationId): JsonResponse
-{
-    $companyId = Auth::user()->companies()->firstOrFail()->id;
+    {
+        $companyId = Auth::user()->companies()->firstOrFail()->id;
 
-    $application = $this->companyTaskApplicationService->getApplicationDetails(
-        companyId: $companyId,
-        applicationId: $applicationId
-    );
+        $application = $this->companyTaskApplicationService->getApplicationDetails(
+            companyId: $companyId,
+            applicationId: $applicationId
+        );
 
-    return response()->json([
-         'data' => new CompanyTaskApplicantDetailsResource($application),
-    ]);
-}
+        return response()->json([
+            'data' => new CompanyTaskApplicantDetailsResource($application),
+        ]);
+    }
 
     /**
      * Accept a student's application and create the official assignment.
      */
-    public function accept(ReviewCompanyTaskApplicationRequest  $request, int $applicationId): JsonResponse {
+    public function accept(ReviewCompanyTaskApplicationRequest $request, int $applicationId): JsonResponse
+    {
         $companyId = $this->getAuthenticatedCompanyId();
         $assignment = $this->companyTaskApplicationService->acceptApplication(
             companyId: $companyId,
@@ -85,15 +87,15 @@ class CompanyTaskApplicationController extends Controller
             data: $request->validated()
         );
 
-         return $this->success(
-        message: 'تم رفض طلب التقديم بنجاح. | Application rejected successfully.',
-        data: [
-            'application_id' => $application->id,
-            'status' => $application->status,
-            'company_notes' => $application->company_notes,
-            'reviewed_at' => $application->reviewed_at?->toISOString(),
-        ]
-    );
+        return $this->success(
+            message: 'تم رفض طلب التقديم بنجاح. | Application rejected successfully.',
+            data: [
+                'application_id' => $application->id,
+                'status' => $application->status,
+                'company_notes' => $application->company_notes,
+                'reviewed_at' => $application->reviewed_at?->toISOString(),
+            ]
+        );
     }
 
     /**

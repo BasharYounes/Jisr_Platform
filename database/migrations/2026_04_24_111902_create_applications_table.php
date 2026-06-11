@@ -14,31 +14,31 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
 
-           $table->foreignId('opportunity_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('opportunity_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('user_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('cv_id')
-          ->nullable()
-          ->constrained('c_v_s', 'CvID')
-          ->nullOnDelete();
+            $table->foreignId('cv_id')
+                ->nullable()
+                ->constrained('c_v_s', 'CvID')
+                ->nullOnDelete();
 
-    $table->text('cover_letter')->nullable();
+            $table->text('cover_letter')->nullable();
 
-    $table->string('status', 32)->default('pending');
+            $table->string('status', 32)->default('pending');
 
-    $table->timestamp('applied_at')->useCurrent();
-    $table->timestamp('reviewed_at')->nullable();
+            $table->timestamp('applied_at')->useCurrent();
+            $table->timestamp('reviewed_at')->nullable();
 
-    $table->text('reviewer_notes')->nullable();
+            $table->text('reviewer_notes')->nullable();
 
-    $table->timestamps();
+            $table->timestamps();
 
-      $table->unique(['opportunity_id', 'user_id']);
+            $table->unique(['opportunity_id', 'user_id']);
         });
     }
 

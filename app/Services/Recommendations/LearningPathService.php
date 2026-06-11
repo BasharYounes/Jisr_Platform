@@ -9,8 +9,7 @@ class LearningPathService
     public function __construct(
         private readonly SkillGapService $gapService,
         private readonly LearningRecommendationService $recommendationService
-    ) {
-    }
+    ) {}
 
     public function generate(AssessmentSession $session): array
     {

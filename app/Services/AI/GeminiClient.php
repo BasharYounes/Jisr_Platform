@@ -17,7 +17,7 @@ class GeminiClient implements AIClientInterface
         try {
             return $this->sendToGemini($systemPrompt, $userPrompt, $primaryModel);
         } catch (AIProviderException $e) {
-            
+
             if ($taskType === 'reasoning') {
                 return $this->sendToGemini(
                     $systemPrompt,
@@ -69,9 +69,9 @@ class GeminiClient implements AIClientInterface
                 ],
             ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new AIProviderException(
-                'Gemini request failed: ' . $response->status() . ' - ' . $response->body()
+                'Gemini request failed: '.$response->status().' - '.$response->body()
             );
         }
 
@@ -96,7 +96,7 @@ class GeminiClient implements AIClientInterface
 
         preg_match('/\{.*\}/s', $text, $matches);
 
-        if (!empty($matches[0])) {
+        if (! empty($matches[0])) {
             $decoded = json_decode($matches[0], true);
 
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
@@ -104,7 +104,7 @@ class GeminiClient implements AIClientInterface
             }
         }
 
-        throw new AIProviderException('Invalid JSON returned from Gemini: ' . $text);
+        throw new AIProviderException('Invalid JSON returned from Gemini: '.$text);
     }
 
     private function modelForTask(string $taskType): string

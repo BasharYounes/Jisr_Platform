@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::create('mentor_reviews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mentor_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->foreignId('user_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->unsignedSmallInteger('rating');
+            $table->unsignedSmallInteger('rating');
 
-    $table->text('review_text')->nullable();
+            $table->text('review_text')->nullable();
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Skill extends Model
 {
     protected $table = 'skills';
+
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -57,30 +58,27 @@ class Skill extends Model
         return 'id';
     }
 
-     public function opportunities()
+    public function opportunities()
     {
         return $this->belongsToMany(Opportunity::class)
-                    ->withPivot(['required_level', 'mandatory', 'weight'])
-                    ->withTimestamps();
+            ->withPivot(['required_level', 'mandatory', 'weight'])
+            ->withTimestamps();
     }
 
     public function users()
-{
+    {
         return $this->belongsToMany(User::class, 'user_skills', 'SkillId', 'UserId')
-                ->withPivot([
-                        'ProficiencyLevel',
-                        'ConfidenceScore',
-                        'Source',
-                        'Verified'
-                ])
-                ->withTimestamps();
-}
+            ->withPivot([
+                'ProficiencyLevel',
+                'ConfidenceScore',
+                'Source',
+                'Verified',
+            ])
+            ->withTimestamps();
+    }
 
     public function trends()
     {
         return $this->hasMany(MarketTrend::class);
     }
-
-
-
 }

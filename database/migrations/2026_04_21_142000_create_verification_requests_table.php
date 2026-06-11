@@ -14,41 +14,32 @@ return new class extends Migration
         Schema::create('verification_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('applicant_user_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+                ->constrained('users')
+                ->cascadeOnDelete();
 
+            $table->string('requested_role', 32);
 
-    $table->string('requested_role', 32);
+            $table->string('requested_specialization', 128)->nullable();
 
+            $table->unsignedInteger('experience_years')->nullable();
 
+            $table->text('portfolio_url')->nullable();
 
-    $table->string('requested_specialization', 128)->nullable();
+            $table->foreignId('cv_id')
+                ->nullable()
+                ->constrained('c_v_s', 'CvID')
+                ->nullOnDelete();
 
-    $table->unsignedInteger('experience_years')->nullable();
+            $table->text('motivation_message')->nullable();
 
-    $table->text('portfolio_url')->nullable();
+            $table->string('status', 32)->default('pending');
 
+            $table->text('review_notes')->nullable();
 
-    $table->foreignId('cv_id')
-          ->nullable()
-        ->constrained('c_v_s', 'CvID')
-          ->nullOnDelete();
+            $table->timestamp('reviewed_at')->nullable();
+            $table->timestamp('applied_at')->useCurrent();
 
-
-    $table->text('motivation_message')->nullable();
-
-
-    $table->string('status', 32)->default('pending');
-
-
-
-    $table->text('review_notes')->nullable();
-
-
-    $table->timestamp('reviewed_at')->nullable();
-    $table->timestamp('applied_at')->useCurrent();
-
-    $table->softDeletes();
+            $table->softDeletes();
 
             $table->timestamps();
         });

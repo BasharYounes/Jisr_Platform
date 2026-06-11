@@ -12,12 +12,12 @@ class StudentTaskApplicationService
     ) {}
 
     public function getAllStudentTaskApplications(int $studentUserId): array
-{
-    return [
-        'applied' => $this->getAppliedTasks($studentUserId),
-        'accepted' => $this->getAcceptedTasks($studentUserId),
-        'rejected' => $this->getRejectedTasks($studentUserId),
-    ];
+    {
+        return [
+            'applied' => $this->getAppliedTasks($studentUserId),
+            'accepted' => $this->getAcceptedTasks($studentUserId),
+            'rejected' => $this->getRejectedTasks($studentUserId),
+        ];
     }
 
     public function getAppliedTasks(int $studentUserId): Collection

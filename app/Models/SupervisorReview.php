@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class SupervisorReview extends Model
 {
-    protected $guraded=[];
-    public function supervisor()
-{
-    return $this->belongsTo(User::class, 'supervisor_id');
-}
+    protected $guraded = [];
 
-public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    public function supervisor()
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

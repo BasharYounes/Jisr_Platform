@@ -21,8 +21,9 @@ class AuditLog extends Model
         'new_value' => 'array',
         'created_at' => 'datetime',
     ];
+
     public function user()
     {
-    return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 }

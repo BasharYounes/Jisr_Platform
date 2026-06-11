@@ -14,28 +14,27 @@ class SendOtpNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-   public function __construct(
-    public string $code,
-    public string $type = 'login'
-) {}
+    public function __construct(
+        public string $code,
+        public string $type = 'login'
+    ) {}
 
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
 
-public function via(object $notifiable): array
-{
-    return ['mail'];
-}
+    public function toMail(object $notifiable): MailMessage
+    {
+        $title = $this->type === 'password_reset'
+            ? 'Reset Your Password'
+            : 'Login OTP';
 
-public function toMail(object $notifiable): MailMessage
-{
-    $title = $this->type === 'password_reset'
-        ? 'Reset Your Password'
-        : 'Login OTP';
-
-    return (new MailMessage)
-        ->subject($title)
-        ->greeting('Hello ' . $notifiable->name)
-        ->line('Your OTP Code:')
-        ->line('👉 ' . $this->code)
-        ->line('This code expires in a few minutes.');
+        return (new MailMessage)
+            ->subject($title)
+            ->greeting('Hello '.$notifiable->name)
+            ->line('Your OTP Code:')
+            ->line('👉 '.$this->code)
+            ->line('This code expires in a few minutes.');
     }
 }

@@ -14,21 +14,16 @@ return new class extends Migration
         Schema::create('market_trends', function (Blueprint $table) {
             $table->id();
             $table->foreignId('skill_id')
-          ->constrained()
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-   
-    $table->decimal('demand_score', 5, 2);
+            $table->decimal('demand_score', 5, 2);
 
-  
-    $table->string('trend_direction', 16);
-   
+            $table->string('trend_direction', 16);
 
-   
-    $table->integer('source_job_count')->default(0);
+            $table->integer('source_job_count')->default(0);
 
- 
-    $table->date('analyzed_date');
+            $table->date('analyzed_date');
             $table->timestamps();
         });
     }

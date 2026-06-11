@@ -13,23 +13,23 @@ class CreateProjectTemplateRequest extends FormRequest
 
     public function rules(): array
     {
-         return [
-           'title' => [
+        return [
+            'title' => [
                 'required',
                 'string',
-                'max:255'
+                'max:255',
             ],
-           'description' => [
+            'description' => [
                 'nullable',
-                 'string'
+                'string',
             ],
-           'level' => [
+            'level' => [
                 'required',
-                'in:Beginner,Intermediate,Advanced'
+                'in:Beginner,Intermediate,Advanced',
             ],
-           'expected_outcome' => [
+            'expected_outcome' => [
                 'required',
-                'string'
+                'string',
             ],
         ];
     }

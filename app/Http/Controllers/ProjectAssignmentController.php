@@ -2,33 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Domains\Supervisor\Actions\AssignProjectAction;
-use App\Domains\Supervisor\Actions\RecalculateProjectAssignmentProgressAction;
-use App\Domains\Supervisor\Requests\AssignProjectRequest;
-use App\Http\Resources\ProjectAssignmentResource;
-use App\Models\ProjectAssignment;
-use App\Support\ApiResponse;
+use App\Domains\Student\Actions\StartAssignmentTaskAction;
 use App\Domains\Student\Actions\SubmitAssignmentTaskAction;
 use App\Domains\Student\Requests\SubmitAssignmentTaskRequest;
-use App\Http\Resources\ProjectAssignmentTaskResource;
-use App\Models\ProjectAssignmentTask;
-use App\Domains\Supervisor\Actions\StartAssignmentTaskReviewAction;
 use App\Domains\Supervisor\Actions\ApproveAssignmentTaskAction;
-use App\Domains\Supervisor\Actions\RequestAssignmentTaskRevisionAction;
-use App\Domains\Supervisor\Requests\RequestAssignmentTaskRevisionRequest;
-use App\Domains\Student\Actions\StartAssignmentTaskAction;
 use App\Domains\Supervisor\Actions\AssignAssignmentTaskToStudentAction;
+use App\Domains\Supervisor\Actions\AssignProjectAction;
+use App\Domains\Supervisor\Actions\RecalculateProjectAssignmentProgressAction;
+use App\Domains\Supervisor\Actions\RequestAssignmentTaskRevisionAction;
+use App\Domains\Supervisor\Actions\StartAssignmentTaskReviewAction;
 use App\Domains\Supervisor\Requests\AssignAssignmentTaskToStudentRequest;
-
-
+use App\Domains\Supervisor\Requests\AssignProjectRequest;
+use App\Domains\Supervisor\Requests\RequestAssignmentTaskRevisionRequest;
+use App\Http\Resources\ProjectAssignmentResource;
+use App\Http\Resources\ProjectAssignmentTaskResource;
+use App\Models\ProjectAssignment;
+use App\Models\ProjectAssignmentTask;
+use App\Support\ApiResponse;
 
 class ProjectAssignmentController extends Controller
 {
+    public function __construct() {}
 
-    public function __construct()
-    {
-
-    }
     public function index()
     {
         $assignments = ProjectAssignment::query()
@@ -45,8 +40,6 @@ class ProjectAssignmentController extends Controller
             ProjectAssignmentResource::collection($assignments)
         );
     }
-
-
 
     public function assignProject(
         AssignProjectRequest $request,
@@ -77,7 +70,6 @@ class ProjectAssignmentController extends Controller
         );
     }
 
-
     public function assignTaskToStudent(
         AssignAssignmentTaskToStudentRequest $request,
         ProjectAssignmentTask $projectAssignmentTask,
@@ -95,8 +87,8 @@ class ProjectAssignmentController extends Controller
     }
 
     public function startTask(
-    ProjectAssignmentTask $projectAssignmentTask,
-    StartAssignmentTaskAction $action
+        ProjectAssignmentTask $projectAssignmentTask,
+        StartAssignmentTaskAction $action
     ) {
         \Gate::authorize('start', $projectAssignmentTask);
 
@@ -107,11 +99,10 @@ class ProjectAssignmentController extends Controller
         );
     }
 
-
     public function submitTask(
-    SubmitAssignmentTaskRequest $request,
-    ProjectAssignmentTask $projectAssignmentTask,
-    SubmitAssignmentTaskAction $action
+        SubmitAssignmentTaskRequest $request,
+        ProjectAssignmentTask $projectAssignmentTask,
+        SubmitAssignmentTaskAction $action
     ) {
         \Gate::authorize('submit', $projectAssignmentTask);
 
@@ -126,8 +117,8 @@ class ProjectAssignmentController extends Controller
     }
 
     public function startTaskReview(
-    ProjectAssignmentTask $projectAssignmentTask,
-    StartAssignmentTaskReviewAction $action
+        ProjectAssignmentTask $projectAssignmentTask,
+        StartAssignmentTaskReviewAction $action
     ) {
         \Gate::authorize('review', $projectAssignmentTask);
 
@@ -140,9 +131,9 @@ class ProjectAssignmentController extends Controller
     }
 
     public function approveTask(
-    ProjectAssignmentTask $projectAssignmentTask,
-    ApproveAssignmentTaskAction $action,
-    RecalculateProjectAssignmentProgressAction $recalculateProgress
+        ProjectAssignmentTask $projectAssignmentTask,
+        ApproveAssignmentTaskAction $action,
+        RecalculateProjectAssignmentProgressAction $recalculateProgress
     ) {
         \Gate::authorize('approve', $projectAssignmentTask);
 

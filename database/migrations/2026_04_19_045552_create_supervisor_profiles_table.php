@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
-   
             $table->string('specialization', 128);
             $table->boolean('is_volunteer')->default(false);
             $table->timestamps();
