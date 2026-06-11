@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Supervisor\Actions\ApproveProjectEvaluationAction;
 use App\Domains\Supervisor\Actions\SubmitProjectEvaluationAction;
 use App\Domains\Supervisor\Requests\SubmitProjectEvaluationRequest;
 use App\Http\Resources\ProjectEvaluationResource;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectEvaluation;
 use App\Support\ApiResponse;
-use App\Domains\Supervisor\Actions\ApproveProjectEvaluationAction;
 
 class ProjectEvaluationController extends Controller
 {
-
     public function store(
         SubmitProjectEvaluationRequest $request,
         ProjectAssignment $projectAssignment,
@@ -54,8 +53,8 @@ class ProjectEvaluationController extends Controller
     }
 
     public function approve(
-    ProjectEvaluation $projectEvaluation,
-    ApproveProjectEvaluationAction $action
+        ProjectEvaluation $projectEvaluation,
+        ApproveProjectEvaluationAction $action
     ) {
         \Gate::authorize('view', $projectEvaluation);
 

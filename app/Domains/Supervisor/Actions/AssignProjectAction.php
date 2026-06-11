@@ -6,8 +6,8 @@ use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
 use App\Domains\Supervisor\Enums\ProjectAssignmentTaskStatus;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectTemplate;
-use Illuminate\Support\Facades\DB;
 use DomainException;
+use Illuminate\Support\Facades\DB;
 
 class AssignProjectAction
 {

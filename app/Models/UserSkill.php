@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserSkill extends Model
 {
+    protected $guarded = [];
 
     public const STATUS_SELF_DECLARED = 'self_declared';
 
@@ -25,8 +26,9 @@ class UserSkill extends Model
         self::STATUS_SUPERVISOR_VERIFIED,
         self::STATUS_COMPANY_VERIFIED,
     ];
-    
+
     protected $table = 'user_skills';
+
     protected $primaryKey = 'UserSkillID';
 
     protected $fillable = [
@@ -58,5 +60,4 @@ class UserSkill extends Model
     {
         return $this->belongsTo(User::class, 'UserId', 'id');
     }
-
 }

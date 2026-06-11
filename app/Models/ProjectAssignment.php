@@ -2,25 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
+use Illuminate\Database\Eloquent\Model;
 
 class ProjectAssignment extends Model
 {
     protected $fillable = [
-    'project_template_id',
-    'supervisor_id',
-    'status',
-    'progress_percentage',
-    'submission_url',
-    'github_link',
-    'assigned_at',
-    'submitted_at',
+        'project_template_id',
+        'supervisor_id',
+        'status',
+        'progress_percentage',
+        'submission_url',
+        'github_link',
+        'assigned_at',
+        'submitted_at',
     ];
+
     protected $casts = [
-    'assigned_at' => 'datetime',
-    'submitted_at' => 'datetime',
-    'status' => ProjectAssignmentStatus::class,
+        'assigned_at' => 'datetime',
+        'submitted_at' => 'datetime',
+        'status' => ProjectAssignmentStatus::class,
     ];
 
     public function supervisor()
@@ -33,10 +34,10 @@ class ProjectAssignment extends Model
         return $this->belongsTo(ProjectTemplate::class);
     }
 
-public function portfolioProject()
-{
-    return $this->morphOne(PortfolioProject::class, 'portfolioable');
-}
+    public function portfolioProject()
+    {
+        return $this->morphOne(PortfolioProject::class, 'portfolioable');
+    }
 
     public function revisionRequests()
     {
@@ -53,16 +54,15 @@ public function portfolioProject()
         return $this->hasMany(ProjectAssignmentTask::class, 'project_assignment_id');
     }
 
-
     public function evaluation()
     {
         return $this->hasOne(ProjectEvaluation::class, 'project_assignment_id');
     }
 
     public function members()
-{
-    return $this->hasMany(ProjectAssignmentMember::class, 'project_assignment_id');
-}
+    {
+        return $this->hasMany(ProjectAssignmentMember::class, 'project_assignment_id');
+    }
 
     public function students()
     {

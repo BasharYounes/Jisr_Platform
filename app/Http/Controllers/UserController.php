@@ -2,60 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CompanyResource;
-use App\Http\Resources\UserResource;
 use App\Http\Requests\CompanyProfileRequest;
 use App\Http\Requests\StudentProfileRequest;
+use App\Http\Resources\CompanyResource;
 use App\Http\Resources\StudentResource;
-use Illuminate\Support\Facades\Auth;
 use App\Services\User\UserService;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Auth;
 
-
-class UserController extends Controller 
+class UserController extends Controller
 {
-    use ApiResponse;    
+    use ApiResponse;
+
     protected $UserService;
 
     public function __construct(UserService $UserService)
     {
-        $this->UserService = $UserService; 
+        $this->UserService = $UserService;
     }
 
-
-   // Company
+    // Company
     public function getProfileCompany()
     {
         $company = Auth::user()->companies()->first();
 
-        if (!$company) {
+        if (! $company) {
             return $this->error('Company profile not found', 404);
         }
 
         return new CompanyResource($company);
     }
-    
-   public function editProfile(CompanyProfileRequest $request)
-    {
-    $user = Auth::user();
-    $company = Auth::user()->companies()->first();
 
-    $company = $this->UserService->editCompanyProfile(
-        $user,
-        $company,
-        $request->validated(),
-        $request
-    );
+    public function editProfile(CompanyProfileRequest $request)
+    {
+        $user = Auth::user();
+        $company = Auth::user()->companies()->first();
+
+        $company = $this->UserService->editCompanyProfile(
+            $user,
+            $company,
+            $request->validated(),
+            $request
+        );
+
         return new CompanyResource($company);
     }
 
-   // Student
-     public function getProfileStudent()
+    // Student
+    public function getProfileStudent()
     {
-        $user =Auth::user();
+        $user = Auth::user();
         $studentProfile = $this->UserService->getStudentProfile($user);
 
-        if (!$studentProfile) {
+        if (! $studentProfile) {
             return $this->error('Student profile not found', 404);
         }
 
@@ -73,6 +72,4 @@ class UserController extends Controller
 
         return new StudentResource($studentProfile);
     }
-
-    
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotificationApplication extends Model
 {
-    protected $guarded=[];
+    protected $guarded = [];
 
     public function notification()
     {
@@ -17,5 +17,4 @@ class NotificationApplication extends Model
     {
         return $this->belongsTo(Application::class);
     }
-    
 }

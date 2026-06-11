@@ -14,16 +14,14 @@ return new class extends Migration
         Schema::create('roadmap_suggestions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-  
-    $table->string('career_path', 128);
+            $table->string('career_path', 128);
 
-   
-    $table->json('suggested_skills')->nullable();
+            $table->json('suggested_skills')->nullable();
 
-    $table->timestamp('generated_at')->useCurrent();
+            $table->timestamp('generated_at')->useCurrent();
             $table->timestamps();
         });
     }

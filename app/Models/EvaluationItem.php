@@ -29,5 +29,4 @@ class EvaluationItem extends Model
     {
         return $this->belongsTo(EvaluationCriteria::class, 'evaluation_criteria_id');
     }
-
 }

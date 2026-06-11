@@ -14,21 +14,21 @@ return new class extends Migration
         Schema::create('project_tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_template_id')
-          ->constrained()
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->string('title');
-    $table->text('description')->nullable();
+            $table->string('title');
+            $table->text('description')->nullable();
 
-    $table->string('status', 32)->default('todo');
+            $table->string('status', 32)->default('todo');
 
-    $table->unsignedInteger('estimated_hours')->nullable();
+            $table->unsignedInteger('estimated_hours')->nullable();
 
-    $table->text('github_branch_or_link')->nullable();
+            $table->text('github_branch_or_link')->nullable();
 
-    $table->unsignedInteger('order_index')->default(0);
+            $table->unsignedInteger('order_index')->default(0);
 
-    $table->softDeletes();
+            $table->softDeletes();
 
             $table->timestamps();
         });

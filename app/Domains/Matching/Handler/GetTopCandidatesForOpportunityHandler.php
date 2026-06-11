@@ -3,16 +3,14 @@
 namespace App\Domain\Matching\Handlers;
 
 use App\Domain\Matching\CandidateExplainer;
-use Illuminate\Support\Facades\DB;
 use App\Domain\Matching\Queries\GetTopCandidatesForOpportunity;
+use Illuminate\Support\Facades\DB;
 
 class GetTopCandidatesForOpportunityHandler
 {
     public function handle(GetTopCandidatesForOpportunity $query)
     {
         $opportunityId = $query->opportunityId;
-
-
 
         $candidates = DB::table('users as u')
             ->select(
@@ -28,7 +26,7 @@ class GetTopCandidatesForOpportunityHandler
             ->crossJoin('OpportunitySkill as os')
             ->leftJoin('UserSkill as us', function ($join) {
                 $join->on('us.UserId', '=', 'u.UserID')
-                     ->on('us.SkillId', '=', 'os.SkillId');
+                    ->on('us.SkillId', '=', 'os.SkillId');
             })
             ->where('u.IsActive', true)
             ->where('os.OpportunityId', $opportunityId)
@@ -37,7 +35,7 @@ class GetTopCandidatesForOpportunityHandler
             ->get();
 
         return $candidates->map(function ($candidate) use ($opportunityId) {
-            $explainer = new CandidateExplainer();
+            $explainer = new CandidateExplainer;
 
             $projectScore = $this->getProjectScore($candidate->UserID);
             $activityScore = $this->getActivityScore($candidate->UserID);
@@ -53,14 +51,14 @@ class GetTopCandidatesForOpportunityHandler
                 $activityScore * 0.10 +
                 $freshness * 0.05;
 
-                $details = [
+            $details = [
                 'matched_skills' => $this->getMatchedSkillsCount($candidate->UserID, $opportunityId),
                 'strong_skills' => $strongSkills,
                 'project_count' => $this->getProjectCount($candidate->UserID),
                 'project_score' => $projectScore,
                 'fresh_days' => $this->getFreshDays($candidate->UserID),
                 'missing_skills' => $missingSkills,
-                ];
+            ];
 
             $explanation = $explainer->explain($details);
 
@@ -74,9 +72,9 @@ class GetTopCandidatesForOpportunityHandler
                 'final_score' => round($finalScore, 2),
             ];
         })
-        ->sortByDesc('final_score')
-        ->take($query->limit)
-        ->values();
+            ->sortByDesc('final_score')
+            ->take($query->limit)
+            ->values();
     }
 
     //  -------------------------   Scoring Functions   --------------------------------
@@ -156,7 +154,9 @@ class GetTopCandidatesForOpportunityHandler
             ->where('UserID', $userId)
             ->value('UpdatedAt');
 
-        if (!$lastActivity) return 999;
+        if (! $lastActivity) {
+            return 999;
+        }
 
         return now()->diffInDays($lastActivity);
     }
@@ -169,5 +169,4 @@ class GetTopCandidatesForOpportunityHandler
             ->where('os.OpportunityId', $opportunityId)
             ->count();
     }
-
 }

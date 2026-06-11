@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CompanyTaskReview extends Model
 {
-      use SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'company_task_submission_id',

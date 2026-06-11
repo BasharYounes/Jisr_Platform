@@ -39,14 +39,14 @@ class SprintOneFoundationSeeder extends Seeder
             ['name' => 'Git',    'required_level' => 2.0, 'weight' => 0.80, 'is_core' => true],
         ];
 
-        if (!$careerPathId) {
+        if (! $careerPathId) {
             return;
         }
 
         foreach ($pathSkills as $item) {
             $skillId = DB::table('skills')->where('name', $item['name'])->value('id');
 
-            if (!$skillId) {
+            if (! $skillId) {
                 continue;
             }
 

@@ -28,21 +28,21 @@ class MatchingTestSeeder extends Seeder
                 'SkillId' => 1,
                 'Weight' => 5,
                 'Mandatory' => true,
-                'RequiredLevel' => 3
+                'RequiredLevel' => 3,
             ],
             [
                 'OpportunityId' => 1,
                 'SkillId' => 2,
                 'Weight' => 5,
                 'Mandatory' => true,
-                'RequiredLevel' => 3
+                'RequiredLevel' => 3,
             ],
             [
                 'OpportunityId' => 1,
                 'SkillId' => 3,
                 'Weight' => 2,
                 'Mandatory' => false,
-                'RequiredLevel' => 1
+                'RequiredLevel' => 1,
             ],
         ]);
     }

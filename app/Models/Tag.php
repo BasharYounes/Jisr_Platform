@@ -11,25 +11,25 @@ class Tag extends Model
     public function opportunities()
     {
         return $this->belongsToMany(Opportunity::class)
-                    ->withPivot(['weight', 'mandatory'])
-                    ->withTimestamps();
+            ->withPivot(['weight', 'mandatory'])
+            ->withTimestamps();
     }
 
     public function users()
     {
         return $this->belongsToMany(User::class)
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function projectTemplates()
     {
         return $this->belongsToMany(ProjectTemplate::class)
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function verificationRequests()
-{
-    return $this->belongsToMany(VerificationRequest::class, 'tag_verification_request')
-                ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(VerificationRequest::class, 'tag_verification_request')
+            ->withTimestamps();
+    }
 }

@@ -21,8 +21,9 @@ class CVTextExtractionService
     private function extractFromPdf(string $path): string
     {
         try {
-            $parser = new Parser();
+            $parser = new Parser;
             $pdf = $parser->parseFile($path);
+
             return trim($pdf->getText());
         } catch (\Throwable $e) {
             return '';
@@ -32,13 +33,14 @@ class CVTextExtractionService
     private function extractFromDocx(string $path): string
     {
         try {
-            $zip = new \ZipArchive();
+            $zip = new \ZipArchive;
 
             if ($zip->open($path) === true) {
                 $index = $zip->locateName('word/document.xml');
 
                 if ($index === false) {
                     $zip->close();
+
                     return '';
                 }
 
@@ -46,6 +48,7 @@ class CVTextExtractionService
                 $zip->close();
 
                 $text = strip_tags(str_replace('</w:p>', PHP_EOL, $data));
+
                 return trim(html_entity_decode($text));
             }
 

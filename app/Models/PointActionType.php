@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class PointActionType extends Model
 {
     protected $guarded = [];
-     public function rule()
+
+    public function rule()
     {
         return $this->belongsTo(PointRule::class, 'point_rule_id');
     }
@@ -21,6 +22,4 @@ class PointActionType extends Model
     {
         return $this->hasMany(PointTransaction::class);
     }
-
-
 }

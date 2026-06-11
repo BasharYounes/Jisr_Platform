@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectTemplate extends Model
 {
     protected $guarded = [];
-      public function assignments()
+
+    public function assignments()
     {
         return $this->hasMany(ProjectAssignment::class);
     }
@@ -20,7 +21,6 @@ class ProjectTemplate extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class)
-                    ->withTimestamps();
+            ->withTimestamps();
     }
-
 }

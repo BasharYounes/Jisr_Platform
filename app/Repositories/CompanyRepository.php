@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Repositories;
 
-use App\Models\Company;
 use App\Interfaces\CompanyRepositoryInterface;
+use App\Models\Company;
 use App\Models\User;
-use Workbench\App\Models\User as ModelsUser;
 
 class CompanyRepository implements CompanyRepositoryInterface
 {
@@ -13,7 +13,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         return Company::create($data);
     }
 
-     public function findById(int $companyId):?Company
+    public function findById(int $companyId): ?Company
     {
 
         return Company::findOrFail($companyId);
@@ -25,20 +25,21 @@ class CompanyRepository implements CompanyRepositoryInterface
         return User::where('is_verified_by_admin', 'pending')->get();
     }
 
-     public function getCompanyByUserId(int $userId)
+    public function getCompanyByUserId(int $userId)
     {
-        $user=User::findOrFail($userId);
-        $company=Company::where('user_id', $userId)->first();
+        $user = User::findOrFail($userId);
+        $company = Company::where('user_id', $userId)->first();
+
         return $company;
     }
 
     public function verify(Company $company): void
-{
-    $user = $company->user;
+    {
+        $user = $company->user;
 
-    if ($user) {
-        $user->is_verified_by_admin = 'accepted';
-        $user->save();
-       }
+        if ($user) {
+            $user->is_verified_by_admin = 'accepted';
+            $user->save();
+        }
     }
 }

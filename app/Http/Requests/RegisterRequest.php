@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
@@ -17,11 +18,11 @@ class RegisterRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-       return [
+        return [
             'role' => 'required|in:student,company,supervisor',
 
             'name' => 'required|string|max:255',
@@ -37,10 +38,10 @@ class RegisterRequest extends FormRequest
             // 'profile_picture' => ['nullable', 'image', 'max:2048'],
 
             //  company fields
-             'industry' => 'required_if:role,company|string',
-             'website' => 'nullable|url',
-             'documentation_file' => 'required_if:role,company|file|max:2048|mimes:pdf,jpg,jpeg,png,doc,docx',
-             'location' => 'required_if:role,company|string',
+            'industry' => 'required_if:role,company|string',
+            'website' => 'nullable|url',
+            'documentation_file' => 'required_if:role,company|file|max:2048|mimes:pdf,jpg,jpeg,png,doc,docx',
+            'location' => 'required_if:role,company|string',
             // 'description' => 'nullable|string|max:1000',
 
             // supervisor fields

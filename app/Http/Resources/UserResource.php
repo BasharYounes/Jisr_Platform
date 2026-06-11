@@ -14,15 +14,14 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-          return [
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'is_verified_by_admin' => $this->is_verified_by_admin,
-            'profile_picture_url' => $this->profile_picture_url? asset('storage/' . $this->profile_picture_url): null,
+            'profile_picture_url' => $this->profile_picture_url ? asset('storage/'.$this->profile_picture_url) : null,
             'bio' => $this->bio,
             'is_active' => $this->is_active,
-          ];    
-    } 
-
+        ];
+    }
 }

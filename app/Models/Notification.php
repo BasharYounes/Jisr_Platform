@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
+    protected $guarded = [];
 
-    protected $guarded=[];
-     protected $casts = [
+    protected $casts = [
         'data' => 'array',
         'is_read' => 'boolean',
         'read_at' => 'datetime',

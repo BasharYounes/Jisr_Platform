@@ -15,16 +15,16 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id')
-          ->constrained()
-          ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('tag_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('tag_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->timestamps();
+            $table->timestamps();
 
-    $table->unique(['user_id', 'tag_id']);
+            $table->unique(['user_id', 'tag_id']);
         });
     }
 

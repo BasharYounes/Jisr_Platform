@@ -6,6 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class MarketTrend extends Model
 {
-        protected $guarded = [];
-
+    protected $guarded = [];
 }

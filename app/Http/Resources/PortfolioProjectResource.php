@@ -19,9 +19,9 @@ class PortfolioProjectResource extends JsonResource
             'project_url' => $this->project_url,
             'source' => $this->source,
 
-            'portfolioable' => $this->when($this->portfolioable_type && $this->portfolioable_id,fn () => [
-            'type' => $this->portfolioable_type,
-            'id' => $this->portfolioable_id,
+            'portfolioable' => $this->when($this->portfolioable_type && $this->portfolioable_id, fn () => [
+                'type' => $this->portfolioable_type,
+                'id' => $this->portfolioable_id,
             ]
             ),
 

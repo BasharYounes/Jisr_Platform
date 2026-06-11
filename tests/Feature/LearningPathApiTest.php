@@ -64,7 +64,7 @@ class LearningPathApiTest extends TestCase
 
         $otherUser = User::query()->create([
             'name' => 'Other Student',
-            'email' => 'other_' . uniqid() . '@example.com',
+            'email' => 'other_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
@@ -80,19 +80,19 @@ class LearningPathApiTest extends TestCase
     {
         $user = User::query()->create([
             'name' => 'Test Student',
-            'email' => 'student_' . uniqid() . '@example.com',
+            'email' => 'student_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
         $careerPath = CareerPath::query()->create([
-            'Name' => 'Backend Developer ' . uniqid(),
+            'Name' => 'Backend Developer '.uniqid(),
             'Description' => 'Backend development path',
         ]);
 
         $skill = Skill::query()->create([
             'name' => 'Laravel',
             'category' => 'Backend',
-            'normalized_name' => 'laravel_' . uniqid(),
+            'normalized_name' => 'laravel_'.uniqid(),
         ]);
 
         CareerPathSkill::query()->create([

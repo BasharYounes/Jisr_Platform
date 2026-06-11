@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProjectAssignmentController;
+use App\Http\Controllers\ProjectEvaluationController;
 use App\Http\Controllers\ProjectTaskController;
 use App\Http\Controllers\ProjectTemplateController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProjectEvaluationController;
 
 Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
     // Create project template

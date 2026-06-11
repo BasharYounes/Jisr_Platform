@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::create('complaints', function (Blueprint $table) {
             $table->id();
             $table->foreignId('complainant_user_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->foreignId('reported_user_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
-    $table->text('reason');
-    $table->enum('status', ['pending', 'under_review', 'resolved', 'rejected'])->default('pending');
-    $table->timestamp('resolved_at')->nullable();
-    $table->text('resolution_notes')->nullable();
+            $table->foreignId('reported_user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+            $table->text('reason');
+            $table->enum('status', ['pending', 'under_review', 'resolved', 'rejected'])->default('pending');
+            $table->timestamp('resolved_at')->nullable();
+            $table->text('resolution_notes')->nullable();
             $table->timestamps();
         });
     }

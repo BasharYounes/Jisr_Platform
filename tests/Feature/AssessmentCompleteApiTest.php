@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\AssessmentEvent;
 use App\Models\AssessmentQuestionAttempt;
 use App\Models\AssessmentSession;
 use App\Models\AssessmentSkillSession;
@@ -12,7 +13,6 @@ use App\Models\User;
 use App\Models\UserSkill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\AssessmentEvent;
 
 class AssessmentCompleteApiTest extends TestCase
 {
@@ -72,7 +72,7 @@ class AssessmentCompleteApiTest extends TestCase
 
         $otherUser = User::query()->create([
             'name' => 'Other Student',
-            'email' => 'other_' . uniqid() . '@example.com',
+            'email' => 'other_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
@@ -305,19 +305,19 @@ class AssessmentCompleteApiTest extends TestCase
     {
         $user = User::query()->create([
             'name' => 'Test Student',
-            'email' => 'student_' . uniqid() . '@example.com',
+            'email' => 'student_'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
 
         $careerPath = CareerPath::query()->create([
-            'Name' => 'Backend Developer ' . uniqid(),
+            'Name' => 'Backend Developer '.uniqid(),
             'Description' => 'Backend development path',
         ]);
 
         $skill = Skill::query()->create([
-            'name' => 'Laravel ' . uniqid(),
+            'name' => 'Laravel '.uniqid(),
             'category' => 'Backend',
-            'normalized_name' => 'laravel_' . uniqid(),
+            'normalized_name' => 'laravel_'.uniqid(),
         ]);
 
         $session = AssessmentSession::query()->create([

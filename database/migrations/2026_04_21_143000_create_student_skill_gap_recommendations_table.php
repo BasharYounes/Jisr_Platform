@@ -14,21 +14,21 @@ return new class extends Migration
         Schema::create('student_skill_gap_recommendations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')
-          ->constrained('users')
-          ->cascadeOnDelete();
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->foreignId('resource_id')
-          ->constrained('learning_resources')
-          ->cascadeOnDelete();
+            $table->foreignId('resource_id')
+                ->constrained('learning_resources')
+                ->cascadeOnDelete();
 
-    $table->foreignId('gap_skill_id')
-          ->constrained('skills')
-          ->cascadeOnDelete();
+            $table->foreignId('gap_skill_id')
+                ->constrained('skills')
+                ->cascadeOnDelete();
 
-    $table->enum('status', ['suggested', 'started', 'completed'])
-      ->default('suggested');
+            $table->enum('status', ['suggested', 'started', 'completed'])
+                ->default('suggested');
 
-    $table->timestamp('suggested_at')->useCurrent();
+            $table->timestamp('suggested_at')->useCurrent();
         });
     }
 

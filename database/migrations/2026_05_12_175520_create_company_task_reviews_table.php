@@ -14,45 +14,45 @@ return new class extends Migration
         Schema::create('company_task_reviews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_task_submission_id')
-            ->constrained('company_task_submissions')
-            ->cascadeOnDelete();
+                ->constrained('company_task_submissions')
+                ->cascadeOnDelete();
 
-        $table->foreignId('company_task_assignment_id')
-            ->constrained('company_task_assignments')
-            ->cascadeOnDelete();
+            $table->foreignId('company_task_assignment_id')
+                ->constrained('company_task_assignments')
+                ->cascadeOnDelete();
 
-        $table->foreignId('company_id')
-            ->constrained('companies')
-            ->cascadeOnDelete();
+            $table->foreignId('company_id')
+                ->constrained('companies')
+                ->cascadeOnDelete();
 
-        $table->foreignId('student_user_id')
-            ->constrained('users')
-            ->cascadeOnDelete();
+            $table->foreignId('student_user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-        $table->unsignedTinyInteger('quality_score');
-        $table->unsignedTinyInteger('commitment_score');
-        $table->unsignedTinyInteger('communication_score');
+            $table->unsignedTinyInteger('quality_score');
+            $table->unsignedTinyInteger('commitment_score');
+            $table->unsignedTinyInteger('communication_score');
 
-        $table->decimal('total_score', 5, 2)->nullable();
+            $table->decimal('total_score', 5, 2)->nullable();
 
-        $table->enum('final_decision', [
-            'approved',
-            'needs_changes',
-            'rejected',
-        ])->default('approved');
+            $table->enum('final_decision', [
+                'approved',
+                'needs_changes',
+                'rejected',
+            ])->default('approved');
 
-        $table->text('feedback')->nullable();
+            $table->text('feedback')->nullable();
 
-        $table->timestamp('reviewed_at')->nullable();
+            $table->timestamp('reviewed_at')->nullable();
 
-        $table->timestamps();
-        $table->softDeletes();
+            $table->timestamps();
+            $table->softDeletes();
 
-        $table->unique('company_task_submission_id');
+            $table->unique('company_task_submission_id');
 
-        $table->index(['company_task_assignment_id']);
-        $table->index(['student_user_id']);
-        $table->index(['company_id']);
+            $table->index(['company_task_assignment_id']);
+            $table->index(['student_user_id']);
+            $table->index(['company_id']);
         });
     }
 

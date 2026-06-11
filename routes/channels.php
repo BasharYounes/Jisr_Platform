@@ -6,7 +6,6 @@
 //     return (int) $user->id === (int) $id;
 // });
 
-
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 

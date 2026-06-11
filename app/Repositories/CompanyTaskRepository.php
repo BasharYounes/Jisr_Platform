@@ -17,6 +17,7 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
     {
         $task->update($data);
         $task->fresh(['company', 'skills']);
+
         return $task;
     }
 
@@ -64,35 +65,35 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
     }
 
     public function getExploreTasks(?string $title = null): Collection
-{
-    return CompanyTask::query()
-        ->with(['company', 'skills'])
-        ->where('status', 'published')
-        ->where('deadline', '>=', now())
-        ->when($title, function ($query) use ($title) {
-            $query->where('title', 'like', '%' . $title . '%');
-        })
-        ->latest('published_at')
-        ->get();
-}
+    {
+        return CompanyTask::query()
+            ->with(['company', 'skills'])
+            ->where('status', 'published')
+            ->where('deadline', '>=', now())
+            ->when($title, function ($query) use ($title) {
+                $query->where('title', 'like', '%'.$title.'%');
+            })
+            ->latest('published_at')
+            ->get();
+    }
 
-public function getAvailableTasksWithSkills(): Collection
-{
-    return CompanyTask::query()
-        ->with(['company', 'skills'])
-        ->where('status', 'published')
-        ->where('deadline', '>=', now())
-        ->latest('published_at')
-        ->get();
-}
+    public function getAvailableTasksWithSkills(): Collection
+    {
+        return CompanyTask::query()
+            ->with(['company', 'skills'])
+            ->where('status', 'published')
+            ->where('deadline', '>=', now())
+            ->latest('published_at')
+            ->get();
+    }
 
-public function findAvailableTaskOrFail(int $taskId): CompanyTask
-{
-    return CompanyTask::query()
-        ->with(['company', 'skills'])
-        ->where('id', $taskId)
-        ->where('status', 'published')
-        ->where('deadline', '>=', now())
-        ->firstOrFail();
-}
+    public function findAvailableTaskOrFail(int $taskId): CompanyTask
+    {
+        return CompanyTask::query()
+            ->with(['company', 'skills'])
+            ->where('id', $taskId)
+            ->where('status', 'published')
+            ->where('deadline', '>=', now())
+            ->firstOrFail();
+    }
 }

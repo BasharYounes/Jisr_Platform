@@ -24,11 +24,11 @@ class StudentProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
+
             // users table
             'name' => ['sometimes', 'string', 'max:255'],
             'bio' => ['sometimes', 'nullable', 'string'],
-            'email' => ['sometimes', 'email', 'max:255',Rule::unique('users', 'email')->ignore($this->user()->id)],
+            'email' => ['sometimes', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user()->id)],
             'profile_picture' => [
                 'sometimes',
                 'nullable',
@@ -41,21 +41,22 @@ class StudentProfileRequest extends FormRequest
             'university' => ['sometimes', 'nullable', 'string', 'max:255'],
             'major' => ['sometimes', 'nullable', 'string', 'max:128'],
             'graduation_year' => [
-            'sometimes',
-            'nullable',
-            'integer',
-            'digits:4',
-            'between:1900,' . now()->year,],
+                'sometimes',
+                'nullable',
+                'integer',
+                'digits:4',
+                'between:1900,'.now()->year, ],
 
             'phone' => [
-                 'sometimes',
-                 'nullable',
-                 'regex:/^(09\d{8}|\+9639\d{8})$/',
-                ],        
-            ];
+                'sometimes',
+                'nullable',
+                'regex:/^(09\d{8}|\+9639\d{8})$/',
+            ],
+        ];
 
     }
-          public function messages(): array
+
+    public function messages(): array
     {
         return [
             // Name
@@ -109,6 +110,6 @@ class StudentProfileRequest extends FormRequest
             'graduation_year' => 'graduation year / سنة التخرج',
             'phone' => 'phone number / رقم الهاتف',
         ];
-    
+
     }
 }

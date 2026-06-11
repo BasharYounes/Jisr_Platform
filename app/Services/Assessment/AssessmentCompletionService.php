@@ -3,19 +3,23 @@
 namespace App\Services\Assessment;
 
 use App\Models\AssessmentSkillSession;
+use App\Models\QuestionBank;
 
 class AssessmentCompletionService
 {
     private const MIN_QUESTIONS = 5;
+
     private const MAX_QUESTIONS = 10;
+
     private const REQUIRED_CONFIDENCE = 0.70;
+
     private const EXPECTED_TOPICS_FOR_CONFIDENCE = 3;
+
     private const MIN_TOPIC_COVERAGE_CONFIDENCE_FACTOR = 0.85;
 
     public function __construct(
         private readonly LevelEstimationService $levelEstimationService
-    ) {
-    }
+    ) {}
 
     public function completeSkillSessionIfEligible(AssessmentSkillSession $skillSession): AssessmentSkillSession
     {
@@ -175,6 +179,7 @@ class AssessmentCompletionService
                     && $attempt->NormalizedScore !== null
                     && $attempt->NormalizedScore !== '';
             })
+            ->filter(fn ($attempt) => $attempt->NormalizedScore !== null && $attempt->NormalizedScore !== '')
             ->map(function ($attempt) {
                 return [
                     'score' => (float) $attempt->NormalizedScore,
@@ -238,7 +243,7 @@ class AssessmentCompletionService
             ->unique()
             ->count();
 
-        $availableTopicCount = \App\Models\QuestionBank::query()
+        $availableTopicCount = QuestionBank::query()
             ->where('SkillID', $skillSession->SkillID)
             ->where('IsActive', true)
             ->whereNotNull('Topic')

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AssessmentSession extends Model
 {
     protected $table = 'assessment_sessions';
+
     protected $primaryKey = 'AssessmentSessionID';
 
     public const STATUS_IN_PROGRESS = 'in_progress';
@@ -57,5 +58,4 @@ class AssessmentSession extends Model
     {
         return 'AssessmentSessionID';
     }
-
 }

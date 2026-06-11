@@ -6,6 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class CompanyUser extends Model
 {
-        protected $guarded = [];
-
+    protected $guarded = [];
 }

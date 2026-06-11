@@ -15,15 +15,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('resource_id')->constrained('learning_resources')->cascadeOnDelete();
 
-    $table->foreignId('skill_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('skill_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->decimal('relevance_score', 5, 2)->default(1);
+            $table->decimal('relevance_score', 5, 2)->default(1);
 
-    $table->timestamps();
+            $table->timestamps();
 
-    $table->unique(['resource_id', 'skill_id']);
+            $table->unique(['resource_id', 'skill_id']);
         });
     }
 

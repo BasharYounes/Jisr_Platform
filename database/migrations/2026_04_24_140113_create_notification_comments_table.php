@@ -13,16 +13,15 @@ return new class extends Migration
     {
         Schema::create('notification_comments', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('notification_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('notification_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->foreignId('comment_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('comment_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
             $table->timestamps();
-
 
         });
     }

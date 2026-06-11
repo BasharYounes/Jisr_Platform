@@ -1,14 +1,12 @@
 <?php
 
 namespace App\Interfaces;
+
 use Illuminate\Support\Collection;
-
-
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface StudentTaskApplicationRepositoryInterface
 {
-      public function getApplicationsByStatus(
+    public function getApplicationsByStatus(
         int $studentUserId,
         string $status
     ): Collection;

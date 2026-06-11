@@ -8,7 +8,7 @@ class VerificationRequest extends Model
 {
     protected $guarded = [];
 
-   public function applicant()
+    public function applicant()
     {
         return $this->belongsTo(User::class, 'applicant_user_id');
     }
@@ -21,6 +21,6 @@ class VerificationRequest extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'tag_verification_request')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 }

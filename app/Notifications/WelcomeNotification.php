@@ -8,8 +8,6 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class WelcomeNotification extends Notification implements ShouldQueue
-
-
 {
     use Queueable;
 
@@ -36,9 +34,9 @@ class WelcomeNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-       return (new MailMessage)
+        return (new MailMessage)
             ->subject('Welcome to Jisr 🎉')
-            ->greeting('Hello ' . $notifiable->name)
+            ->greeting('Hello '.$notifiable->name)
             ->line('Your account has been created successfully.')
             ->line('We are happy to have you!')
             ->action('Visit Platform', url('/'))

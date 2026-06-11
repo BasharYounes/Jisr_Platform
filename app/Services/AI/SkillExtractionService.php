@@ -6,12 +6,11 @@ class SkillExtractionService
 {
     public function __construct(
         private readonly AIClientInterface $aiClient
-    ) {
-    }
+    ) {}
 
     public function extractSkills(string $resumeText, string $careerPath = 'Backend Developer'): array
     {
-        $systemPrompt = <<<PROMPT
+        $systemPrompt = <<<'PROMPT'
             You are an expert CV skill extraction engine.
 
             Return valid JSON only. Do not use markdown. Do not wrap the response in code fences.

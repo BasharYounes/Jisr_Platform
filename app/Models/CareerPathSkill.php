@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CareerPathSkill extends Model
 {
     protected $table = 'career_path_skills';
+
     protected $primaryKey = 'CareerPathSkillID';
 
     protected $fillable = [
