@@ -18,14 +18,11 @@ class StudentTaskProgressController extends Controller
         private readonly CompanyTaskProgressService $progressService
     ) {}
 
-    public function index(
-        Request $request,
-        int $assignmentId
-    ): JsonResponse {
+    public function index(Request $request, int $assignmentId): JsonResponse
+    {
         $result = $this->progressService->getStudentProgressUpdates(
             $assignmentId,
-            $request->user()->id
-        );
+            $request->user()->id);
 
         return $this->success(
             message: 'تم جلب تحديثات تقدم المهمة بنجاح. | Task progress updates retrieved successfully.',
@@ -48,18 +45,16 @@ class StudentTaskProgressController extends Controller
         );
     }
 
-    public function store(
-        StoreCompanyTaskProgressRequest $request,
-        int $assignmentId
-    ): JsonResponse {
+    public function store(StoreCompanyTaskProgressRequest $request, int $assignmentId): JsonResponse
+    {
         $progressUpdate = $this->progressService->createProgressUpdate(
             $assignmentId,
             $request->user()->id,
             $request->validated()
         );
 
-        $progressUpdate->load('student:id,name,email');
-
+        $progressUpdate->load('student:id,name,email,profile_picture_url');
+        
         return $this->success(
             message: 'تم إضافة تحديث التقدم بنجاح. | Progress update created successfully.',
             data: new CompanyTaskProgressResource($progressUpdate),

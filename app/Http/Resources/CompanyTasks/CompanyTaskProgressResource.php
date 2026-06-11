@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\CompanyTasks;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,10 +35,7 @@ class CompanyTaskProgressResource extends JsonResource
             'attachments' => collect($this->attachments ?? [])
                 ->map(function (string $path): array {
                     return [
-                        'name' => basename($path),
-                        'path' => $path,
                         'url' => asset('storage/'.$path),
-                        'extension' => pathinfo($path, PATHINFO_EXTENSION),
                     ];
                 })
                 ->values(),

@@ -46,7 +46,7 @@ class CompanyTaskProgressRepository implements CompanyTaskProgressRepositoryInte
             ->with([
                 'student:id,name,email',
             ])
-            ->oldest('created_at')
+            ->latest()
             ->get();
     }
 

@@ -14,131 +14,67 @@ class StoreCompanyTaskProgressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required','string','max:5000'],
 
-            'description' => [
-                'required',
-                'string',
-                'max:5000',
-            ],
+            'progress_percentage' => ['required','integer','between:0,100'],
 
-            'progress_percentage' => [
-                'required',
-                'integer',
-                'between:0,100',
-            ],
+            'github_url' => ['nullable','url','max:2048'],
 
-            'github_url' => [
-                'nullable',
-                'url',
-                'max:2048',
-            ],
-
-            'demo_url' => [
-                'nullable',
-                'url',
-                'max:2048',
-            ],
+            'demo_url' => ['nullable','url','max:2048'],
 
             'attachments' => [
-                'required',
-                'array',
-                'min:1',
-                'max:5',
-            ],
+                'required','array','min:1','max:5'],
 
-            'attachments.*' => [
-                'required',
-                'file',
-                'mimes:jpg,jpeg,png,pdf,json,zip',
-                'max:10240',
-            ],
+            'attachments.*' => ['required','file','mimes:jpg,jpeg,png,pdf,json,zip','max:10240'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'title.required' => [
-                'ar' => 'عنوان تحديث التقدم مطلوب.',
-                'en' => 'Progress update title is required.',
-            ],
-            'title.string' => [
-                'ar' => 'عنوان تحديث التقدم يجب أن يكون نصاً.',
-                'en' => 'Progress update title must be a string.',
-            ],
-            'title.max' => [
-                'ar' => 'عنوان تحديث التقدم يجب ألا يتجاوز 255 حرفاً.',
-                'en' => 'Progress update title must not exceed 255 characters.',
-            ],
+            'title.required' => 'عنوان تحديث التقدم مطلوب. | Progress update title is required.',
 
-            'description.required' => [
-                'ar' => 'وصف تحديث التقدم مطلوب.',
-                'en' => 'Progress update description is required.',
-            ],
-            'description.string' => [
-                'ar' => 'وصف تحديث التقدم يجب أن يكون نصاً.',
-                'en' => 'Progress update description must be a string.',
-            ],
-            'description.max' => [
-                'ar' => 'وصف تحديث التقدم يجب ألا يتجاوز 5000 حرف.',
-                'en' => 'Progress update description must not exceed 5000 characters.',
-            ],
+            'title.string' => 'عنوان تحديث التقدم يجب أن يكون نصاً. | Progress update title must be a string.',
 
-            'progress_percentage.required' => [
-                'ar' => 'نسبة التقدم مطلوبة.',
-                'en' => 'Progress percentage is required.',
-            ],
-            'progress_percentage.integer' => [
-                'ar' => 'نسبة التقدم يجب أن تكون رقماً صحيحاً.',
-                'en' => 'Progress percentage must be an integer.',
-            ],
-            'progress_percentage.between' => [
-                'ar' => 'نسبة التقدم يجب أن تكون بين 0 و100.',
-                'en' => 'Progress percentage must be between 0 and 100.',
-            ],
+            'title.max' => 'عنوان تحديث التقدم يجب ألا يتجاوز 255 حرفاً. | Progress update title must not exceed 255 characters.',
 
-            'github_url.url' => [
-                'ar' => 'رابط GitHub غير صالح.',
-                'en' => 'The GitHub URL is invalid.',
-            ],
-            'demo_url.url' => [
-                'ar' => 'رابط العرض التجريبي غير صالح.',
-                'en' => 'The demo URL is invalid.',
-            ],
+            'description.required' => 'وصف تحديث التقدم مطلوب. | Progress update description is required.',
 
-            'attachments.required' => [
-                'ar' => 'يجب إرفاق ملف واحد على الأقل لتوثيق التقدم.',
-                'en' => 'At least one progress evidence file is required.',
-            ],
-            'attachments.array' => [
-                'ar' => 'ملفات التوثيق يجب أن تكون ضمن قائمة.',
-                'en' => 'Attachments must be an array.',
-            ],
-            'attachments.min' => [
-                'ar' => 'يجب إرفاق ملف توثيق واحد على الأقل.',
-                'en' => 'At least one attachment is required.',
-            ],
-            'attachments.max' => [
-                'ar' => 'لا يمكن إرفاق أكثر من 5 ملفات.',
-                'en' => 'No more than 5 attachments may be uploaded.',
-            ],
-            'attachments.*.file' => [
-                'ar' => 'كل عنصر ضمن ملفات التوثيق يجب أن يكون ملفاً.',
-                'en' => 'Each attachment must be a valid file.',
-            ],
-            'attachments.*.mimes' => [
-                'ar' => 'صيغة ملف التوثيق غير مدعومة.',
-                'en' => 'The attachment file type is not supported.',
-            ],
-            'attachments.*.max' => [
-                'ar' => 'حجم كل ملف يجب ألا يتجاوز 10 ميغابايت.',
-                'en' => 'Each attachment must not exceed 10 MB.',
-            ],
+            'description.string' => 'وصف تحديث التقدم يجب أن يكون نصاً. | Progress update description must be a string.',
+
+            'description.max' => 'وصف تحديث التقدم يجب ألا يتجاوز 5000 حرف. | Progress update description must not exceed 5000 characters.',
+
+            'progress_percentage.required' => 'نسبة التقدم مطلوبة. | Progress percentage is required.',
+
+            'progress_percentage.integer' => 'نسبة التقدم يجب أن تكون رقماً صحيحاً. | Progress percentage must be an integer.',
+
+            'progress_percentage.between' => 'نسبة التقدم يجب أن تكون بين 0 و100. | Progress percentage must be between 0 and 100.',
+
+            'github_url.url' => 'رابط GitHub غير صالح. | The GitHub URL is invalid.',
+
+            'github_url.max' => 'رابط GitHub يجب ألا يتجاوز 2048 حرفاً. | The GitHub URL must not exceed 2048 characters.',
+
+            'demo_url.url' => 'رابط العرض التجريبي غير صالح. | The demo URL is invalid.',
+
+            'demo_url.max' => 'رابط العرض التجريبي يجب ألا يتجاوز 2048 حرفاً. | The demo URL must not exceed 2048 characters.',
+
+            'attachments.required' => 'يجب إرفاق ملف واحد على الأقل لتوثيق التقدم. | At least one progress evidence file is required.',
+
+            'attachments.array' => 'ملفات التوثيق يجب أن تكون ضمن قائمة. | Attachments must be an array.',
+
+            'attachments.min' => 'يجب إرفاق ملف توثيق واحد على الأقل. | At least one attachment is required.',
+
+            'attachments.max' => 'لا يمكن إرفاق أكثر من 5 ملفات. | No more than 5 attachments may be uploaded.',
+
+            'attachments.*.required' => 'ملف التوثيق مطلوب. | The attachment file is required.',
+
+            'attachments.*.file' => 'كل عنصر ضمن ملفات التوثيق يجب أن يكون ملفاً صالحاً. | Each attachment must be a valid file.',
+
+            'attachments.*.mimes' => 'صيغة ملف التوثيق غير مدعومة. | The attachment file type is not supported.',
+
+            'attachments.*.max' => 'حجم كل ملف يجب ألا يتجاوز 10 ميغابايت. | Each attachment must not exceed 10 MB.',
         ];
+
     }
 }
