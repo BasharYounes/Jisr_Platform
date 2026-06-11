@@ -54,7 +54,7 @@ class StudentTaskProgressController extends Controller
         );
 
         $progressUpdate->load('student:id,name,email,profile_picture_url');
-        
+
         return $this->success(
             message: 'تم إضافة تحديث التقدم بنجاح. | Progress update created successfully.',
             data: new CompanyTaskProgressResource($progressUpdate),

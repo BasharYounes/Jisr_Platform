@@ -3,6 +3,7 @@
 namespace App\Interfaces;
 
 use App\Models\CompanyTaskAssignment;
+use Illuminate\Support\Collection;
 
 interface CompanyTaskAssignmentRepositoryInterface
 {
@@ -12,8 +13,8 @@ interface CompanyTaskAssignmentRepositoryInterface
 
     public function getByCompany(int $companyId): Collection;
 
-public function findCompanyAssignmentDetailsOrFail(
-    int $companyId,
-    int $assignmentId
-): CompanyTaskAssignment;
+    public function findCompanyAssignmentDetailsOrFail(
+        int $companyId,
+        int $assignmentId
+    ): CompanyTaskAssignment;
 }

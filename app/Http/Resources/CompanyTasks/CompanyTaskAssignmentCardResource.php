@@ -25,7 +25,7 @@ class CompanyTaskAssignmentCardResource extends JsonResource
                 'name' => $this->student?->name,
                 'email' => $this->student?->email,
                 'profile_picture_url' => $this->student?->profile_picture_url
-                    ? asset('storage/' . $this->student->profile_picture_url)
+                    ? asset('storage/'.$this->student->profile_picture_url)
                     : null,
             ],
 
@@ -33,7 +33,7 @@ class CompanyTaskAssignmentCardResource extends JsonResource
                 'score' => $this->application?->match_score !== null
                     ? (float) $this->application->match_score
                     : null,
-                'reasons' => $this->application?->match_reasons ?? [],
+                // 'reasons' => $this->application?->match_reasons ?? [],
             ],
 
             'started_at' => $this->started_at?->toISOString(),

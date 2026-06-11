@@ -15,18 +15,18 @@ class StoreCompanyTaskProgressRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'description' => ['required','string','max:5000'],
+            'description' => ['required', 'string', 'max:5000'],
 
-            'progress_percentage' => ['required','integer','between:0,100'],
+            'progress_percentage' => ['required', 'integer', 'between:0,100'],
 
-            'github_url' => ['nullable','url','max:2048'],
+            'github_url' => ['nullable', 'url', 'max:2048'],
 
-            'demo_url' => ['nullable','url','max:2048'],
+            'demo_url' => ['nullable', 'url', 'max:2048'],
 
             'attachments' => [
-                'required','array','min:1','max:5'],
+                'required', 'array', 'min:1', 'max:5'],
 
-            'attachments.*' => ['required','file','mimes:jpg,jpeg,png,pdf,json,zip','max:10240'],
+            'attachments.*' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf,json,zip', 'max:10240'],
         ];
     }
 
