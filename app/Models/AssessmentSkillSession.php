@@ -10,6 +10,12 @@ class AssessmentSkillSession extends Model
 
     protected $primaryKey = 'AssessmentSkillSessionID';
 
+    public const STATUS_IN_PROGRESS = 'in_progress';
+
+    public const STATUS_COMPLETED = 'completed';
+
+    public const STATUS_NEEDS_REVIEW = 'needs_review';
+
     protected $fillable = [
         'AssessmentSessionID',
         'SkillID',

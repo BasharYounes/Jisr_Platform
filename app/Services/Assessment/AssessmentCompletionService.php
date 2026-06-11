@@ -28,7 +28,26 @@ class AssessmentCompletionService
             'assessmentSession',
         ]);
 
-        if ($this->isAlreadyCompleted($skillSession)) {
+        if (
+            $this->isAlreadyCompleted($skillSession)
+            || $this->isAlreadyNeedsReview($skillSession)
+        ) {
+            return $skillSession->fresh([
+                'questionAttempts.questionBank',
+                'assessmentSession',
+            ]);
+        }
+
+        $completionReason = $this->resolveCompletionReason($skillSession);
+
+        if ($completionReason === 'needs_review_limit_reached') {
+            $skillSession->forceFill([
+                'Status' => AssessmentSkillSession::STATUS_NEEDS_REVIEW,
+                'FinalLevel' => null,
+                'ConfidenceScore' => null,
+                'CompletedAt' => null,
+            ])->save();
+
             return $skillSession->fresh([
                 'questionAttempts.questionBank',
                 'assessmentSession',
@@ -55,7 +74,7 @@ class AssessmentCompletionService
                 skillSession: $skillSession,
                 attempts: $attempts
             ),
-            'Status' => 'completed',
+            'Status' => AssessmentSkillSession::STATUS_COMPLETED,
             'CompletedAt' => now(),
         ])->save();
 
@@ -76,9 +95,14 @@ class AssessmentCompletionService
             return true;
         }
 
-        $attempts = $this->extractEvaluatedAttempts($skillSession);
+        $completionReason = $this->resolveCompletionReason($skillSession);
 
-        return $this->shouldComplete($attempts);
+        return in_array($completionReason, [
+            'max_questions_reached',
+            'confidence_threshold_reached',
+            'needs_review_limit_reached',
+            'already_completed',
+        ], true);
     }
 
     public function resolveCompletionReason(AssessmentSkillSession $skillSession): string
@@ -92,15 +116,29 @@ class AssessmentCompletionService
             return 'already_completed';
         }
 
+        if ($this->isAlreadyNeedsReview($skillSession)) {
+            return 'needs_review_limit_reached';
+        }
+
         $attempts = $this->extractEvaluatedAttempts($skillSession);
 
-        $questionCount = count($attempts);
+        $evaluatedQuestionCount = count($attempts);
+        $answeredQuestionCount = $this->countAnsweredAttempts($skillSession);
+        $reviewQuestionCount = $this->countReviewAttempts($skillSession);
 
-        if ($questionCount < self::MIN_QUESTIONS) {
+        if (
+            $evaluatedQuestionCount < self::MIN_QUESTIONS
+            && $answeredQuestionCount >= self::MAX_QUESTIONS
+            && $reviewQuestionCount > 0
+        ) {
+            return 'needs_review_limit_reached';
+        }
+
+        if ($evaluatedQuestionCount < self::MIN_QUESTIONS) {
             return 'not_completed';
         }
 
-        if ($questionCount >= self::MAX_QUESTIONS) {
+        if ($evaluatedQuestionCount >= self::MAX_QUESTIONS) {
             return 'max_questions_reached';
         }
 
@@ -136,6 +174,11 @@ class AssessmentCompletionService
     {
         return $skillSession->questionAttempts
             ->sortBy('AskedAt')
+            ->filter(function ($attempt) {
+                return $attempt->LlmEvaluationStatus === 'completed'
+                    && $attempt->NormalizedScore !== null
+                    && $attempt->NormalizedScore !== '';
+            })
             ->filter(fn ($attempt) => $attempt->NormalizedScore !== null && $attempt->NormalizedScore !== '')
             ->map(function ($attempt) {
                 return [
@@ -157,8 +200,13 @@ class AssessmentCompletionService
 
     private function isAlreadyCompleted(AssessmentSkillSession $skillSession): bool
     {
-        return $skillSession->Status === 'completed'
+        return $skillSession->Status === AssessmentSkillSession::STATUS_COMPLETED
             && $skillSession->FinalLevel !== null;
+    }
+
+    private function isAlreadyNeedsReview(AssessmentSkillSession $skillSession): bool
+    {
+        return $skillSession->Status === AssessmentSkillSession::STATUS_NEEDS_REVIEW;
     }
 
     private function resolveStartingLevel(AssessmentSkillSession $skillSession): float
@@ -189,6 +237,7 @@ class AssessmentCompletionService
         $skillSession->loadMissing('questionAttempts.questionBank');
 
         $testedTopicCount = $skillSession->questionAttempts
+            ->filter(fn ($attempt) => $attempt->LlmEvaluationStatus === 'completed')
             ->pluck('questionBank.Topic')
             ->filter()
             ->unique()
@@ -218,4 +267,19 @@ class AssessmentCompletionService
 
         return round(max(0.0, min(1.0, $baseConfidence * $confidenceFactor)), 2);
     }
+
+    private function countReviewAttempts(AssessmentSkillSession $skillSession): int
+    {
+        return $skillSession->questionAttempts
+            ->filter(fn ($attempt) => $attempt->LlmEvaluationStatus === 'needs_review')
+            ->count();
+    }
+
+    private function countAnsweredAttempts(AssessmentSkillSession $skillSession): int
+    {
+        return $skillSession->questionAttempts
+            ->filter(fn ($attempt) => $attempt->AnsweredAt !== null)
+            ->count();
+    }
+
 }
