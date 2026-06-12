@@ -212,9 +212,8 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-p
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/task-assignments')->group(function () {
     Route::get('/{assignmentId}/progress', [StudentTaskProgressController::class, 'index'])->whereNumber('assignmentId');
     Route::post('/{assignmentId}/progress', [StudentTaskProgressController::class, 'store'])->whereNumber('assignmentId');
-});
+
 // Student task submission
-Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/task-assignments')->group(function () {
-    Route::post('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'store'])->whereNumber('assignmentId');
+     Route::post('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'store'])->whereNumber('assignmentId');
     Route::get('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'show'])->whereNumber('assignmentId');
 });

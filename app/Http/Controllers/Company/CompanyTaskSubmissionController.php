@@ -21,7 +21,7 @@ class CompanyTaskSubmissionController extends Controller
         Request $request,
         int $assignmentId
     ): JsonResponse {
-        $companyId = $this->getAuthenticatedCompanyId($request);
+        $companyId = $this->submissionService->getAuthenticatedCompanyId($request);
 
         $submission = $this->submissionService->getCompanySubmission(
             $assignmentId,
@@ -34,11 +34,5 @@ class CompanyTaskSubmissionController extends Controller
         );
     }
 
-    private function getAuthenticatedCompanyId(Request $request): int
-    {
-        return (int) $request->user()
-            ->companies()
-            ->firstOrFail()
-            ->id;
-    }
+   
 }

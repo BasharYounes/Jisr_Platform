@@ -21,10 +21,19 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
         return $task;
     }
 
-    public function findCompanyTaskOrFail(int $companyId, int $taskId): CompanyTask
-    {
+    public function findCompanyTaskOrFail(
+        int $companyId,
+        int $taskId
+    ): CompanyTask {
         return CompanyTask::query()
             ->with(['company', 'skills'])
+            ->withCount([
+                'assignments as accepted_students_count' => function ($query) {
+                    $query->where('status', '!=', 'cancelled');
+                },
+
+                'submissions as submissions_count',
+            ])
             ->where('company_id', $companyId)
             ->where('id', $taskId)
             ->firstOrFail();
@@ -34,6 +43,13 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
     {
         return CompanyTask::query()
             ->with(['skills'])
+            ->withCount([
+                'assignments as accepted_students_count' => function ($query) {
+                    $query->where('status', '!=', 'cancelled');
+                },
+
+                'submissions as submissions_count',
+            ])
             ->where('company_id', $companyId)
             ->latest()
             ->get();

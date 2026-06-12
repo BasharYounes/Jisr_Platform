@@ -38,7 +38,10 @@ class CompanyTaskSubmissionResource extends JsonResource
                     ? ['url' => asset('storage/'.$this->zip_file_path)] : null,
                 'notes' => $this->notes,
             ],
-
+            'stats' => [
+                'accepted_students_count' => (int) $this->accepted_students_count,
+                'submissions_count' => (int) $this->submissions_count,
+            ],
             'submitted_at' => $this->submitted_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),

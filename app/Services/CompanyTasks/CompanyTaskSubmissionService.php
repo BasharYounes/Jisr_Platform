@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+use Illuminate\Http\Request;
 
 class CompanyTaskSubmissionService
 {
@@ -28,11 +29,11 @@ class CompanyTaskSubmissionService
                 $studentUserId
             );
 
+        $this->ensureNoExistingSubmission($assignmentId);
+
         $this->ensureAssignmentCanBeSubmitted($assignment);
 
         $this->ensureDeadlineHasNotPassed($assignment);
-
-        $this->ensureNoExistingSubmission($assignmentId);
 
         $storedZipPath = null;
 
@@ -107,16 +108,33 @@ class CompanyTaskSubmissionService
     }
 
     private function ensureAssignmentCanBeSubmitted(
-        CompanyTaskAssignment $assignment
-    ): void {
-        if ($assignment->status !== 'working') {
-            throw ValidationException::withMessages([
-                'assignment' => [
-                    'لا يمكن تسليم هذه المهمة لأن حالة التنفيذ ليست قيد العمل. | This task cannot be submitted because the assignment is not in working status.',
-                ],
-            ]);
-        }
+    CompanyTaskAssignment $assignment
+): void {
+    if ($assignment->status === 'working') {
+        return;
     }
+
+    $message = match ($assignment->status) {
+        'submitted' =>
+            'تم إرسال التسليم النهائي لهذه المهمة مسبقًا، ولا يمكن إرسال تسليم آخر. | The final submission has already been sent, and another submission cannot be created.',
+
+        'reviewed' =>
+            'تمت مراجعة وتسليم هذه المهمة مسبقًا، ولا يمكن تعديل التسليم أو إرساله مجددًا. | This task has already been reviewed, and the submission cannot be sent again.',
+
+        'closed' =>
+            'تم إغلاق تنفيذ هذه المهمة، ولم يعد إرسال التسليم متاحًا. | This task assignment has been closed, and submission is no longer available.',
+
+        'cancelled' =>
+            'تم إلغاء تنفيذ هذه المهمة، لذلك لا يمكن إرسال تسليم نهائي. | This task assignment has been cancelled, so a final submission cannot be sent.',
+
+        default =>
+            'لا يمكن إرسال التسليم النهائي في الحالة الحالية للمهمة. | The final submission cannot be sent in the assignment’s current status.',
+    };
+
+    throw ValidationException::withMessages([
+        'assignment' => [$message],
+    ]);
+}
 
     private function ensureDeadlineHasNotPassed(
         CompanyTaskAssignment $assignment
@@ -173,5 +191,13 @@ class CompanyTaskSubmissionService
             "company-task-submissions/{$assignmentId}",
             'public'
         );
+    }
+
+     public  function getAuthenticatedCompanyId(Request $request): int
+    {
+        return (int) $request->user()
+            ->companies()
+            ->firstOrFail()
+            ->id;
     }
 }
