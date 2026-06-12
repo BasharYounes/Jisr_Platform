@@ -18,7 +18,6 @@ class CompanyTaskSubmissionResource extends JsonResource
                 'id' => $this->student?->id ?? $this->student_user_id,
                 'name' => $this->student?->name,
                 'email' => $this->student?->email,
-
                 'profile_picture_url' => $this->student?->profile_picture_url
                     ? asset('storage/'.$this->student->profile_picture_url)
                     : null,
@@ -36,12 +35,7 @@ class CompanyTaskSubmissionResource extends JsonResource
                 'demo_url' => $this->demo_url,
 
                 'zip_file' => $this->zip_file_path
-                    ? [
-                        'name' => basename($this->zip_file_path),
-                        'url' => asset('storage/'.$this->zip_file_path),
-                    ]
-                    : null,
-
+                    ? ['url' => asset('storage/'.$this->zip_file_path)] : null,
                 'notes' => $this->notes,
             ],
 
