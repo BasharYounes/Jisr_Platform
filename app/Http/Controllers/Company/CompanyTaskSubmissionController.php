@@ -33,6 +33,4 @@ class CompanyTaskSubmissionController extends Controller
             data: new CompanyTaskSubmissionResource($submission)
         );
     }
-
-   
 }
