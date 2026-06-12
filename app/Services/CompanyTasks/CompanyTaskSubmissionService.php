@@ -5,7 +5,6 @@ namespace App\Services\CompanyTasks;
 use App\Interfaces\CompanyTaskSubmissionRepositoryInterface;
 use App\Models\CompanyTaskAssignment;
 use App\Models\CompanyTaskSubmission;
-use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -186,13 +185,5 @@ class CompanyTaskSubmissionService
             "company-task-submissions/{$assignmentId}",
             'public'
         );
-    }
-
-    public function getAuthenticatedCompanyId(Request $request): int
-    {
-        return (int) $request->user()
-            ->companies()
-            ->firstOrFail()
-            ->id;
     }
 }

@@ -39,8 +39,13 @@ class CompanyTaskSubmissionResource extends JsonResource
                 'notes' => $this->notes,
             ],
             'stats' => [
-                'accepted_students_count' => (int) $this->accepted_students_count,
-                'submissions_count' => (int) $this->submissions_count,
+                'accepted_students_count' => (int) (
+                    $this->assignment?->task?->accepted_students_count ?? 0
+                ),
+
+                'submissions_count' => (int) (
+                    $this->assignment?->task?->submissions_count ?? 0
+                ),
             ],
             'submitted_at' => $this->submitted_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
