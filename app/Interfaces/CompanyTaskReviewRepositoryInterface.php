@@ -8,17 +8,21 @@ use App\Models\CompanyTaskSubmission;
 
 interface CompanyTaskReviewRepositoryInterface
 {
-    public function findCompanySubmissionOrFail(
-        int $submissionId,
+    public function findCompanyAssignmentOrFail(
+        int $assignmentId,
         int $companyId
-    ): CompanyTaskSubmission;
+    ): CompanyTaskAssignment;
+
+    public function findLatestSubmittedSubmissionForAssignment(
+        int $assignmentId
+    ): ?CompanyTaskSubmission;
 
     public function findBySubmission(
         int $submissionId
     ): ?CompanyTaskReview;
 
-    public function findCompanyReviewOrFail(
-        int $submissionId,
+    public function findLatestCompanyReviewByAssignmentOrFail(
+        int $assignmentId,
         int $companyId
     ): CompanyTaskReview;
 

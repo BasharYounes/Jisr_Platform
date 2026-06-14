@@ -9,21 +9,41 @@ use App\Models\CompanyTaskSubmission;
 
 class CompanyTaskReviewRepository implements CompanyTaskReviewRepositoryInterface
 {
-    public function findCompanySubmissionOrFail(
-        int $submissionId,
+    public function findCompanyAssignmentOrFail(
+        int $assignmentId,
         int $companyId
-    ): CompanyTaskSubmission {
-        return CompanyTaskSubmission::query()
-            ->whereKey($submissionId)
-            ->whereHas('assignment.task', function ($query) use ($companyId): void {
+    ): CompanyTaskAssignment {
+        return CompanyTaskAssignment::query()
+            ->whereKey($assignmentId)
+            ->whereHas('task', function ($query) use ($companyId): void {
                 $query->where('company_id', $companyId);
             })
+            ->with([
+                'task:id,company_id,title,deadline',
+                'student:id,name,email,profile_picture_url',
+                'submissions' => function ($query): void {
+                    $query->latest('id');
+                },
+                'reviews' => function ($query): void {
+                    $query->latest('id');
+                },
+            ])
+            ->firstOrFail();
+    }
+
+    public function findLatestSubmittedSubmissionForAssignment(
+        int $assignmentId
+    ): ?CompanyTaskSubmission {
+        return CompanyTaskSubmission::query()
+            ->where('company_task_assignment_id', $assignmentId)
+            ->where('status', 'submitted')
             ->with([
                 'assignment.task:id,company_id,title,deadline',
                 'student:id,name,email,profile_picture_url',
                 'review',
             ])
-            ->firstOrFail();
+            ->latest('id')
+            ->first();
     }
 
     public function findBySubmission(
@@ -34,12 +54,12 @@ class CompanyTaskReviewRepository implements CompanyTaskReviewRepositoryInterfac
             ->first();
     }
 
-    public function findCompanyReviewOrFail(
-        int $submissionId,
+    public function findLatestCompanyReviewByAssignmentOrFail(
+        int $assignmentId,
         int $companyId
     ): CompanyTaskReview {
         return CompanyTaskReview::query()
-            ->where('company_task_submission_id', $submissionId)
+            ->where('company_task_assignment_id', $assignmentId)
             ->where('company_id', $companyId)
             ->with([
                 'submission',
@@ -47,6 +67,7 @@ class CompanyTaskReviewRepository implements CompanyTaskReviewRepositoryInterfac
                 'student:id,name,email,profile_picture_url',
                 'company.users:id,name',
             ])
+            ->latest('id')
             ->firstOrFail();
     }
 

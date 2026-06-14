@@ -3,6 +3,7 @@
 namespace App\Services\CompanyTasks;
 
 use App\Interfaces\CompanyTaskReviewRepositoryInterface;
+use App\Models\CompanyTaskAssignment;
 use App\Models\CompanyTaskReview;
 use App\Models\CompanyTaskSubmission;
 use Illuminate\Support\Facades\DB;
@@ -15,18 +16,20 @@ class CompanyTaskReviewService
     ) {}
 
     public function createReview(
-        int $submissionId,
+        int $assignmentId,
         int $companyId,
         array $data
     ): CompanyTaskReview {
-        $submission = $this->reviewRepository
-            ->findCompanySubmissionOrFail(
-                submissionId: $submissionId,
+        $assignment = $this->reviewRepository
+            ->findCompanyAssignmentOrFail(
+                assignmentId: $assignmentId,
                 companyId: $companyId
             );
 
-        $this->ensureSubmissionCanBeReviewed($submission);
-        $this->ensureReviewDoesNotExist($submissionId);
+        $submission = $this->getLatestSubmittedSubmissionOrFail($assignment);
+
+        $this->ensureAssignmentCanBeReviewed($assignment, $submission);
+        $this->ensureReviewDoesNotExist($submission->id);
 
         $totalScore = $this->calculateTotalScore(
             qualityScore: (int) $data['quality_score'],
@@ -35,6 +38,7 @@ class CompanyTaskReviewService
         );
 
         $review = DB::transaction(function () use (
+            $assignment,
             $submission,
             $companyId,
             $data,
@@ -42,9 +46,9 @@ class CompanyTaskReviewService
         ): CompanyTaskReview {
             $review = $this->reviewRepository->create([
                 'company_task_submission_id' => $submission->id,
-                'company_task_assignment_id' => $submission->company_task_assignment_id,
+                'company_task_assignment_id' => $assignment->id,
                 'company_id' => $companyId,
-                'student_user_id' => $submission->student_user_id,
+                'student_user_id' => $assignment->student_user_id,
 
                 'quality_score' => $data['quality_score'],
                 'commitment_score' => $data['commitment_score'],
@@ -64,10 +68,8 @@ class CompanyTaskReviewService
             );
 
             $this->reviewRepository->updateAssignment(
-                $submission->assignment,
-                $this->getAssignmentState(
-                    $data['final_decision']
-                )
+                $assignment,
+                $this->getAssignmentState($data['final_decision'])
             );
 
             return $review;
@@ -82,38 +84,60 @@ class CompanyTaskReviewService
     }
 
     public function getCompanyReview(
-        int $submissionId,
+        int $assignmentId,
         int $companyId
     ): CompanyTaskReview {
         return $this->reviewRepository
-            ->findCompanyReviewOrFail(
-                submissionId: $submissionId,
+            ->findLatestCompanyReviewByAssignmentOrFail(
+                assignmentId: $assignmentId,
                 companyId: $companyId
             );
     }
 
-    private function ensureSubmissionCanBeReviewed(
+    private function getLatestSubmittedSubmissionOrFail(
+        CompanyTaskAssignment $assignment
+    ): CompanyTaskSubmission {
+        $submission = $this->reviewRepository
+            ->findLatestSubmittedSubmissionForAssignment($assignment->id);
+
+        if ($submission === null) {
+            throw ValidationException::withMessages([
+                'submission' => [
+                    'لا يوجد تسليم نهائي جاهز للمراجعة لهذا التكليف. | There is no submitted final submission ready for review for this assignment.',
+                ],
+            ]);
+        }
+
+        return $submission;
+    }
+
+    private function ensureAssignmentCanBeReviewed(
+        CompanyTaskAssignment $assignment,
         CompanyTaskSubmission $submission
     ): void {
         if (
-            $submission->status === 'submitted'
-            && $submission->assignment?->status === 'submitted'
+            $assignment->status === 'submitted'
+            && $submission->status === 'submitted'
         ) {
             return;
         }
 
-        $message = match ($submission->status) {
-            'approved' => 'تم اعتماد هذا التسليم مسبقًا. | This submission has already been approved.',
+        $message = match (true) {
+            $assignment->status === 'working' => 'لا يمكن مراجعة هذا التكليف قبل أن يرسل الطالب التسليم النهائي. | This assignment cannot be reviewed before the student submits the final submission.',
 
-            'needs_changes' => 'تمت مراجعة هذا التسليم وطلب تعديلات عليه مسبقًا. | This submission has already been reviewed and changes were requested.',
+            $assignment->status === 'reviewed' => 'تمت مراجعة هذا التكليف مسبقًا. | This assignment has already been reviewed.',
 
-            'rejected' => 'تم رفض هذا التسليم مسبقًا. | This submission has already been rejected.',
+            $submission->status === 'approved' => 'تم اعتماد هذا التسليم مسبقًا. | This submission has already been approved.',
 
-            default => 'لا يمكن مراجعة التسليم في حالته الحالية. | The submission cannot be reviewed in its current status.',
+            $submission->status === 'needs_changes' => 'تمت مراجعة هذا التسليم وطلب تعديلات عليه مسبقًا. | This submission has already been reviewed and changes were requested.',
+
+            $submission->status === 'rejected' => 'تم رفض هذا التسليم مسبقًا. | This submission has already been rejected.',
+
+            default => 'لا يمكن مراجعة هذا التكليف في حالته الحالية. | The assignment cannot be reviewed in its current status.',
         };
 
         throw ValidationException::withMessages([
-            'submission' => [$message],
+            'assignment' => [$message],
         ]);
     }
 

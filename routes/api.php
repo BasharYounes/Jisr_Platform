@@ -145,17 +145,21 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assign
     Route::get('/', 'index');
     Route::get('/{assignmentId}', 'show')->whereNumber('assignmentId');
 });
-// company task submission
-Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->group(function () {
-    Route::get('/{assignmentId}/submission', [CompanyTaskSubmissionController::class, 'show'])->whereNumber('assignmentId');
-    // Company Review
-    Route::post('/{submissionId}/review', [CompanyTaskReviewController::class, 'store'])->whereNumber('submissionId');
-    Route::get('/{submissionId}/review', [CompanyTaskReviewController::class, 'show'])->whereNumber('submissionId');
-});
 
 // Company Task Assignments Progress
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->group(function () {
     Route::get('/{assignmentId}/progress', [CompanyTaskProgressController::class, 'index'])->whereNumber('assignmentId');
+});
+// company task submission
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskSubmissionController::class)->group(function () {
+    Route::get('/{assignmentId}/submission', 'show')->whereNumber('assignmentId');
+});
+
+// Company Review
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks/reviews')->controller(CompanyTaskReviewController::class)->group(function () {
+
+    Route::post('/{assignmentId}/review', 'store')->whereNumber('assignmentId');
+    Route::get('/{assignmentId}/review', 'show')->whereNumber('assignmentId');
 });
 // /============
 // Conversation

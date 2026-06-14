@@ -20,10 +20,10 @@ class CompanyTaskReviewController extends Controller
 
     public function store(
         StoreCompanyTaskReviewRequest $request,
-        int $submissionId
+        int $assignmentId
     ): JsonResponse {
         $review = $this->reviewService->createReview(
-            submissionId: $submissionId,
+            assignmentId: $assignmentId,
             companyId: $this->getAuthenticatedCompanyId($request),
             data: $request->validated()
         );
@@ -37,10 +37,10 @@ class CompanyTaskReviewController extends Controller
 
     public function show(
         Request $request,
-        int $submissionId
+        int $assignmentId
     ): JsonResponse {
         $review = $this->reviewService->getCompanyReview(
-            submissionId: $submissionId,
+            assignmentId: $assignmentId,
             companyId: $this->getAuthenticatedCompanyId($request)
         );
 
