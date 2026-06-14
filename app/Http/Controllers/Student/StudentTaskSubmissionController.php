@@ -34,10 +34,10 @@ class StudentTaskSubmissionController extends Controller
         //     statusCode: 201
         // );
         return $this->success(
-    message: 'تم إرسال التسليم النهائي بنجاح. | Final submission sent successfully.',
-    data: null,
-    statusCode: 201
-);
+            message: 'تم إرسال التسليم النهائي بنجاح. | Final submission sent successfully.',
+            data: null,
+            statusCode: 201
+        );
     }
 
     public function show(

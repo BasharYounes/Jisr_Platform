@@ -10,6 +10,7 @@ use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
 use App\Interfaces\CompanyTaskProgressRepositoryInterface;
 use App\Interfaces\CompanyTaskRepositoryInterface;
+use App\Interfaces\CompanyTaskReviewRepositoryInterface;
 use App\Interfaces\CompanyTaskSubmissionRepositoryInterface;
 use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
@@ -40,6 +41,7 @@ use App\Repositories\CompanyTaskApplicationRepository;
 use App\Repositories\CompanyTaskAssignmentRepository;
 use App\Repositories\CompanyTaskProgressRepository;
 use App\Repositories\CompanyTaskRepository;
+use App\Repositories\CompanyTaskReviewRepository;
 use App\Repositories\CompanyTaskSubmissionRepository;
 use App\Repositories\ConversationParticipantRepository;
 use App\Repositories\ConversationRepository;
@@ -139,6 +141,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CompanyTaskSubmissionRepositoryInterface::class,
             CompanyTaskSubmissionRepository::class
+        );
+
+        $this->app->bind(
+            CompanyTaskReviewRepositoryInterface::class,
+            CompanyTaskReviewRepository::class
         );
 
         $this->app->bind(AIClientInterface::class, function () {

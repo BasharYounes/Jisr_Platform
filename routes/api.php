@@ -13,6 +13,7 @@ use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskAssignmentController;
 use App\Http\Controllers\Company\CompanyTaskController;
 use App\Http\Controllers\Company\CompanyTaskProgressController;
+use App\Http\Controllers\Company\CompanyTaskReviewController;
 use App\Http\Controllers\Company\CompanyTaskSubmissionController;
 use App\Http\Controllers\CompanyHomeController;
 use App\Http\Controllers\Conversations\ConversationController;
@@ -147,6 +148,9 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assign
 // company task submission
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->group(function () {
     Route::get('/{assignmentId}/submission', [CompanyTaskSubmissionController::class, 'show'])->whereNumber('assignmentId');
+    // Company Review
+    Route::post('/{submissionId}/review', [CompanyTaskReviewController::class, 'store'])->whereNumber('submissionId');
+    Route::get('/{submissionId}/review', [CompanyTaskReviewController::class, 'show'])->whereNumber('submissionId');
 });
 
 // Company Task Assignments Progress
