@@ -7,6 +7,7 @@ use App\Http\Requests\SubmitAnswerRequest;
 use App\Models\AssessmentAnswer;
 use App\Models\AssessmentQuestionAttempt;
 use App\Services\AI\AnswerEvaluationService;
+use App\Services\Assessment\EvaluationValidationService;
 use App\Services\Assessment\AssessmentTelemetryService;
 use App\Services\Assessment\LevelEstimationService;
 use App\Support\ApiResponse;
@@ -18,8 +19,10 @@ class AssessmentAnswerController extends Controller
     public function __construct(
         private readonly AnswerEvaluationService $answerEvaluationService,
         private readonly LevelEstimationService $levelEstimationService,
-        private AssessmentTelemetryService $telemetryService,
-    ) {}
+        private readonly AssessmentTelemetryService $telemetryService,
+        private readonly EvaluationValidationService $evaluationValidationService
+    ) {
+    }
 
     public function submit(SubmitAnswerRequest $request, $session, AssessmentQuestionAttempt $attempt): JsonResponse
     {
@@ -41,14 +44,34 @@ class AssessmentAnswerController extends Controller
 
         $levelBefore = $attempt->assessmentSkillSession->CurrentEstimatedLevel;
 
-        $evaluation = $this->answerEvaluationService->evaluate(
+        $rawEvaluation = $this->answerEvaluationService->evaluate(
             $attempt->questionBank,
             $answerText
         );
 
-        $normalizedScore = (float) ($evaluation['normalized_score'] ?? 0);
+        $evaluation = $this->evaluationValidationService->validateAndNormalize(
+            $attempt->questionBank,
+            $rawEvaluation
+        );
 
-        DB::transaction(function () use ($attempt, $answerText, $evaluation, $normalizedScore, $levelBefore) {
+        $normalizedScore = (float) $evaluation['normalized_score'];
+
+        $needsReview = (bool) data_get(
+            $evaluation,
+            'validation.needs_review',
+            false
+        );
+
+        DB::transaction(function () use (
+            $attempt,
+            $answerText,
+            $evaluation,
+            $normalizedScore,
+            $levelBefore,
+            $rawEvaluation,
+            $needsReview
+            ) {
+
             AssessmentAnswer::query()->create([
                 'AssessmentQuestionAttemptID' => $attempt->AssessmentQuestionAttemptID,
                 'AnswerText' => $answerText,
@@ -58,7 +81,9 @@ class AssessmentAnswerController extends Controller
 
             $attempt->update([
                 'AnsweredAt' => now(),
-                'LlmEvaluationStatus' => 'completed',
+                'LlmEvaluationStatus' => $needsReview
+                    ? 'needs_review'
+                    : 'completed',
                 'RawScore' => (float) ($evaluation['total_score'] ?? 0),
                 'NormalizedScore' => $normalizedScore,
                 'FeedbackText' => $evaluation['feedback_ar'] ?? null,
@@ -67,15 +92,23 @@ class AssessmentAnswerController extends Controller
 
             $skillSession = $attempt->assessmentSkillSession;
 
-            $newLevel = $this->levelEstimationService->resolveNextLevel(
-                (float) $skillSession->CurrentEstimatedLevel,
-                $normalizedScore
-            );
+            if ($needsReview) {
+                $newLevel = (float) $skillSession->CurrentEstimatedLevel;
 
-            $skillSession->update([
-                'CurrentEstimatedLevel' => $newLevel,
-                'QuestionCount' => $skillSession->QuestionCount + 1,
-            ]);
+                // $skillSession->update([
+                //     'QuestionCount' => $skillSession->QuestionCount + 1,
+                // ]);
+            } else {
+                $newLevel = $this->levelEstimationService->resolveNextLevel(
+                    (float) $skillSession->CurrentEstimatedLevel,
+                    $normalizedScore
+                );
+
+                $skillSession->update([
+                    'CurrentEstimatedLevel' => $newLevel,
+                    'QuestionCount' => $skillSession->QuestionCount + 1,
+                ]);
+            }
 
             $levelAfter = $attempt->assessmentSkillSession->fresh()->CurrentEstimatedLevel;
 
@@ -96,16 +129,25 @@ class AssessmentAnswerController extends Controller
                 'payload' => [
                     'question_level' => $attempt->questionBank->Level ?? null,
                     'difficulty_weight' => $attempt->questionBank->DifficultyWeight ?? null,
-                    'feedback' => $evaluation['feedback'] ?? null,
-                    'raw_evaluation' => $evaluation,
+                    'feedback' => $evaluation['feedback_ar'] ?? null,
+
+                    'validation' => $evaluation['validation'] ?? null,
+
+                    'raw_evaluation' => $rawEvaluation,
+                    'validated_evaluation' => $evaluation,
                 ],
             ]);
         });
 
-        return ApiResponse::success('Answer submitted and evaluated successfully.', [
+        $message = $needsReview
+        ? 'Answer submitted and flagged for review.'
+        : 'Answer submitted and evaluated successfully.';
+
+        return ApiResponse::success($message, [
             'attempt_id' => $attempt->AssessmentQuestionAttemptID,
             'normalized_score' => $normalizedScore,
             'feedback' => $evaluation['feedback_ar'] ?? null,
+            'needs_review' => $needsReview,
         ]);
     }
 

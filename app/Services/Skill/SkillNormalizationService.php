@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Skills;
+namespace App\Services\Skill;
 
 use App\Models\Skill;
 use App\Models\SkillAlias;
