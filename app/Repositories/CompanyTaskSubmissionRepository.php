@@ -44,7 +44,14 @@ class CompanyTaskSubmissionRepository implements CompanyTaskSubmissionRepository
         return CompanyTaskSubmission::query()
             ->where('company_task_assignment_id', $assignmentId)
             ->with([
-                'assignment.task:id,company_id,title,deadline,submission_type',
+                'assignment.task' => function ($query) {
+                    $query->withCount([
+                        'applications as accepted_students_count' => function ($query) {
+                            $query->where('status', 'accepted');
+                        },
+                        'submissions',
+                    ]);
+                },
                 'student:id,name,email,profile_picture_url',
             ])
             ->latest('submitted_at')

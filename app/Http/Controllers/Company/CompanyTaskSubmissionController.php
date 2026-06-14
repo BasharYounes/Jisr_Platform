@@ -29,7 +29,7 @@ class CompanyTaskSubmissionController extends Controller
         );
 
         return $this->success(
-            message: 'تم جلب التسليم النهائي للطالب بنجاح. | Student final submission retrieved successfully.',
+            message: 'تم جلب التسليم النهائي للطالب بنجاح',
             data: new CompanyTaskSubmissionResource($submission)
         );
     }

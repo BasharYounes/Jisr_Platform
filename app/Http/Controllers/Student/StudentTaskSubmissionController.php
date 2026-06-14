@@ -28,9 +28,14 @@ class StudentTaskSubmissionController extends Controller
             $request->validated()
         );
 
+        // return $this->success(
+        //     message: 'تم إرسال التسليم النهائي بنجاح. | Final submission sent successfully.',
+        // data: new CompanyTaskSubmissionResource($submission),
+        //     statusCode: 201
+        // );
         return $this->success(
             message: 'تم إرسال التسليم النهائي بنجاح. | Final submission sent successfully.',
-            data: new CompanyTaskSubmissionResource($submission),
+            data: null,
             statusCode: 201
         );
     }

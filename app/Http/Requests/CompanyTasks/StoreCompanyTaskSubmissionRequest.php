@@ -30,7 +30,7 @@ class StoreCompanyTaskSubmissionRequest extends FormRequest
             'zip_file' => [
                 'nullable',
                 'file',
-                'mimes:zip',
+                'mimes:zip,rar',
                 'max:51200',
             ],
 

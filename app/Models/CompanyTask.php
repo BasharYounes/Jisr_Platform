@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CompanyTask extends Model
@@ -56,5 +57,17 @@ class CompanyTask extends Model
     public function assignments()
     {
         return $this->hasMany(CompanyTaskAssignment::class);
+    }
+
+    public function submissions(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            CompanyTaskSubmission::class,
+            CompanyTaskAssignment::class,
+            'company_task_id',
+            'company_task_assignment_id',
+            'id',
+            'id'
+        );
     }
 }
