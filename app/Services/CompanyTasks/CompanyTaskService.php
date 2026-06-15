@@ -54,15 +54,15 @@ class CompanyTaskService
         });
     }
 
-   public function getCompanyTasks(
-    int $companyId,
-    ?string $status = null
-) {
-    return $this->companyTaskRepository->getByCompany(
-        companyId: $companyId,
-        status: $status
-    );
-}
+    public function getCompanyTasks(
+        int $companyId,
+        ?string $status = null
+    ) {
+        return $this->companyTaskRepository->getByCompany(
+            companyId: $companyId,
+            status: $status
+        );
+    }
 
     public function getCompanyTaskDetails(int $companyId, int $taskId): CompanyTask
     {
@@ -159,83 +159,83 @@ class CompanyTaskService
     }
 
     public function getTaskCancellationBlockingAssignments(
-    int $companyId,
-    int $taskId
-): Collection {
-    $task = $this->companyTaskRepository
-        ->findCompanyTaskWithAssignmentsOrFail(
-            companyId: $companyId,
-            taskId: $taskId
-        );
-
-    return $this->companyTaskRepository
-        ->getCancellationBlockingAssignmentsForTask($task);
-}
-
-public function cancelTask(
-    int $companyId,
-    int $taskId,
-    ?string $reason = null
-): CompanyTask {
-    return DB::transaction(function () use (
-        $companyId,
-        $taskId,
-        $reason
-    ): CompanyTask {
+        int $companyId,
+        int $taskId
+    ): Collection {
         $task = $this->companyTaskRepository
             ->findCompanyTaskWithAssignmentsOrFail(
                 companyId: $companyId,
                 taskId: $taskId
             );
 
-        $this->ensureTaskCanBeCancelled($task);
-
-        $blockingAssignments = $this->companyTaskRepository
+        return $this->companyTaskRepository
             ->getCancellationBlockingAssignmentsForTask($task);
+    }
 
-        if ($blockingAssignments->isNotEmpty()) {
+    public function cancelTask(
+        int $companyId,
+        int $taskId,
+        ?string $reason = null
+    ): CompanyTask {
+        return DB::transaction(function () use (
+            $companyId,
+            $taskId,
+            $reason
+        ): CompanyTask {
+            $task = $this->companyTaskRepository
+                ->findCompanyTaskWithAssignmentsOrFail(
+                    companyId: $companyId,
+                    taskId: $taskId
+                );
+
+            $this->ensureTaskCanBeCancelled($task);
+
+            $blockingAssignments = $this->companyTaskRepository
+                ->getCancellationBlockingAssignmentsForTask($task);
+
+            if ($blockingAssignments->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'assignments' => [
+                        'لا يمكن إلغاء التاسك لوجود طلاب تم قبولهم عليه. | Cannot cancel the task because there are accepted students assigned to it.',
+                    ],
+                ]);
+            }
+
+            $this->companyTaskRepository
+                ->rejectPendingApplicationsForCancelledTask(
+                    task: $task,
+                    reason: $reason
+                );
+
+            return $this->companyTaskRepository->cancel($task);
+        });
+    }
+
+    private function ensureTaskCanBeCancelled(
+        CompanyTask $task
+    ): void {
+        if ($task->status === 'cancelled') {
             throw ValidationException::withMessages([
-                'assignments' => [
-                    'لا يمكن إلغاء التاسك لوجود طلاب تم قبولهم عليه. | Cannot cancel the task because there are accepted students assigned to it.',
+                'task' => [
+                    'هذا التاسك ملغى مسبقًا. | This task is already cancelled.',
                 ],
             ]);
         }
 
-        $this->companyTaskRepository
-            ->rejectPendingApplicationsForCancelledTask(
-                task: $task,
-                reason: $reason
-            );
+        if ($task->status === 'closed') {
+            throw ValidationException::withMessages([
+                'task' => [
+                    'لا يمكن إلغاء تاسك مغلق. | A closed task cannot be cancelled.',
+                ],
+            ]);
+        }
 
-        return $this->companyTaskRepository->cancel($task);
-    });
-}
-
-private function ensureTaskCanBeCancelled(
-    CompanyTask $task
-): void {
-    if ($task->status === 'cancelled') {
-        throw ValidationException::withMessages([
-            'task' => [
-                'هذا التاسك ملغى مسبقًا. | This task is already cancelled.',
-            ],
-        ]);
+        if (! in_array($task->status, ['draft', 'published'], true)) {
+            throw ValidationException::withMessages([
+                'task' => [
+                    'يمكن إلغاء التاسك فقط قبل بدء التنفيذ. | A task can only be cancelled before execution starts.',
+                ],
+            ]);
+        }
     }
-
-    if ($task->status === 'closed') {
-        throw ValidationException::withMessages([
-            'task' => [
-                'لا يمكن إلغاء تاسك مغلق. | A closed task cannot be cancelled.',
-            ],
-        ]);
-    }
-
-    if (! in_array($task->status, ['draft', 'published'], true)) {
-        throw ValidationException::withMessages([
-            'task' => [
-                'يمكن إلغاء التاسك فقط قبل بدء التنفيذ. | A task can only be cancelled before execution starts.',
-            ],
-        ]);
-    }
-}
 }

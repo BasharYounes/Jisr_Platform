@@ -126,7 +126,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::put('/{taskId}', 'update')->whereNumber('taskId');
     Route::patch('/{taskId}/publish', 'publish')->whereNumber('taskId');
     Route::patch('/{taskId}/close', 'close')->whereNumber('taskId');
-    Route::patch('{taskId}/cancel', 'cancel')->whereNumber('taskId');    
+    Route::patch('{taskId}/cancel', 'cancel')->whereNumber('taskId');
 });
 
 // Get Skill for task

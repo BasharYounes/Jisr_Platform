@@ -14,9 +14,9 @@ interface CompanyTaskRepositoryInterface
     public function findCompanyTaskOrFail(int $companyId, int $taskId): CompanyTask;
 
     public function getByCompany(
-    int $companyId,
-    ?string $status = null
-): Collection;
+        int $companyId,
+        ?string $status = null
+    ): Collection;
 
     public function syncSkills(CompanyTask $task, array $skills): void;
 
@@ -35,22 +35,22 @@ interface CompanyTaskRepositoryInterface
     public function close(
         CompanyTask $task
     ): CompanyTask;
-    
-public function findCompanyTaskWithAssignmentsOrFail(
-    int $companyId,
-    int $taskId
-): CompanyTask;
 
-public function getCancellationBlockingAssignmentsForTask(
-    CompanyTask $task
-): Collection;
+    public function findCompanyTaskWithAssignmentsOrFail(
+        int $companyId,
+        int $taskId
+    ): CompanyTask;
 
-public function rejectPendingApplicationsForCancelledTask(
-    CompanyTask $task,
-    ?string $reason = null
-): int;
+    public function getCancellationBlockingAssignmentsForTask(
+        CompanyTask $task
+    ): Collection;
 
-public function cancel(
-    CompanyTask $task
-): CompanyTask;
+    public function rejectPendingApplicationsForCancelledTask(
+        CompanyTask $task,
+        ?string $reason = null
+    ): int;
+
+    public function cancel(
+        CompanyTask $task
+    ): CompanyTask;
 }
