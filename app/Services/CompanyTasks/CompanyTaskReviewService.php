@@ -12,7 +12,8 @@ use Illuminate\Validation\ValidationException;
 class CompanyTaskReviewService
 {
     public function __construct(
-        private readonly CompanyTaskReviewRepositoryInterface $reviewRepository
+        private readonly CompanyTaskReviewRepositoryInterface $reviewRepository,
+        private readonly TaskPortfolioProjectService $taskPortfolioProjectService,
     ) {}
 
     public function createReview(
@@ -74,6 +75,11 @@ class CompanyTaskReviewService
 
             return $review;
         });
+
+        if ($review->final_decision === 'approved') {
+            $this->taskPortfolioProjectService
+                ->createFromApprovedReview($review);
+        }
 
         return $review->load([
             'submission',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyTasks\StoreCompanyTaskRequest;
 use App\Http\Requests\CompanyTasks\UpdateCompanyTaskRequest;
+use App\Http\Resources\CompanyTasks\CompanyTaskAssignmentDetailsResource;
 use App\Http\Resources\CompanyTasks\CompanyTaskResource;
 use App\Services\CompanyTasks\CompanyTaskService;
 use Illuminate\Http\JsonResponse;
@@ -81,6 +82,40 @@ class CompanyTaskController extends Controller
 
         return response()->json([
             'message' => 'تم نشر المهمة بنجاح. | Task published successfully.',
+            'data' => new CompanyTaskResource($task),
+        ]);
+    }
+
+    public function close(int $taskId): JsonResponse
+    {
+        $companyId = Auth::user()->companies()->firstOrFail()->id;
+
+        $blockingAssignments = $this->companyTaskService
+            ->getTaskCloseBlockingAssignments(
+                companyId: $companyId,
+                taskId: $taskId
+            );
+
+        if ($blockingAssignments->isNotEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'لا يمكن إغلاق التاسك قبل تقييم كل الطلاب المرتبطين به. | Cannot close the task before reviewing all assigned students.',
+                'data' => [
+                    'unreviewed_assignments' => CompanyTaskAssignmentDetailsResource::collection(
+                        $blockingAssignments
+                    ),
+                ],
+            ], 422);
+        }
+
+        $task = $this->companyTaskService->closeTask(
+            companyId: $companyId,
+            taskId: $taskId
+        );
+
+        return response()->json([
+            'status' => true,
+            'message' => 'تم إغلاق التاسك بنجاح. | Task closed successfully.',
             'data' => new CompanyTaskResource($task),
         ]);
     }

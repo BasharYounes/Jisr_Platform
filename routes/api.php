@@ -125,6 +125,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::get('/{taskId}', 'show');
     Route::put('/{taskId}', 'update');
     Route::patch('/{taskId}/publish', 'publish');
+    Route::patch('/{taskId}/close', 'close');
 });
 
 // Get Skill for task
@@ -138,7 +139,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::get('/applications/student/details/{applicationId}', 'show');
     Route::post('/applications/accept/{applicationId}', 'accept');
     Route::post('/applications/reject/{applicationId}', 'reject');
-    Route::patch('/{taskId}/close', 'close');
+
 });
 
 //  Tasks Assignment

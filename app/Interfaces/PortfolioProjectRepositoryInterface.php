@@ -16,4 +16,10 @@ interface PortfolioProjectRepositoryInterface
     public function update(PortfolioProject $project, array $data): PortfolioProject;
 
     public function delete(PortfolioProject $project): void;
+
+    public function findByPortfolioable(
+        int $userId,
+        string $portfolioableType,
+        int $portfolioableId
+    ): ?PortfolioProject;
 }

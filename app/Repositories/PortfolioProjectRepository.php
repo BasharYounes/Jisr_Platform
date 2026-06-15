@@ -40,4 +40,16 @@ class PortfolioProjectRepository implements PortfolioProjectRepositoryInterface
     {
         $project->delete();
     }
+
+    public function findByPortfolioable(
+        int $userId,
+        string $portfolioableType,
+        int $portfolioableId
+    ): ?PortfolioProject {
+        return PortfolioProject::query()
+            ->where('user_id', $userId)
+            ->where('portfolioable_type', $portfolioableType)
+            ->where('portfolioable_id', $portfolioableId)
+            ->first();
+    }
 }
