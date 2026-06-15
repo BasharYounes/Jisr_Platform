@@ -122,10 +122,11 @@ Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store');
-    Route::get('/{taskId}', 'show');
-    Route::put('/{taskId}', 'update');
-    Route::patch('/{taskId}/publish', 'publish');
-    Route::patch('/{taskId}/close', 'close');
+    Route::get('/{taskId}', 'show')->whereNumber('taskId');
+    Route::put('/{taskId}', 'update')->whereNumber('taskId');
+    Route::patch('/{taskId}/publish', 'publish')->whereNumber('taskId');
+    Route::patch('/{taskId}/close', 'close')->whereNumber('taskId');
+    Route::patch('{taskId}/cancel', 'cancel')->whereNumber('taskId');    
 });
 
 // Get Skill for task

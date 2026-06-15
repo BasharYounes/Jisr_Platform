@@ -11,20 +11,41 @@ use App\Services\CompanyTasks\CompanyTaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 class CompanyTaskController extends Controller
 {
     public function __construct(
         private readonly CompanyTaskService $companyTaskService
     ) {}
 
-    public function index(): AnonymousResourceCollection
-    {
-        $companyId = Auth::user()->companies()->firstOrFail()->id;
-        $tasks = $this->companyTaskService->getCompanyTasks($companyId);
+   public function index(Request $request): JsonResponse
+{
+    $companyId = Auth::user()->companies()->firstOrFail()->id;
 
-        return CompanyTaskResource::collection($tasks);
-    }
+    $data = $request->validate([
+        'status' => [
+            'nullable',
+            'string',
+            Rule::in([
+                'draft',
+                'published',
+                'in_progress',
+                'closed',
+                'cancelled',
+            ]),
+        ],
+    ]);
+
+    $tasks = $this->companyTaskService->getCompanyTasks(
+        companyId: $companyId,
+        status: $data['status'] ?? null
+    );
+
+    return response()->json([
+        'data' => CompanyTaskResource::collection($tasks),
+    ]);
+}
 
     public function store(StoreCompanyTaskRequest $request): JsonResponse
     {
@@ -119,4 +140,47 @@ class CompanyTaskController extends Controller
             'data' => new CompanyTaskResource($task),
         ]);
     }
+
+    public function cancel(Request $request, int $taskId): JsonResponse
+{
+    $companyId = Auth::user()->companies()->firstOrFail()->id;
+
+    $data = $request->validate([
+        'reason' => [
+            'nullable',
+            'string',
+            'max:1000',
+        ],
+    ]);
+
+    $blockingAssignments = $this->companyTaskService
+        ->getTaskCancellationBlockingAssignments(
+            companyId: $companyId,
+            taskId: $taskId
+        );
+
+    if ($blockingAssignments->isNotEmpty()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'لا يمكن إلغاء التاسك لوجود طلاب تم قبولهم عليه. | Cannot cancel the task because there are accepted students assigned to it.',
+            'data' => [
+                'blocking_assignments' => CompanyTaskAssignmentDetailsResource::collection(
+                    $blockingAssignments
+                ),
+            ],
+        ], 422);
+    }
+
+    $task = $this->companyTaskService->cancelTask(
+        companyId: $companyId,
+        taskId: $taskId,
+        reason: $data['reason'] ?? null
+    );
+
+    return response()->json([
+        'status' => true,
+        'message' => 'تم إلغاء التاسك بنجاح. | Task cancelled successfully.',
+        'data' => new CompanyTaskResource($task),
+    ]);
+}
 }
