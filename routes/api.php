@@ -121,6 +121,7 @@ Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware
 // Company Tasks Creation & Publish
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
     Route::post('index/', 'index');
+    Route::get('', 'index');
     Route::post('/', 'store');
     Route::get('/{taskId}', 'show')->whereNumber('taskId');
     Route::put('/{taskId}', 'update')->whereNumber('taskId');
