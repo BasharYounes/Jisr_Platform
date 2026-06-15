@@ -144,12 +144,14 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskAssignmentController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/{assignmentId}', 'show')->whereNumber('assignmentId');
+    Route::post('/{assignmentId}/close', 'close')->whereNumber('assignmentId');
 });
 
 // Company Task Assignments Progress
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->group(function () {
     Route::get('/{assignmentId}/progress', [CompanyTaskProgressController::class, 'index'])->whereNumber('assignmentId');
 });
+
 // company task submission
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskSubmissionController::class)->group(function () {
     Route::get('/{assignmentId}/submission', 'show')->whereNumber('assignmentId');
@@ -160,6 +162,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks/revie
     Route::post('/{assignmentId}', 'store')->whereNumber('assignmentId');
     Route::get('/{assignmentId}', 'show')->whereNumber('assignmentId');
 });
+
 // /============
 // Conversation
 // /============
@@ -167,7 +170,6 @@ Route::middleware('auth:sanctum')->prefix('conversations')->controller(Conversat
     Route::get('/all', 'index');
     Route::get('/task-conversations', 'taskConversations');
     Route::get('/closed', 'closedConversations');
-
     Route::get('/{conversationId}', 'show');
     Route::get('/{conversationId}/messages', 'index');
     Route::post('/{conversationId}/messages', 'store');

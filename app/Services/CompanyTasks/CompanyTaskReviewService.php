@@ -176,7 +176,6 @@ class CompanyTaskReviewService
 
             'approved', 'rejected' => [
                 'status' => 'reviewed',
-                'completed_at' => now(),
             ],
         };
     }
