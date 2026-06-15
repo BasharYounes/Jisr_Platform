@@ -24,4 +24,17 @@ interface CompanyTaskRepositoryInterface
     public function getAvailableTasksWithSkills(): Collection;
 
     public function findAvailableTaskOrFail(int $taskId): CompanyTask;
+
+    public function findCompanyTaskWithAssignmentsOrFail(
+        int $companyId,
+        int $taskId
+    ): CompanyTask;
+
+    public function getUnreviewedAssignmentsForTask(
+        CompanyTask $task
+    ): Collection;
+
+    public function close(
+        CompanyTask $task
+    ): CompanyTask;
 }

@@ -66,22 +66,22 @@ class CompanyTaskAssignmentRepository implements CompanyTaskAssignmentRepository
             })
             ->firstOrFail();
     }
-    
-    public function update(
-    CompanyTaskAssignment $assignment,
-    array $data
-): CompanyTaskAssignment {
-    $assignment->update($data);
 
-    return $assignment->refresh()->load([
-        'task.skills',
-        'student.studentProfile',
-        'student.skills',
-        'student.portfolioProjects',
-        'application',
-        'progressUpdates',
-        'submissions',
-        'reviews',
-    ]);
-}
+    public function update(
+        CompanyTaskAssignment $assignment,
+        array $data
+    ): CompanyTaskAssignment {
+        $assignment->update($data);
+
+        return $assignment->refresh()->load([
+            'task.skills',
+            'student.studentProfile',
+            'student.skills',
+            'student.portfolioProjects',
+            'application',
+            'progressUpdates',
+            'submissions',
+            'reviews',
+        ]);
+    }
 }

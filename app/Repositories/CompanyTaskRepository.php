@@ -112,4 +112,62 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
             ->where('deadline', '>=', now())
             ->firstOrFail();
     }
+
+    public function findCompanyTaskWithAssignmentsOrFail(
+        int $companyId,
+        int $taskId
+    ): CompanyTask {
+        return CompanyTask::query()
+            ->where('company_id', $companyId)
+            ->whereKey($taskId)
+            ->with([
+                'company',
+                'skills',
+                'assignments.task.skills',
+                'assignments.application',
+                'assignments.student.studentProfile',
+                'assignments.student.skills',
+                'assignments.student.portfolioProjects',
+                'assignments.progressUpdates',
+                'assignments.submissions',
+                'assignments.reviews',
+            ])
+            ->firstOrFail();
+    }
+
+    public function getUnreviewedAssignmentsForTask(
+        CompanyTask $task
+    ): Collection {
+        return $task->assignments()
+            ->where('status', '!=', 'cancelled')
+            ->where(function ($query): void {
+                $query
+                    ->where('status', '!=', 'reviewed')
+                    ->orWhereDoesntHave('reviews');
+            })
+            ->with([
+                'task.skills',
+                'application',
+                'student.studentProfile',
+                'student.skills',
+                'student.portfolioProjects',
+                'progressUpdates',
+                'submissions',
+                'reviews',
+            ])
+            ->get();
+    }
+
+    public function close(
+        CompanyTask $task
+    ): CompanyTask {
+        $task->update([
+            'status' => 'closed',
+        ]);
+
+        return $task->fresh([
+            'company',
+            'skills',
+        ]);
+    }
 }

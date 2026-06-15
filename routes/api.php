@@ -138,13 +138,13 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::get('/applications/student/details/{applicationId}', 'show');
     Route::post('/applications/accept/{applicationId}', 'accept');
     Route::post('/applications/reject/{applicationId}', 'reject');
+    Route::patch('/{taskId}/close', 'close');
 });
 
 //  Tasks Assignment
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskAssignmentController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/{assignmentId}', 'show')->whereNumber('assignmentId');
-    Route::post('/{assignmentId}/close', 'close')->whereNumber('assignmentId');
 });
 
 // Company Task Assignments Progress

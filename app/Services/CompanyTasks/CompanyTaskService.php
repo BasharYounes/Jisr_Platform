@@ -4,6 +4,7 @@ namespace App\Services\CompanyTasks;
 
 use App\Interfaces\CompanyTaskRepositoryInterface;
 use App\Models\CompanyTask;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -102,5 +103,53 @@ class CompanyTaskService
                 'deadline' => ['Task deadline must be in the future before publishing.'],
             ]);
         }
+    }
+
+    public function getTaskCloseBlockingAssignments(
+        int $companyId,
+        int $taskId
+    ): Collection {
+        $task = $this->companyTaskRepository
+            ->findCompanyTaskWithAssignmentsOrFail(
+                companyId: $companyId,
+                taskId: $taskId
+            );
+
+        return $this->companyTaskRepository
+            ->getUnreviewedAssignmentsForTask($task);
+    }
+
+    public function closeTask(
+        int $companyId,
+        int $taskId
+    ): CompanyTask {
+        return DB::transaction(function () use ($companyId, $taskId): CompanyTask {
+            $task = $this->companyTaskRepository
+                ->findCompanyTaskWithAssignmentsOrFail(
+                    companyId: $companyId,
+                    taskId: $taskId
+                );
+
+            if ($task->status === 'closed') {
+                throw ValidationException::withMessages([
+                    'task' => [
+                        'هذا التاسك مغلق مسبقًا. | This task is already closed.',
+                    ],
+                ]);
+            }
+
+            $blockingAssignments = $this->companyTaskRepository
+                ->getUnreviewedAssignmentsForTask($task);
+
+            if ($blockingAssignments->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'assignments' => [
+                        'لا يمكن إغلاق التاسك قبل تقييم كل الطلاب المرتبطين به. | Cannot close the task before reviewing all assigned students.',
+                    ],
+                ]);
+            }
+
+            return $this->companyTaskRepository->close($task);
+        });
     }
 }

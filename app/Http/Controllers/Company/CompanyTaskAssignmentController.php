@@ -39,20 +39,4 @@ class CompanyTaskAssignmentController extends Controller
             'data' => new CompanyTaskAssignmentDetailsResource($assignment),
         ]);
     }
-
-    public function close(int $assignmentId): JsonResponse
-{
-    $companyId = Auth::user()->companies()->firstOrFail()->id;
-
-    $assignment = $this->assignmentService->closeCompanyAssignment(
-        companyId: $companyId,
-        assignmentId: $assignmentId
-    );
-
-    return response()->json([
-        'status' => true,
-        'message' => 'تم إغلاق تكليف الطالب بنجاح. | Assignment closed successfully.',
-        'data' => new CompanyTaskAssignmentDetailsResource($assignment),
-    ]);
-}
 }
