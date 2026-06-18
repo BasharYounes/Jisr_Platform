@@ -36,7 +36,7 @@ return new class extends Migration
             ])->default('draft');
 
             $table->timestamp('deadline')->nullable();
-            $table->timestamp('posted_at')->useCurrent();
+            $table->timestamp('posted_at')->nullable();
             $table->timestamps();
         });
     }
