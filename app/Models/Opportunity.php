@@ -16,7 +16,7 @@ class Opportunity extends Model
 
     public function skills()
     {
-        return $this->belongsToMany(Skill::class)
+        return $this->belongsToMany(Skill::class, 'opportunity_skills')
             ->withPivot(['required_level', 'mandatory', 'weight'])
             ->withTimestamps();
     }

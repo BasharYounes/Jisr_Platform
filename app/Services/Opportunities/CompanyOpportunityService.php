@@ -6,6 +6,7 @@ use App\Interfaces\CompanyOpportunityRepositoryInterface;
 use App\Models\Opportunity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -268,7 +269,7 @@ class CompanyOpportunityService
 
         if (
             $opportunity->deadline !== null
-            && $opportunity->deadline->isPast()
+            && Carbon::parse($opportunity->deadline)->isPast()
         ) {
             throw ValidationException::withMessages([
                 'deadline' => [

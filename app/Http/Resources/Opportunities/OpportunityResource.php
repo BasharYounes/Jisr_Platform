@@ -29,8 +29,8 @@ class OpportunityResource extends JsonResource
 
             'status' => $this->status,
 
-            'deadline' => $this->deadline?->toISOString(),
-            'posted_at' => $this->posted_at?->toISOString(),
+            'deadline' => $this->deadline,
+            'posted_at' => $this->posted_at,
 
             'applications_count' => $this->whenCounted('applications'),
 
@@ -46,8 +46,8 @@ class OpportunityResource extends JsonResource
                 });
             }),
 
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
