@@ -29,7 +29,10 @@ return new class extends Migration
 
             $table->text('cover_letter')->nullable();
 
-            $table->string('status', 32)->default('pending');
+            $table->enum('status', ['pending', 'accepted', 'rejected', 'withdrawn'])->default('pending');
+
+            $table->decimal('match_score', 5, 2)->nullable();
+            $table->json('match_reasons')->nullable();
 
             $table->timestamp('applied_at')->useCurrent();
             $table->timestamp('reviewed_at')->nullable();
@@ -39,6 +42,11 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['opportunity_id', 'user_id']);
+
+            // indexes
+            $table->index(['opportunity_id', 'status']);
+            $table->index(['user_id', 'status']);
+            $table->index('match_score');
         });
     }
 

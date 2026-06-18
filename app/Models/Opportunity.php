@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Opportunity extends Model
 {
@@ -30,5 +31,10 @@ class Opportunity extends Model
     public function applications()
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function interviews(): HasMany
+    {
+        return $this->hasMany(OpportunityInterview::class, 'opportunity_id');
     }
 }

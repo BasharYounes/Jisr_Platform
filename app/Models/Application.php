@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Application extends Model
 {
@@ -21,5 +22,10 @@ class Application extends Model
     public function cv()
     {
         return $this->belongsTo(Cv::class);
+    }
+
+    public function interview(): HasOne
+    {
+        return $this->hasOne(OpportunityInterview::class, 'application_id');
     }
 }
