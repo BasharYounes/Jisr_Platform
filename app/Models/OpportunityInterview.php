@@ -15,19 +15,6 @@ class OpportunityInterview extends Model
         'scheduled_at' => 'datetime',
     ];
 
-    public const MEETING_TYPES = [
-        'online',
-        'onsite',
-        'phone',
-    ];
-
-    public const STATUSES = [
-        'scheduled',
-        'rescheduled',
-        'completed',
-        'cancelled',
-    ];
-
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class, 'application_id');

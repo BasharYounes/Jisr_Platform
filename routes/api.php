@@ -16,6 +16,7 @@ use App\Http\Controllers\Company\CompanyTaskProgressController;
 use App\Http\Controllers\Company\CompanyTaskReviewController;
 use App\Http\Controllers\Company\CompanyTaskSubmissionController;
 use App\Http\Controllers\CompanyHomeController;
+use App\Http\Controllers\CompanyOpportunity\CompanyOpportunityController;
 use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
@@ -117,7 +118,9 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(fu
 });
 // /Home
 Route::get('/company/home', [CompanyHomeController::class, 'index'])->middleware(['auth:sanctum', 'role:company']);
-
+//
+// CompanyTasks
+// /============
 // Company Tasks Creation & Publish
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskController::class)->group(function () {
     Route::post('index/', 'index');
@@ -187,6 +190,24 @@ Route::middleware('auth:sanctum')->prefix('conversations/messages')->controller(
 Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationParticipantController::class)->group(function () {
     Route::patch('/{conversationId}/read', 'markAsRead');
 });
+
+//
+// Company Opportunities
+// =======================
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportunities')->controller(CompanyOpportunityController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+
+    Route::get('/{opportunityId}', 'show')->whereNumber('opportunityId');
+    Route::put('/{opportunityId}', 'update')->whereNumber('opportunityId');
+
+    Route::patch('/{opportunityId}/publish', 'publish')->whereNumber('opportunityId');
+    Route::patch('/{opportunityId}/close', 'close')->whereNumber('opportunityId');
+    Route::patch('/{opportunityId}/cancel', 'cancel')->whereNumber('opportunityId');
+
+    Route::delete('/{opportunityId}', 'destroy')->whereNumber('opportunityId');
+});
+
 // ============
 // == Student
 // ============

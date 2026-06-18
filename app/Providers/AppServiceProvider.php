@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Events\ProjectAssignmentStatusChanged;
 use App\Interfaces\CompanyHomeRepositoryInterface;
+use App\Interfaces\CompanyOpportunityRepositoryInterface;
 use App\Interfaces\CompanyRepositoryInterface;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
@@ -36,6 +37,7 @@ use App\Policies\ProjectAssignmentPolicy;
 use App\Policies\ProjectAssignmentTaskPolicy;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Repositories\CompanyHomeRepository;
+use App\Repositories\CompanyOpportunityRepository;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CompanyTaskApplicationRepository;
 use App\Repositories\CompanyTaskAssignmentRepository;
@@ -146,6 +148,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CompanyTaskReviewRepositoryInterface::class,
             CompanyTaskReviewRepository::class
+        );
+
+        $this->app->bind(
+            CompanyOpportunityRepositoryInterface::class,
+            CompanyOpportunityRepository::class
         );
 
         $this->app->bind(AIClientInterface::class, function () {
