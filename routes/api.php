@@ -22,6 +22,7 @@ use App\Http\Controllers\Conversations\ConversationParticipantController;
 use App\Http\Controllers\Matching\MatchingController;
 use App\Http\Controllers\Skill\SkillController;
 use App\Http\Controllers\Student\PortfolioProjectController;
+use App\Http\Controllers\Student\StudentProjectTemplateController;
 use App\Http\Controllers\Student\StudentTaskApplicationController;
 use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\Student\StudentTaskProgressController;
@@ -217,6 +218,15 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->co
     Route::get('/recommended', 'recommended');
     Route::get('/{taskId}', 'show');
     Route::post('/{taskId}/apply', 'apply');
+});
+
+// Student Project Template Applications
+Route::middleware(['auth:sanctum',])->prefix('student/project-templates')->controller(StudentProjectTemplateController::class)->group(function () {
+    Route::get('/applications/all', 'all');
+    Route::get('/applications/pending', 'pending');
+    Route::get('/applications/accepted', 'accepted');
+    Route::get('/applications/rejected', 'rejected');
+    Route::post('/{projectTemplate}/apply', 'apply');
 });
 
 // Student Portfolio Projects

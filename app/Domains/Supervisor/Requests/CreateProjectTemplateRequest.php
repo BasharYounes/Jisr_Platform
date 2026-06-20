@@ -31,6 +31,11 @@ class CreateProjectTemplateRequest extends FormRequest
                 'required',
                 'string',
             ],
+            'max_students' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
         ];
     }
 }
