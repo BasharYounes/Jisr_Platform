@@ -23,4 +23,9 @@ class ProjectTemplate extends Model
         return $this->belongsToMany(Tag::class)
             ->withTimestamps();
     }
+
+    public function applications()
+    {
+        return $this->hasMany(ProjectTemplateApplication::class);
+    }
 }

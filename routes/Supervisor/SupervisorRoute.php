@@ -4,6 +4,7 @@ use App\Http\Controllers\ProjectAssignmentController;
 use App\Http\Controllers\ProjectEvaluationController;
 use App\Http\Controllers\ProjectTaskController;
 use App\Http\Controllers\ProjectTemplateController;
+use App\Http\Controllers\Supervisor\ProjectTemplateApplicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
@@ -12,6 +13,25 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'project-templates',
         [ProjectTemplateController::class, 'create']
     );
+
+    // Project template applications
+    Route::get(
+        'project-templates/{projectTemplate}/applications',
+        [ProjectTemplateApplicationController::class, 'index']
+    );
+    Route::get(
+        'project-template-applications/{projectTemplateApplication}',
+        [ProjectTemplateApplicationController::class, 'show']
+    );
+    Route::post(
+        'project-template-applications/{projectTemplateApplication}/accept',
+        [ProjectTemplateApplicationController::class, 'accept']
+    );
+    Route::post(
+        'project-template-applications/{projectTemplateApplication}/reject',
+        [ProjectTemplateApplicationController::class, 'reject']
+    );
+
     // Project assignment
     Route::post(
         'project-assignments',
