@@ -13,6 +13,10 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'project-templates',
         [ProjectTemplateController::class, 'create']
     );
+    Route::patch(
+        'project-templates/{projectTemplate}',
+        [ProjectTemplateController::class, 'update']
+    );
 
     // Project template applications
     Route::get(
@@ -22,6 +26,10 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
     Route::get(
         'project-template-applications/{projectTemplateApplication}',
         [ProjectTemplateApplicationController::class, 'show']
+    );
+    Route::get(
+        'project-assignments/{projectAssignment}/active-students',
+        [ProjectAssignmentController::class, 'activeStudents']
     );
     Route::post(
         'project-template-applications/{projectTemplateApplication}/accept',
@@ -90,7 +98,7 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
 
     // Final project evaluation
     Route::post(
-        'project-assignments/{projectAssignment}/evaluation',
+        'project-assignments/{projectAssignment}/students/{student}/evaluation',
         [ProjectEvaluationController::class, 'store']
     );
 

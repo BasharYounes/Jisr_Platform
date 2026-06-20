@@ -86,6 +86,16 @@ Route::get('/dev/login-as-test', function () {
     return response()->json(['token' => $token]);
 });
 
+Route::get('/dev1/login-as-test', function () {
+    $user = User::firstOrCreate(
+        ['email' => 'dev1@test.com'],
+        ['name' => 'Dev User', 'password' => bcrypt('123456')]
+    );
+    $token = $user->createToken('dev-token')->plainTextToken;
+
+    return response()->json(['token' => $token]);
+});
+
 Route::get('/dev/test-gemini', function (AIClientInterface $ai) {
     return $ai->generateJson(
         'Return valid JSON only.',

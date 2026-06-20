@@ -59,7 +59,7 @@ class ProjectTemplateApplicationController extends Controller
         );
 
         return ApiResponse::success(
-            'تم قبول الطالب وإنشاء تكليف المشروع بنجاح. | Student accepted and project assignment created successfully.',
+            'تم قبول الطالب وربطه بفريق المشروع بنجاح. | Student accepted and linked to the project team successfully.',
             new ProjectTemplateApplicantDetailsResource($application),
             200
         );

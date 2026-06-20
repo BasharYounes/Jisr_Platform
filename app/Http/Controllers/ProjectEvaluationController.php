@@ -8,6 +8,7 @@ use App\Domains\Supervisor\Requests\SubmitProjectEvaluationRequest;
 use App\Http\Resources\ProjectEvaluationResource;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectEvaluation;
+use App\Models\User;
 use App\Support\ApiResponse;
 
 class ProjectEvaluationController extends Controller
@@ -15,6 +16,7 @@ class ProjectEvaluationController extends Controller
     public function store(
         SubmitProjectEvaluationRequest $request,
         ProjectAssignment $projectAssignment,
+        User $student,
         SubmitProjectEvaluationAction $action
     ) {
         \Gate::authorize('create', ProjectEvaluation::class);
@@ -27,10 +29,12 @@ class ProjectEvaluationController extends Controller
 
         $evaluation = $action->execute(
             $projectAssignment,
+            $student,
             $request->validated()
         );
 
-        return ApiResponse::success('Project evaluation submitted successfully',
+        return ApiResponse::success(
+            'Student project evaluation submitted successfully',
             new ProjectEvaluationResource($evaluation),
             201
         );
@@ -41,13 +45,15 @@ class ProjectEvaluationController extends Controller
         \Gate::authorize('view', $projectEvaluation);
 
         $projectEvaluation->load([
-            'assignment.students',
             'assignment.projectTemplate',
+            'student',
             'supervisor',
             'items.criteria',
+            'items.evidences',
         ]);
 
-        return ApiResponse::success('Project evaluation retrieved successfully',
+        return ApiResponse::success(
+            'Project evaluation retrieved successfully',
             new ProjectEvaluationResource($projectEvaluation)
         );
     }
