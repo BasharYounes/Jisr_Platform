@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CVAnalysis extends Model
 {
     protected $table = 'c_v_analyses';
+
     protected $primaryKey = 'CVAnalysisID';
 
     protected $fillable = [

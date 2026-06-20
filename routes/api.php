@@ -33,6 +33,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
+
+
 Broadcast::routes([
     'middleware' => ['auth:sanctum'],
 ]);
@@ -140,6 +142,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::post('/applications/reject/{applicationId}', 'reject');
 });
 
+
 //  Tasks Assignment
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskAssignmentController::class)->group(function () {
     Route::get('/', 'index');
@@ -219,6 +222,7 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-p
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/task-assignments')->group(function () {
     Route::get('/{assignmentId}/progress', [StudentTaskProgressController::class, 'index'])->whereNumber('assignmentId');
     Route::post('/{assignmentId}/progress', [StudentTaskProgressController::class, 'store'])->whereNumber('assignmentId');
+
 
     // Student task submission
     Route::post('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'store'])->whereNumber('assignmentId');
