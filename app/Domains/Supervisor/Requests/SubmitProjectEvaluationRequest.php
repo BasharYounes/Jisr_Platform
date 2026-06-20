@@ -43,19 +43,32 @@ class SubmitProjectEvaluationRequest extends FormRequest
                 'max:1500',
             ],
 
+            /*
+             * شرح نصي اختياري من المشرف.
+             */
             'items.*.evidence' => [
                 'nullable',
                 'string',
                 'max:3000',
             ],
 
-            'items.*.evidence_urls' => [
-                'nullable',
+            /*
+             * صورة واحدة على الأقل لكل معيار،
+             * وحتى خمس صور للمعيار الواحد.
+             */
+            'items.*.evidence_images' => [
+                'required',
                 'array',
+                'min:1',
+                'max:5',
             ],
 
-            'items.*.evidence_urls.*' => [
-                'url',
+            'items.*.evidence_images.*' => [
+                'required',
+                'file',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
             ],
         ];
     }

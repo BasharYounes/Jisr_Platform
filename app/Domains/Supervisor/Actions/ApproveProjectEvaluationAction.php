@@ -15,8 +15,10 @@ class ApproveProjectEvaluationAction
     public function execute(ProjectEvaluation $evaluation): ProjectEvaluation
     {
         return DB::transaction(function () use ($evaluation) {
-            // dd($evaluation->status);
-            if ($evaluation->status !== ProjectEvaluationStatus::SUBMITTED->value) {
+            if (
+                $evaluation->status !==
+                ProjectEvaluationStatus::SUBMITTED->value
+            ) {
                 throw new DomainException(
                     'Only submitted evaluations can be approved.'
                 );
@@ -42,26 +44,49 @@ class ApproveProjectEvaluationAction
                 );
             }
 
-            $oldStatus = $assignment->status->value;
-
             $evaluation->update([
                 'status' => ProjectEvaluationStatus::APPROVED->value,
             ]);
 
-            $assignment->update([
-                'status' => ProjectAssignmentStatus::COMPLETED->value,
-            ]);
+            /*
+             * لا نكمل المشروع عند اعتماد تقييم طالب واحد.
+             * يكتمل فقط بعد اعتماد تقييم جميع أعضاء الفريق النشطين.
+             */
+            $activeStudentIds = $assignment->members()
+                ->where('status', 'active')
+                ->pluck('student_id');
 
-            event(new ProjectAssignmentStatusChanged(
-                assignment: $assignment,
-                oldStatus: $oldStatus,
-                newStatus: ProjectAssignmentStatus::COMPLETED->value,
-                changedBy: auth()->id()
-            ));
+            $approvedStudentIds = ProjectEvaluation::query()
+                ->where('project_assignment_id', $assignment->id)
+                ->whereIn('student_id', $activeStudentIds)
+                ->where(
+                    'status',
+                    ProjectEvaluationStatus::APPROVED->value
+                )
+                ->pluck('student_id');
+
+            $allActiveStudentsApproved =
+                $activeStudentIds->isNotEmpty() &&
+                $activeStudentIds->diff($approvedStudentIds)->isEmpty();
+
+            if ($allActiveStudentsApproved) {
+                $oldStatus = $assignment->status->value;
+
+                $assignment->update([
+                    'status' => ProjectAssignmentStatus::COMPLETED->value,
+                ]);
+
+                event(new ProjectAssignmentStatusChanged(
+                    assignment: $assignment,
+                    oldStatus: $oldStatus,
+                    newStatus: ProjectAssignmentStatus::COMPLETED->value,
+                    changedBy: auth()->id()
+                ));
+            }
 
             return $evaluation->refresh()->load([
-                'assignment.students',
                 'assignment.projectTemplate',
+                'student',
                 'supervisor',
                 'items.criteria',
             ]);
