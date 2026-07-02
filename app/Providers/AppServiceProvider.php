@@ -155,6 +155,21 @@ class AppServiceProvider extends ServiceProvider
             CompanyOpportunityRepository::class
         );
 
+        $this->app->bind(
+            OpportunityApplicationRepositoryInterface::class,
+            OpportunityApplicationRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityInterviewRepositoryInterface::class,
+            OpportunityInterviewRepository::class
+        );
+
+        $this->app->bind(
+            ConversationRepositoryInterface::class,
+            ConversationRepository::class
+        );
+
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
                 ? app(GeminiClient::class)
