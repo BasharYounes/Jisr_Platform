@@ -10,11 +10,11 @@ class OpportunityResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'id_Resource' => $this->id,
 
             'company' => $this->whenLoaded('company', function (): array {
                 return [
-                    'id' => $this->company?->id,
+                    'id_Company' => $this->company?->id,
                     'name' => $this->company?->name,
                 ];
             }),
@@ -37,7 +37,7 @@ class OpportunityResource extends JsonResource
             'skills' => $this->whenLoaded('skills', function () {
                 return $this->skills->map(function ($skill): array {
                     return [
-                        'id' => $skill->id,
+                        'id_Skill' => $skill->id,
                         'name' => $skill->name,
                         'required_level' => $skill->pivot?->required_level,
                         'mandatory' => (bool) $skill->pivot?->mandatory,

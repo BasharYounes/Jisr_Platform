@@ -169,9 +169,9 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks/revie
     Route::get('/{assignmentId}', 'show')->whereNumber('assignmentId');
 });
 
-// /============
+//
 // Conversation
-// /============
+// ============
 Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationController::class)->group(function () {
     Route::get('/all', 'index');
     Route::get('/task-conversations', 'taskConversations');
@@ -197,7 +197,6 @@ Route::middleware('auth:sanctum')->prefix('conversations')->controller(Conversat
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportunities')->controller(CompanyOpportunityController::class)->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store');
-
     Route::get('/{opportunityId}', 'show')->whereNumber('opportunityId');
     Route::put('/{opportunityId}', 'update')->whereNumber('opportunityId');
 
