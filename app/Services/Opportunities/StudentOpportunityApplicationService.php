@@ -19,38 +19,33 @@ class StudentOpportunityApplicationService
     ) {}
 
     public function apply(
-        int $studentUserId,
+        int $studentId,
         int $opportunityId,
         array $data
     ): Application {
-        return DB::transaction(function () use ($studentUserId, $opportunityId, $data): Application {
+        return DB::transaction(function () use ($studentId, $opportunityId, $data): Application {
             $opportunity = $this->opportunityRepository
                 ->findPublishedActiveOrFail($opportunityId);
 
-            if ($this->applicationRepository->existsForStudent($studentUserId, $opportunity->id)) {
+            if ($this->applicationRepository->existsForStudent($studentId, $opportunity->id)) {
                 throw ValidationException::withMessages([
                     'opportunity' => [
-                        'لقد قمت بالتقديم على هذه الفرصة مسبقًا. | You have already applied to this opportunity.',
+                        'لقد قمت بالتقديم على هذه الفرصة مسبقًا.',
                     ],
                 ]);
             }
 
-            if (! empty($data['cv_id'])) {
-                $this->ensureCvBelongsToStudent(
-                    studentUserId: $studentUserId,
-                    cvId: (int) $data['cv_id']
-                );
-            }
+            $cv = $this->getStudentCvOrFail($studentId);
 
             $matchSnapshot = $this->recommendationService->calculateMatch(
                 opportunity: $opportunity,
-                studentUserId: $studentUserId
+                studentUserId: $studentId
             );
 
             $application = $this->applicationRepository->create([
                 'opportunity_id' => $opportunity->id,
-                'user_id' => $studentUserId,
-                'cv_id' => $data['cv_id'] ?? null,
+                'user_id' => $studentId,
+                'cv_id' => $cv->CvID,
                 'cover_letter' => $data['cover_letter'] ?? null,
                 'status' => 'pending',
                 'match_score' => $matchSnapshot['score'],
@@ -58,7 +53,7 @@ class StudentOpportunityApplicationService
                 'applied_at' => now(),
             ]);
 
-            // TODO: Dispatch notification to company when a new application is submitted.
+            // TODO: Dispatch notification to company when a new opportunity application is submitted.
 
             return $application;
         });
@@ -95,7 +90,7 @@ class StudentOpportunityApplicationService
             if ($application->status !== 'pending') {
                 throw ValidationException::withMessages([
                     'application' => [
-                        'لا يمكن سحب الطلب بعد مراجعته. | You cannot withdraw an application after it has been reviewed.',
+                        'لا يمكن سحب الطلب بعد مراجعته.',
                     ],
                 ]);
             }
@@ -103,7 +98,7 @@ class StudentOpportunityApplicationService
             if ($application->interview !== null) {
                 throw ValidationException::withMessages([
                     'application' => [
-                        'لا يمكن سحب الطلب بعد جدولة مقابلة. | You cannot withdraw an application after an interview has been scheduled.',
+                        'لا يمكن سحب الطلب بعد جدولة مقابلة.',
                     ],
                 ]);
             }
@@ -118,21 +113,22 @@ class StudentOpportunityApplicationService
         });
     }
 
-    private function ensureCvBelongsToStudent(
-        int $studentUserId,
-        int $cvId
-    ): void {
-        $exists = Cv::query()
-            ->where('CvID', $cvId)
+    private function getStudentCvOrFail(int $studentUserId): Cv
+    {
+        $cv = Cv::query()
             ->where('UserId', $studentUserId)
-            ->exists();
+            ->orderByDesc('IsPrimary')
+            ->orderByDesc('UploadedAt')
+            ->first();
 
-        if (! $exists) {
+        if (! $cv) {
             throw ValidationException::withMessages([
-                'cv_id' => [
-                    'السيرة الذاتية المختارة لا تعود لهذا الطالب. | Selected CV does not belong to this student.',
+                'cv' => [
+                    'يجب رفع سيرة ذاتية قبل التقديم على الفرصة.',
                 ],
             ]);
         }
+
+        return $cv;
     }
 }

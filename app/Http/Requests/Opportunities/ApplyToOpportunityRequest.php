@@ -14,11 +14,6 @@ class ApplyToOpportunityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cv_id' => [
-                'nullable',
-                'integer',
-                'exists:c_v_s,CvID',
-            ],
             'cover_letter' => [
                 'nullable',
                 'string',
@@ -30,7 +25,6 @@ class ApplyToOpportunityRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'cv_id.exists' => 'السيرة الذاتية المختارة غير موجودة. | Selected CV does not exist.',
             'cover_letter.string' => 'رسالة التقديم يجب أن تكون نصًا. | Cover letter must be a string.',
             'cover_letter.max' => 'رسالة التقديم طويلة جدًا. | Cover letter is too long.',
         ];

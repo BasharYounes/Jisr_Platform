@@ -65,7 +65,7 @@ class StudentOpportunityController extends Controller
         int $opportunityId
     ): JsonResponse {
         $application = $this->applicationService->apply(
-            studentUserId: (int) $request->user()->id,
+            studentId: (int) $request->user()->id,
             opportunityId: $opportunityId,
             data: $request->validated()
         );

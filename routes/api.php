@@ -28,6 +28,7 @@ use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\Student\StudentTaskProgressController;
 use App\Http\Controllers\Student\StudentTaskSubmissionController;
 use App\Http\Controllers\StudentOpportunity\StudentOpportunityController;
+use App\Http\Controllers\StudentOpportunity\StudentApplicationController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use App\Services\AI\AIClientInterface;
