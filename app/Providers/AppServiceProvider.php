@@ -18,6 +18,7 @@ use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Interfaces\NotificationRepositoryInterface;
 use App\Interfaces\OpportunityApplicationRepositoryInterface;
+use App\Interfaces\OpportunityRepositoryInterface;
 use App\Interfaces\PortfolioProjectRepositoryInterface;
 use App\Interfaces\SkillRepositoryInterface;
 use App\Interfaces\StudentRepositoryInterface;
@@ -51,6 +52,7 @@ use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\NotificationRepository;
 use App\Repositories\OpportunityApplicationRepository;
+use App\Repositories\OpportunityRepository;
 use App\Repositories\PortfolioProjectRepository;
 use App\Repositories\SkillRepository;
 use App\Repositories\StudentRepository;
@@ -160,6 +162,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             OpportunityApplicationRepositoryInterface::class,
             OpportunityApplicationRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityRepositoryInterface::class,
+            OpportunityRepository::class
         );
 
         $this->app->bind(

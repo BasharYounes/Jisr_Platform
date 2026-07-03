@@ -3,6 +3,7 @@
 namespace App\Interfaces;
 
 use App\Models\Application;
+use Illuminate\Support\Collection;
 
 interface OpportunityApplicationRepositoryInterface
 {
@@ -15,4 +16,15 @@ interface OpportunityApplicationRepositoryInterface
         int $studentUserId,
         int $opportunityId
     ): ?Application;
+
+    public function create(array $data): Application;
+
+    public function getStudentApplications(int $studentUserId): Collection;
+
+    public function findStudentApplicationOrFail(
+        int $studentUserId,
+        int $applicationId
+    ): Application;
+
+    public function update(Application $application, array $data): Application;
 }

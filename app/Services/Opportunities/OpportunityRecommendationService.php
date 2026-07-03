@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 class OpportunityRecommendationService
 {
-    private const RECOMMENDED_MIN_SCORE = 75.0;
+    private const RECOMMENDED_MIN_SCORE = 50.0;
 
     private const EXPLORE_MIN_SCORE = 35.0;
 

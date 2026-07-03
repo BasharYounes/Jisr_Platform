@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\StudentOpportunity;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Opportunities\ApplyToOpportunityRequest;
+use App\Http\Resources\Opportunities\OpportunityApplicationResource;
 use App\Http\Resources\Opportunities\StudentOpportunityDetailsResource;
 use App\Http\Resources\Opportunities\StudentOpportunityResource;
+use App\Services\Opportunities\StudentOpportunityApplicationService;
 use App\Services\Opportunities\StudentOpportunityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,7 +15,8 @@ use Illuminate\Http\Request;
 class StudentOpportunityController extends Controller
 {
     public function __construct(
-        private readonly StudentOpportunityService $studentOpportunityService
+        private readonly StudentOpportunityService $studentOpportunityService,
+        private readonly StudentOpportunityApplicationService $applicationService
     ) {}
 
     public function recommended(Request $request): JsonResponse
@@ -54,5 +58,22 @@ class StudentOpportunityController extends Controller
             'message' => 'تم جلب تفاصيل الفرصة بنجاح. | Opportunity details retrieved successfully.',
             'data' => new StudentOpportunityDetailsResource($opportunity),
         ]);
+    }
+
+    public function apply(
+        ApplyToOpportunityRequest $request,
+        int $opportunityId
+    ): JsonResponse {
+        $application = $this->applicationService->apply(
+            studentUserId: (int) $request->user()->id,
+            opportunityId: $opportunityId,
+            data: $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم إرسال طلب التقديم بنجاح. | Application submitted successfully.',
+            'data' => new OpportunityApplicationResource($application),
+        ], 201);
     }
 }
