@@ -18,8 +18,10 @@ class ProjectTemplateResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'expected_outcome' => $this->expected_outcome,
             'expected_completion_date' => $this->expected_completion_date,
             'level' => $this->level,
+            'max_students' => $this->max_students,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

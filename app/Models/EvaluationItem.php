@@ -29,4 +29,9 @@ class EvaluationItem extends Model
     {
         return $this->belongsTo(EvaluationCriteria::class, 'evaluation_criteria_id');
     }
+
+    public function evidences()
+    {
+        return $this->hasMany(EvaluationItemEvidence::class, 'evaluation_item_id');
+    }
 }

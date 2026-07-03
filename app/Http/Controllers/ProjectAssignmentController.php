@@ -19,6 +19,7 @@ use App\Http\Resources\ProjectAssignmentTaskResource;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Support\ApiResponse;
+use App\Domains\Supervisor\Actions\GetActiveProjectAssignmentStudentsAction;
 
 class ProjectAssignmentController extends Controller
 {
@@ -67,6 +68,21 @@ class ProjectAssignmentController extends Controller
 
         return ApiResponse::success('Project assignment details retrieved successfully',
             new ProjectAssignmentResource($projectAssignment)
+        );
+    }
+
+    public function activeStudents(
+    ProjectAssignment $projectAssignment,
+    GetActiveProjectAssignmentStudentsAction $action
+    ) {
+        $students = $action->execute(
+            $projectAssignment,
+            (int) auth()->id()
+        );
+
+        return ApiResponse::success(
+            'Active project team students retrieved successfully',
+            $students
         );
     }
 

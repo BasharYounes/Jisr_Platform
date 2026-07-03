@@ -4,6 +4,7 @@ use App\Http\Controllers\ProjectAssignmentController;
 use App\Http\Controllers\ProjectEvaluationController;
 use App\Http\Controllers\ProjectTaskController;
 use App\Http\Controllers\ProjectTemplateController;
+use App\Http\Controllers\Supervisor\ProjectTemplateApplicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
@@ -12,6 +13,33 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'project-templates',
         [ProjectTemplateController::class, 'create']
     );
+    Route::patch(
+        'project-templates/{projectTemplate}',
+        [ProjectTemplateController::class, 'update']
+    );
+
+    // Project template applications
+    Route::get(
+        'project-templates/{projectTemplate}/applications',
+        [ProjectTemplateApplicationController::class, 'index']
+    );
+    Route::get(
+        'project-template-applications/{projectTemplateApplication}',
+        [ProjectTemplateApplicationController::class, 'show']
+    );
+    Route::get(
+        'project-assignments/{projectAssignment}/active-students',
+        [ProjectAssignmentController::class, 'activeStudents']
+    );
+    Route::post(
+        'project-template-applications/{projectTemplateApplication}/accept',
+        [ProjectTemplateApplicationController::class, 'accept']
+    );
+    Route::post(
+        'project-template-applications/{projectTemplateApplication}/reject',
+        [ProjectTemplateApplicationController::class, 'reject']
+    );
+
     // Project assignment
     Route::post(
         'project-assignments',
@@ -70,7 +98,7 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
 
     // Final project evaluation
     Route::post(
-        'project-assignments/{projectAssignment}/evaluation',
+        'project-assignments/{projectAssignment}/students/{student}/evaluation',
         [ProjectEvaluationController::class, 'store']
     );
 

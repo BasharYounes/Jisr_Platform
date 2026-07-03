@@ -8,6 +8,7 @@ class ProjectEvaluation extends Model
 {
     protected $fillable = [
         'project_assignment_id',
+        'student_id',
         'supervisor_id',
         'total_score',
         'final_grade',
@@ -26,7 +27,15 @@ class ProjectEvaluation extends Model
 
     public function assignment()
     {
-        return $this->belongsTo(ProjectAssignment::class, 'project_assignment_id');
+        return $this->belongsTo(
+            ProjectAssignment::class,
+            'project_assignment_id'
+        );
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
     }
 
     public function supervisor()
@@ -36,6 +45,9 @@ class ProjectEvaluation extends Model
 
     public function items()
     {
-        return $this->hasMany(EvaluationItem::class, 'project_evaluation_id');
+        return $this->hasMany(
+            EvaluationItem::class,
+            'project_evaluation_id'
+        );
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectEvaluationResource extends JsonResource
 {
@@ -11,8 +12,13 @@ class ProjectEvaluationResource extends JsonResource
     {
         return [
             'id' => $this->id,
-
             'project_assignment_id' => $this->project_assignment_id,
+
+            'student' => [
+                'id' => $this->student?->id,
+                'name' => $this->student?->name,
+                'email' => $this->student?->email,
+            ],
 
             'supervisor' => [
                 'id' => $this->supervisor?->id,
@@ -32,14 +38,6 @@ class ProjectEvaluationResource extends JsonResource
                 'status' => $this->assignment?->status,
                 'progress_percentage' => $this->assignment?->progress_percentage,
 
-                'members' => [
-                    'student' => [
-                        'id' => $this->assignment?->student?->id,
-                        'name' => $this->assignment?->student?->name,
-                        'email' => $this->assignment?->student?->email,
-                    ],
-                ],
-
                 'project_template' => [
                     'id' => $this->assignment?->projectTemplate?->id,
                     'title' => $this->assignment?->projectTemplate?->title,
@@ -53,7 +51,19 @@ class ProjectEvaluationResource extends JsonResource
                     'score' => $item->score,
                     'comment' => $item->comment,
                     'evidence' => $item->evidence,
-                    'evidence_urls' => $item->evidence_urls,
+
+                    'evidence_images' => $item->evidences
+                        ->map(function ($evidence) {
+                            return [
+                                'id' => $evidence->id,
+                                'url' => Storage::disk($evidence->disk)
+                                    ->url($evidence->file_path),
+                                'original_name' => $evidence->original_name,
+                                'mime_type' => $evidence->mime_type,
+                                'size_bytes' => $evidence->size_bytes,
+                            ];
+                        })
+                        ->values(),
 
                     'criteria' => [
                         'id' => $item->criteria?->id,

@@ -23,6 +23,7 @@ use App\Http\Controllers\Conversations\ConversationParticipantController;
 use App\Http\Controllers\Matching\MatchingController;
 use App\Http\Controllers\Skill\SkillController;
 use App\Http\Controllers\Student\PortfolioProjectController;
+use App\Http\Controllers\Student\StudentProjectTemplateController;
 use App\Http\Controllers\Student\StudentTaskApplicationController;
 use App\Http\Controllers\Student\StudentTaskController;
 use App\Http\Controllers\Student\StudentTaskProgressController;
@@ -35,6 +36,18 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
 
 Broadcast::routes([
     'middleware' => ['auth:sanctum'],
@@ -69,6 +82,16 @@ require __DIR__.'/Notification/NotificationsRoutes.php';
 Route::get('/dev/login-as-test', function () {
     $user = User::firstOrCreate(
         ['email' => 'dev@test.com'],
+        ['name' => 'Dev User', 'password' => bcrypt('123456')]
+    );
+    $token = $user->createToken('dev-token')->plainTextToken;
+
+    return response()->json(['token' => $token]);
+});
+
+Route::get('/dev1/login-as-test', function () {
+    $user = User::firstOrCreate(
+        ['email' => 'dev1@test.com'],
         ['name' => 'Dev User', 'password' => bcrypt('123456')]
     );
     $token = $user->createToken('dev-token')->plainTextToken;
@@ -148,6 +171,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::post('/applications/reject/{applicationId}', 'reject');
 
 });
+
 
 //  Tasks Assignment
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskAssignmentController::class)->group(function () {
@@ -258,6 +282,15 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->co
     Route::post('/{taskId}/apply', 'apply');
 });
 
+// Student Project Template Applications
+Route::middleware(['auth:sanctum',])->prefix('student/project-templates')->controller(StudentProjectTemplateController::class)->group(function () {
+    Route::get('/applications/all', 'all');
+    Route::get('/applications/pending', 'pending');
+    Route::get('/applications/accepted', 'accepted');
+    Route::get('/applications/rejected', 'rejected');
+    Route::post('/{projectTemplate}/apply', 'apply');
+});
+
 // Student Portfolio Projects
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-projects')->controller(PortfolioProjectController::class)->group(function () {
     Route::get('/', 'index');
@@ -272,10 +305,13 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/task-assign
     Route::get('/{assignmentId}/progress', [StudentTaskProgressController::class, 'index'])->whereNumber('assignmentId');
     Route::post('/{assignmentId}/progress', [StudentTaskProgressController::class, 'store'])->whereNumber('assignmentId');
 
+
+
     // Student task submission
     Route::post('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'store'])->whereNumber('assignmentId');
     Route::get('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'show'])->whereNumber('assignmentId');
 });
+
 
 //
 // Student Opportunities
