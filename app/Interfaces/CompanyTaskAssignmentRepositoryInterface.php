@@ -17,4 +17,9 @@ interface CompanyTaskAssignmentRepositoryInterface
         int $companyId,
         int $assignmentId
     ): CompanyTaskAssignment;
+
+    public function update(
+        CompanyTaskAssignment $assignment,
+        array $data
+    ): CompanyTaskAssignment;
 }

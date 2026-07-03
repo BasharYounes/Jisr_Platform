@@ -19,19 +19,24 @@ return new class extends Migration
 
             $table->string('title');
             $table->text('description')->nullable();
-
-            $table->string('type', 32);
+            // job | internship
+            $table->enum('type', ['job', 'internship']);
             $table->string('location')->nullable();
 
             $table->decimal('salary_min', 10, 2)->nullable();
             $table->decimal('salary_max', 10, 2)->nullable();
 
-            $table->decimal('match_score', 5, 2)->nullable();
+            // $table->decimal('match_score', 5, 2)->nullable();
 
-            $table->string('status', 32)->default('open');
+            $table->enum('status', [
+                'draft',
+                'published',
+                'closed',
+                'cancelled',
+            ])->default('draft');
 
             $table->timestamp('deadline')->nullable();
-            $table->timestamp('posted_at')->useCurrent();
+            $table->timestamp('posted_at')->nullable();
             $table->timestamps();
         });
     }

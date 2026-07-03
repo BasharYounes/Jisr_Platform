@@ -281,5 +281,4 @@ class AssessmentCompletionService
             ->filter(fn ($attempt) => $attempt->AnsweredAt !== null)
             ->count();
     }
-
 }

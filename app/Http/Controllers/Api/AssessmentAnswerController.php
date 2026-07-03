@@ -7,8 +7,8 @@ use App\Http\Requests\SubmitAnswerRequest;
 use App\Models\AssessmentAnswer;
 use App\Models\AssessmentQuestionAttempt;
 use App\Services\AI\AnswerEvaluationService;
-use App\Services\Assessment\EvaluationValidationService;
 use App\Services\Assessment\AssessmentTelemetryService;
+use App\Services\Assessment\EvaluationValidationService;
 use App\Services\Assessment\LevelEstimationService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -21,8 +21,7 @@ class AssessmentAnswerController extends Controller
         private readonly LevelEstimationService $levelEstimationService,
         private readonly AssessmentTelemetryService $telemetryService,
         private readonly EvaluationValidationService $evaluationValidationService
-    ) {
-    }
+    ) {}
 
     public function submit(SubmitAnswerRequest $request, $session, AssessmentQuestionAttempt $attempt): JsonResponse
     {
@@ -70,7 +69,7 @@ class AssessmentAnswerController extends Controller
             $levelBefore,
             $rawEvaluation,
             $needsReview
-            ) {
+        ) {
 
             AssessmentAnswer::query()->create([
                 'AssessmentQuestionAttemptID' => $attempt->AssessmentQuestionAttemptID,

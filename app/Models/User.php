@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -246,5 +247,10 @@ class User extends Authenticatable
     public function otpCodes()
     {
         return $this->hasMany(OtpCode::class);
+    }
+
+    public function opportunityInterviews(): HasMany
+    {
+        return $this->hasMany(OpportunityInterview::class, 'student_user_id');
     }
 }

@@ -304,14 +304,11 @@ class AssessmentController extends Controller
         }
 
         $message = match ($freshSession->Status) {
-            AssessmentSession::STATUS_COMPLETED =>
-                'Assessment session completed successfully.',
+            AssessmentSession::STATUS_COMPLETED => 'Assessment session completed successfully.',
 
-            AssessmentSession::STATUS_NEEDS_REVIEW =>
-                'Assessment session requires review before final results can be issued.',
+            AssessmentSession::STATUS_NEEDS_REVIEW => 'Assessment session requires review before final results can be issued.',
 
-            default =>
-                'Assessment session is not ready to be completed yet.',
+            default => 'Assessment session is not ready to be completed yet.',
         };
 
         return ApiResponse::success($message, [
@@ -332,6 +329,7 @@ class AssessmentController extends Controller
                 ];
             }),
         ]);
+
         return ApiResponse::success('Assessment session completed successfully.',
             $session->fresh('skillSessions')
         );

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Events\ProjectAssignmentStatusChanged;
 use App\Interfaces\CompanyHomeRepositoryInterface;
+use App\Interfaces\CompanyOpportunityRepositoryInterface;
 use App\Interfaces\CompanyRepositoryInterface;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
@@ -16,6 +17,8 @@ use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Interfaces\NotificationRepositoryInterface;
+use App\Interfaces\OpportunityApplicationRepositoryInterface;
+use App\Interfaces\OpportunityRepositoryInterface;
 use App\Interfaces\PortfolioProjectRepositoryInterface;
 use App\Interfaces\SkillRepositoryInterface;
 use App\Interfaces\StudentRepositoryInterface;
@@ -36,6 +39,7 @@ use App\Policies\ProjectAssignmentPolicy;
 use App\Policies\ProjectAssignmentTaskPolicy;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Repositories\CompanyHomeRepository;
+use App\Repositories\CompanyOpportunityRepository;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CompanyTaskApplicationRepository;
 use App\Repositories\CompanyTaskAssignmentRepository;
@@ -47,6 +51,8 @@ use App\Repositories\ConversationParticipantRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\NotificationRepository;
+use App\Repositories\OpportunityApplicationRepository;
+use App\Repositories\OpportunityRepository;
 use App\Repositories\PortfolioProjectRepository;
 use App\Repositories\SkillRepository;
 use App\Repositories\StudentRepository;
@@ -146,6 +152,31 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CompanyTaskReviewRepositoryInterface::class,
             CompanyTaskReviewRepository::class
+        );
+
+        $this->app->bind(
+            CompanyOpportunityRepositoryInterface::class,
+            CompanyOpportunityRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityApplicationRepositoryInterface::class,
+            OpportunityApplicationRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityRepositoryInterface::class,
+            OpportunityRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityInterviewRepositoryInterface::class,
+            OpportunityInterviewRepository::class
+        );
+
+        $this->app->bind(
+            ConversationRepositoryInterface::class,
+            ConversationRepository::class
         );
 
         $this->app->bind(AIClientInterface::class, function () {
