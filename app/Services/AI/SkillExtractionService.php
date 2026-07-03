@@ -15,7 +15,7 @@ class SkillExtractionService
         $skillsCatalog = $this->buildSkillsCatalog();
 
         $systemPrompt = $this->buildSystemPrompt($skillsCatalog);
-        $userPrompt   = $this->buildUserPrompt($resumeText, $careerPath);
+        $userPrompt = $this->buildUserPrompt($resumeText, $careerPath);
 
         return $this->aiClient->generateJson($systemPrompt, $userPrompt);
     }
@@ -42,7 +42,7 @@ class SkillExtractionService
 
         $lines = $skills->map(function (Skill $skill) {
             $aliasesText = $skill->aliases->isNotEmpty()
-                ? '  [also known as: ' . $skill->aliases->pluck('Alias')->implode(', ') . ']'
+                ? '  [also known as: '.$skill->aliases->pluck('Alias')->implode(', ').']'
                 : '';
 
             return "  - {$skill->name}{$aliasesText}  (category: {$skill->category})";

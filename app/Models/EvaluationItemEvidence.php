@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class EvaluationItemEvidence extends Model
 {
     protected $table = 'evaluation_item_evidences';
+
     protected $fillable = [
         'evaluation_item_id',
         'disk',

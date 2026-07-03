@@ -117,7 +117,7 @@ class AcceptProjectTemplateApplicationAction
 
         if ($openAssignments->count() > 1) {
             throw new DomainException(
-                'يوجد أكثر من فريق مفتوح لهذا القالب. يجب إغلاق أو معالجة التعارض قبل قبول طالب جديد. ' .
+                'يوجد أكثر من فريق مفتوح لهذا القالب. يجب إغلاق أو معالجة التعارض قبل قبول طالب جديد. '.
                 '| More than one open team exists for this project template.'
             );
         }
@@ -135,7 +135,7 @@ class AcceptProjectTemplateApplicationAction
          */
         if ($assignment->status !== ProjectAssignmentStatus::ASSIGNED) {
             throw new DomainException(
-                'لا يمكن إضافة طالب إلى مشروع بدأ أو انتهى. ' .
+                'لا يمكن إضافة طالب إلى مشروع بدأ أو انتهى. '.
                 '| Students cannot be added after the project has started.'
             );
         }
@@ -146,7 +146,7 @@ class AcceptProjectTemplateApplicationAction
 
         if ($hasAssignedTasks) {
             throw new DomainException(
-                'لا يمكن إضافة طالب بعد بدء إسناد مهام المشروع. ' .
+                'لا يمكن إضافة طالب بعد بدء إسناد مهام المشروع. '.
                 '| Students cannot be added after project tasks have been assigned.'
             );
         }
@@ -157,7 +157,7 @@ class AcceptProjectTemplateApplicationAction
 
         if ($studentAlreadyExists) {
             throw new DomainException(
-                'هذا الطالب عضو في فريق المشروع مسبقاً. ' .
+                'هذا الطالب عضو في فريق المشروع مسبقاً. '.
                 '| This student is already a member of the project team.'
             );
         }
@@ -172,7 +172,7 @@ class AcceptProjectTemplateApplicationAction
 
             if ($activeMembersCount >= (int) $template->max_students) {
                 throw new DomainException(
-                    'تم الوصول إلى العدد الأقصى للطلاب في هذا المشروع. ' .
+                    'تم الوصول إلى العدد الأقصى للطلاب في هذا المشروع. '.
                     '| The maximum number of students for this project has been reached.'
                 );
             }
@@ -184,7 +184,7 @@ class AcceptProjectTemplateApplicationAction
     ): void {
         if ($application->status !== ProjectTemplateApplicationStatus::PENDING) {
             throw new DomainException(
-                'لا يمكن اتخاذ قرار على طلب تمت مراجعته مسبقاً. ' .
+                'لا يمكن اتخاذ قرار على طلب تمت مراجعته مسبقاً. '.
                 '| This application has already been reviewed.'
             );
         }

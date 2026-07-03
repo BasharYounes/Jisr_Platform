@@ -78,7 +78,6 @@ class ProjectAssignment extends Model
     }
 }
 
-
 /*
 
 */

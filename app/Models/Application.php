@@ -30,7 +30,7 @@ class Application extends Model
 
     public function cv()
     {
-        return $this->belongsTo(Cv::class);
+        return $this->belongsTo(CV::class, 'cv_id', 'CvID');
     }
 
     public function interview(): HasOne

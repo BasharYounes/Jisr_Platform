@@ -27,4 +27,15 @@ interface OpportunityApplicationRepositoryInterface
     ): Application;
 
     public function update(Application $application, array $data): Application;
+
+    public function getOpportunityCandidates(
+        int $companyId,
+        int $opportunityId
+    ): Collection;
+
+    public function findCompanyCandidateOrFail(
+        int $companyId,
+        int $opportunityId,
+        int $applicationId
+    ): Application;
 }

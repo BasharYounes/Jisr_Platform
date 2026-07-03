@@ -84,4 +84,46 @@ class OpportunityApplicationRepository implements OpportunityApplicationReposito
             'interview',
         ]);
     }
+
+    public function getOpportunityCandidates(
+        int $companyId,
+        int $opportunityId
+    ): Collection {
+        return Application::query()
+            ->with([
+                'user.studentProfile',
+                'opportunity.company',
+                'opportunity.skills',
+                'cv',
+                'interview',
+            ])
+            ->where('opportunity_id', $opportunityId)
+            ->whereHas('opportunity', function ($query) use ($companyId): void {
+                $query->where('company_id', $companyId);
+            })
+            ->orderByDesc('match_score')
+            ->latest('applied_at')
+            ->get();
+    }
+
+    public function findCompanyCandidateOrFail(
+        int $companyId,
+        int $opportunityId,
+        int $applicationId
+    ): Application {
+        return Application::query()
+            ->with([
+                'user.studentProfile',
+                'opportunity.company',
+                'opportunity.skills',
+                'cv',
+                'interview',
+            ])
+            ->whereKey($applicationId)
+            ->where('opportunity_id', $opportunityId)
+            ->whereHas('opportunity', function ($query) use ($companyId): void {
+                $query->where('company_id', $companyId);
+            })
+            ->firstOrFail();
+    }
 }
