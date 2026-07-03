@@ -8,6 +8,7 @@ use App\Domains\Student\Requests\SubmitAssignmentTaskRequest;
 use App\Domains\Supervisor\Actions\ApproveAssignmentTaskAction;
 use App\Domains\Supervisor\Actions\AssignAssignmentTaskToStudentAction;
 use App\Domains\Supervisor\Actions\AssignProjectAction;
+use App\Domains\Supervisor\Actions\GetActiveProjectAssignmentStudentsAction;
 use App\Domains\Supervisor\Actions\RecalculateProjectAssignmentProgressAction;
 use App\Domains\Supervisor\Actions\RequestAssignmentTaskRevisionAction;
 use App\Domains\Supervisor\Actions\StartAssignmentTaskReviewAction;
@@ -19,7 +20,6 @@ use App\Http\Resources\ProjectAssignmentTaskResource;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Support\ApiResponse;
-use App\Domains\Supervisor\Actions\GetActiveProjectAssignmentStudentsAction;
 
 class ProjectAssignmentController extends Controller
 {
@@ -72,8 +72,8 @@ class ProjectAssignmentController extends Controller
     }
 
     public function activeStudents(
-    ProjectAssignment $projectAssignment,
-    GetActiveProjectAssignmentStudentsAction $action
+        ProjectAssignment $projectAssignment,
+        GetActiveProjectAssignmentStudentsAction $action
     ) {
         $students = $action->execute(
             $projectAssignment,

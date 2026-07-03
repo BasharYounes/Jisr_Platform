@@ -44,7 +44,7 @@ class SubmitProjectEvaluationAction
 
                 if (! $isActiveMember) {
                     throw new DomainException(
-                        'الطالب المحدد ليس عضواً نشطاً في فريق هذا المشروع. ' .
+                        'الطالب المحدد ليس عضواً نشطاً في فريق هذا المشروع. '.
                         '| The selected student is not an active member of this project team.'
                     );
                 }
@@ -54,7 +54,7 @@ class SubmitProjectEvaluationAction
                     ProjectAssignmentStatus::UNDER_REVIEW
                 ) {
                     throw new DomainException(
-                        'لا يمكن التقييم النهائي إلا عندما يكون المشروع قيد المراجعة. ' .
+                        'لا يمكن التقييم النهائي إلا عندما يكون المشروع قيد المراجعة. '.
                         '| Final evaluation is allowed only when the project is under review.'
                     );
                 }
@@ -66,7 +66,7 @@ class SubmitProjectEvaluationAction
 
                 if ($studentTasksCount === 0) {
                     throw new DomainException(
-                        'لا يمكن تقييم طالب لم تُسند إليه أي مهمة في المشروع. ' .
+                        'لا يمكن تقييم طالب لم تُسند إليه أي مهمة في المشروع. '.
                         '| A student with no assigned project tasks cannot be evaluated.'
                     );
                 }
@@ -81,7 +81,7 @@ class SubmitProjectEvaluationAction
 
                 if ($unfinishedStudentTasks > 0) {
                     throw new DomainException(
-                        'لا يمكن تقييم الطالب قبل اكتمال جميع مهامه المسندة إليه. ' .
+                        'لا يمكن تقييم الطالب قبل اكتمال جميع مهامه المسندة إليه. '.
                         '| All tasks assigned to this student must be completed before evaluation.'
                     );
                 }
@@ -143,7 +143,7 @@ class SubmitProjectEvaluationAction
                     ProjectEvaluationStatus::APPROVED->value
                 ) {
                     throw new DomainException(
-                        'لا يمكن تعديل تقييم تمت الموافقة عليه. ' .
+                        'لا يمكن تعديل تقييم تمت الموافقة عليه. '.
                         '| An approved evaluation cannot be modified.'
                     );
                 }
@@ -192,8 +192,7 @@ class SubmitProjectEvaluationAction
 
                 foreach ($data['items'] as $item) {
                     $evaluationItem = $evaluation->items()->create([
-                        'evaluation_criteria_id' =>
-                            $item['evaluation_criteria_id'],
+                        'evaluation_criteria_id' => $item['evaluation_criteria_id'],
                         'score' => $item['score'],
                         'comment' => $item['comment'] ?? null,
                         'evidence' => $item['evidence'] ?? null,

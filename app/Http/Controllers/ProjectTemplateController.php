@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Domains\Supervisor\Actions\CreateProjectTemplateAction;
+use App\Domains\Supervisor\Actions\UpdateProjectTemplateAction;
 use App\Domains\Supervisor\Requests\CreateProjectTemplateRequest;
+use App\Domains\Supervisor\Requests\UpdateProjectTemplateRequest;
 use App\Http\Resources\ProjectTemplateResource;
 use App\Models\ProjectTemplate;
 use App\Support\ApiResponse;
 use Illuminate\Http\Request;
-use App\Domains\Supervisor\Actions\UpdateProjectTemplateAction;
-use App\Domains\Supervisor\Requests\UpdateProjectTemplateRequest;
 
 class ProjectTemplateController extends Controller
 {
@@ -66,9 +66,9 @@ class ProjectTemplateController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-    UpdateProjectTemplateRequest $request,
-    ProjectTemplate $projectTemplate,
-    UpdateProjectTemplateAction $action
+        UpdateProjectTemplateRequest $request,
+        ProjectTemplate $projectTemplate,
+        UpdateProjectTemplateAction $action
     ) {
         $template = $action->execute(
             $projectTemplate,

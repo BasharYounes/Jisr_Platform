@@ -48,4 +48,21 @@ class OpportunityRepository implements OpportunityRepositoryInterface
             })
             ->firstOrFail();
     }
+
+    public function findCompanyOpportunityOrFail(
+        int $companyId,
+        int $opportunityId
+    ): Opportunity {
+        return Opportunity::query()
+            ->with([
+                'company',
+                'skills',
+            ])
+            ->withCount([
+                'applications',
+            ])
+            ->whereKey($opportunityId)
+            ->where('company_id', $companyId)
+            ->firstOrFail();
+    }
 }

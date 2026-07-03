@@ -37,7 +37,7 @@ class UpdateProjectTemplateAction
 
             if ($hasAssignment || $hasBlockingApplication) {
                 throw new DomainException(
-                    'لا يمكن تعديل قالب مشروع دخل مرحلة التقديم أو التنفيذ. ' .
+                    'لا يمكن تعديل قالب مشروع دخل مرحلة التقديم أو التنفيذ. '.
                     '| A project template cannot be edited after applications or assignments exist.'
                 );
             }
