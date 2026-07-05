@@ -38,7 +38,7 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\Community\PostController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -250,6 +250,19 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
         Route::patch('/{interviewId}/complete', 'complete')->whereNumber('interviewId');
     });
 });
+
+//==============
+//Community Techincal Posts
+//==============
+Route::middleware(['auth:sanctum'])
+    ->prefix('community')
+    ->group(function () {
+        Route::get('/posts', [PostController::class, 'index']);
+        Route::post('/posts', [PostController::class, 'store']);
+        Route::get('/posts/{post}', [PostController::class, 'show']);
+        Route::put('/posts/{post}', [PostController::class, 'update']);
+        Route::delete('/posts/{post}', [PostController::class, 'destroy']);
+    });
 
 // ============
 // == Student
