@@ -18,6 +18,7 @@ use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Interfaces\NotificationRepositoryInterface;
 use App\Interfaces\OpportunityApplicationRepositoryInterface;
+use App\Interfaces\OpportunityInterviewRepositoryInterface;
 use App\Interfaces\OpportunityRepositoryInterface;
 use App\Interfaces\PortfolioProjectRepositoryInterface;
 use App\Interfaces\SkillRepositoryInterface;
@@ -52,6 +53,7 @@ use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\NotificationRepository;
 use App\Repositories\OpportunityApplicationRepository;
+use App\Repositories\OpportunityInterviewRepository;
 use App\Repositories\OpportunityRepository;
 use App\Repositories\PortfolioProjectRepository;
 use App\Repositories\SkillRepository;
@@ -67,6 +69,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use App\Models\OpportunityInterview;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -221,9 +224,10 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Relation::enforceMorphMap([
-            'user' => User::class,
-            'company_task_assignment' => CompanyTaskAssignment::class,
-        ]);
+    'user' => User::class,
+    'company_task_assignment' => CompanyTaskAssignment::class,
+    'opportunity_interview' => OpportunityInterview::class,
+]);
 
     }
 }

@@ -245,7 +245,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
 
     Route::controller(OpportunityInterviewController::class)->prefix('interviews')->group(function () {
         Route::post('/{applicationId}', 'schedule')->whereNumber('applicationId');
-        Route::patch('/{interviewId}/reschedule', 'reschedule')->whereNumber('interviewId');
+        Route::post('/{interviewId}/reschedule', 'reschedule')->whereNumber('interviewId');
         Route::patch('/{interviewId}/cancel', 'cancel')->whereNumber('interviewId');
         Route::patch('/{interviewId}/complete', 'complete')->whereNumber('interviewId');
     });
