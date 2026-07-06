@@ -4,10 +4,16 @@ namespace App\Services\Community;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Services\Points\PointService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class CommunityPostService
 {
+    public function __construct(
+        private readonly PointService $pointService
+    ) {}
+
     public function index(array $filters = []): LengthAwarePaginator
     {
         return Post::query()
@@ -26,13 +32,24 @@ class CommunityPostService
 
     public function create(User $user, array $data): Post
     {
-        return Post::create([
-            'User_id' => $user->id,
-            'Content' => $data['content'],
-            'Type' => $data['type'],
-            'LikeCount' => 0,
-            'CommentCount' => 0,
-        ])->load('user');
+        return DB::transaction(function () use ($user, $data) {
+            $post = Post::create([
+                'User_id' => $user->id,
+                'Content' => $data['content'],
+                'Type' => $data['type'],
+                'LikeCount' => 0,
+                'CommentCount' => 0,
+            ])->load('user');
+
+            $this->pointService->award(
+                user: $user,
+                actionType: 'community_post_created',
+                reference: $post,
+                description: 'Created a community post.'
+            );
+
+            return $post;
+        });
     }
 
     public function update(Post $post, array $data): Post

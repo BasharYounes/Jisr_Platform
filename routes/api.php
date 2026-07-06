@@ -38,7 +38,7 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Community\PostController;
+use App\Http\Controllers\Community\PostController;
 /*
 |--------------------------------------------------------------------------
 | API Routes

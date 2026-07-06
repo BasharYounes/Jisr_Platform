@@ -27,6 +27,7 @@ use App\Interfaces\StudentSkillRepositoryInterface;
 use App\Interfaces\StudentTaskApplicationRepositoryInterface;
 use App\Interfaces\SupervisorRepositoryInterface;
 use App\Interfaces\UserRepositoryInterface;
+use App\Interfaces\PointRepositoryInterface;
 use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
 use App\Listeners\NotifyStudentProjectStatusChanged;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
@@ -62,6 +63,7 @@ use App\Repositories\StudentSkillRepository;
 use App\Repositories\StudentTaskApplicationRepository;
 use App\Repositories\SupervisorRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\PointRepository;
 use App\Services\AI\AIClientInterface;
 use App\Services\AI\GeminiClient;
 use App\Services\AI\MockAIClient;
@@ -180,6 +182,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ConversationRepositoryInterface::class,
             ConversationRepository::class
+        );
+
+        $this->app->bind(
+            PointRepositoryInterface::class,
+            PointRepository::class
         );
 
         $this->app->bind(AIClientInterface::class, function () {
