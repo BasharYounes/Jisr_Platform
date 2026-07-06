@@ -17,8 +17,7 @@ class OpportunityInterviewService
         private readonly OpportunityApplicationRepositoryInterface $applicationRepository,
         private readonly OpportunityInterviewRepositoryInterface $interviewRepository,
         private readonly ConversationService $conversationService,
-    ) {
-    }
+    ) {}
 
     public function schedule(
         int $companyId,

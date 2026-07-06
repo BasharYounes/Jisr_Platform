@@ -15,8 +15,7 @@ class OpportunityInterviewController extends Controller
 {
     public function __construct(
         private readonly OpportunityInterviewService $interviewService
-    ) {
-    }
+    ) {}
 
     public function schedule(
         ScheduleOpportunityInterviewRequest $request,

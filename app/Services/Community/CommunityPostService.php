@@ -24,7 +24,7 @@ class CommunityPostService
             )
             ->when(
                 isset($filters['search']),
-                fn ($query) => $query->where('Content', 'like', '%' . $filters['search'] . '%')
+                fn ($query) => $query->where('Content', 'like', '%'.$filters['search'].'%')
             )
             ->latest()
             ->paginate($filters['per_page'] ?? 10);

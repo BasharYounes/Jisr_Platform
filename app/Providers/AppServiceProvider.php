@@ -20,6 +20,7 @@ use App\Interfaces\NotificationRepositoryInterface;
 use App\Interfaces\OpportunityApplicationRepositoryInterface;
 use App\Interfaces\OpportunityInterviewRepositoryInterface;
 use App\Interfaces\OpportunityRepositoryInterface;
+use App\Interfaces\PointRepositoryInterface;
 use App\Interfaces\PortfolioProjectRepositoryInterface;
 use App\Interfaces\SkillRepositoryInterface;
 use App\Interfaces\StudentRepositoryInterface;
@@ -27,11 +28,11 @@ use App\Interfaces\StudentSkillRepositoryInterface;
 use App\Interfaces\StudentTaskApplicationRepositoryInterface;
 use App\Interfaces\SupervisorRepositoryInterface;
 use App\Interfaces\UserRepositoryInterface;
-use App\Interfaces\PointRepositoryInterface;
 use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
 use App\Listeners\NotifyStudentProjectStatusChanged;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 use App\Models\CompanyTaskAssignment;
+use App\Models\OpportunityInterview;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Models\ProjectEvaluation;
@@ -56,6 +57,7 @@ use App\Repositories\NotificationRepository;
 use App\Repositories\OpportunityApplicationRepository;
 use App\Repositories\OpportunityInterviewRepository;
 use App\Repositories\OpportunityRepository;
+use App\Repositories\PointRepository;
 use App\Repositories\PortfolioProjectRepository;
 use App\Repositories\SkillRepository;
 use App\Repositories\StudentRepository;
@@ -63,7 +65,6 @@ use App\Repositories\StudentSkillRepository;
 use App\Repositories\StudentTaskApplicationRepository;
 use App\Repositories\SupervisorRepository;
 use App\Repositories\UserRepository;
-use App\Repositories\PointRepository;
 use App\Services\AI\AIClientInterface;
 use App\Services\AI\GeminiClient;
 use App\Services\AI\MockAIClient;
@@ -71,7 +72,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use App\Models\OpportunityInterview;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -231,10 +231,10 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Relation::enforceMorphMap([
-    'user' => User::class,
-    'company_task_assignment' => CompanyTaskAssignment::class,
-    'opportunity_interview' => OpportunityInterview::class,
-]);
+            'user' => User::class,
+            'company_task_assignment' => CompanyTaskAssignment::class,
+            'opportunity_interview' => OpportunityInterview::class,
+        ]);
 
     }
 }

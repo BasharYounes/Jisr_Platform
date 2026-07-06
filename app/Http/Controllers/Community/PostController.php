@@ -19,8 +19,7 @@ class PostController extends Controller
 
     public function __construct(
         private readonly CommunityPostService $communityPostService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): JsonResponse
     {

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CVController;
 use App\Http\Controllers\Api\LearningController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Community\PostController;
 use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskAssignmentController;
 use App\Http\Controllers\Company\CompanyTaskController;
@@ -38,7 +39,7 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Community\PostController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -251,9 +252,9 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
     });
 });
 
-//==============
-//Community Techincal Posts
-//==============
+// ==============
+// Community Techincal Posts
+// ==============
 Route::middleware(['auth:sanctum'])
     ->prefix('community')
     ->group(function () {

@@ -53,7 +53,7 @@ class PointRulesSeeder extends Seeder
                 [
                     'points' => $ruleData['points'],
                     'max_per_day' => $ruleData['max_per_day'],
-                    'is_active' => true
+                    'is_active' => true,
                 ]
             );
 

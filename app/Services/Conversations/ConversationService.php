@@ -6,8 +6,8 @@ use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Models\Conversation;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ConversationService
 {
@@ -88,33 +88,34 @@ class ConversationService
             );
         });
     }
+
     public function openForConversationable(
-    Model $conversationable,
-    array $participants
-): Conversation {
-    return DB::transaction(function () use ($conversationable, $participants): Conversation {
-        $conversation = $this->conversationRepository->findByConversationable(
-            type: $conversationable->getMorphClass(),
-            id: (int) $conversationable->getKey()
-        );
-
-        if (! $conversation) {
-            $conversation = $this->conversationRepository
-                ->createForConversationable($conversationable);
-        }
-
-        foreach ($participants as $participant) {
-            $this->participantRepository->addParticipant(
-                conversationId: (int) $conversation->id,
-                userId: (int) $participant['user_id'],
-                role: $participant['role']
+        Model $conversationable,
+        array $participants
+    ): Conversation {
+        return DB::transaction(function () use ($conversationable, $participants): Conversation {
+            $conversation = $this->conversationRepository->findByConversationable(
+                type: $conversationable->getMorphClass(),
+                id: (int) $conversationable->getKey()
             );
-        }
 
-        return $conversation->fresh([
-            'participants',
-            'conversationable',
-        ]);
-    });
-   }
+            if (! $conversation) {
+                $conversation = $this->conversationRepository
+                    ->createForConversationable($conversationable);
+            }
+
+            foreach ($participants as $participant) {
+                $this->participantRepository->addParticipant(
+                    conversationId: (int) $conversation->id,
+                    userId: (int) $participant['user_id'],
+                    role: $participant['role']
+                );
+            }
+
+            return $conversation->fresh([
+                'participants',
+                'conversationable',
+            ]);
+        });
+    }
 }
