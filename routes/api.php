@@ -25,6 +25,7 @@ use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
 use App\Http\Controllers\Matching\MatchingController;
+use App\Http\Controllers\Points\MyPointController;
 use App\Http\Controllers\Skill\SkillController;
 use App\Http\Controllers\Student\PortfolioProjectController;
 use App\Http\Controllers\Student\StudentProjectTemplateController;
@@ -338,4 +339,12 @@ Route::middleware(['auth:sanctum'])->prefix('community')->group(function () {
     Route::get('/comments/{comment}/replies', [CommentController::class, 'replies']);
     Route::put('/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+});
+
+// ==============
+// Me / Points
+// ==============
+Route::middleware('auth:sanctum')->prefix('me')->group(function () {
+    Route::get('/points', [MyPointController::class, 'summary']);
+    Route::get('/points/history', [MyPointController::class, 'history']);
 });

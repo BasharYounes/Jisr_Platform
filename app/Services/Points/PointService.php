@@ -5,6 +5,7 @@ namespace App\Services\Points;
 use App\Interfaces\PointRepositoryInterface;
 use App\Models\PointTransaction;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
 class PointService
@@ -65,5 +66,24 @@ class PointService
     public function totalForUser(User $user): int
     {
         return $this->pointRepository->getUserTotalPoints($user->id);
+    }
+
+    public function getUserTotalPoints(User $user): int
+    {
+        return (int) PointTransaction::query()
+            ->where('user_id', $user->id)
+            ->sum('points');
+    }
+
+    public function getUserPointTransactions(User $user, array $filters = []): LengthAwarePaginator
+    {
+        return PointTransaction::query()
+            ->with([
+                'actionType.rule',
+                'actionType.category',
+            ])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate($filters['per_page'] ?? 10);
     }
 }
