@@ -104,11 +104,14 @@ class CommunityCommentService
         });
     }
 
-    public function getPostComments(Post $post, string $filter = 'oldest')
+    public function getPostComments(Post $post, User $user, string $filter = 'oldest')
     {
         $query = Comment::query()
             ->with('user')
-            ->withCount('replies')
+            ->withCount(['replies', 'likes'])
+            ->withExists([
+                'likes as is_liked' => fn ($query) => $query->where('user_id', $user->id),
+            ])
             ->where('post_id', $post->id)
             ->whereNull('parent_comment_id');
 
@@ -123,7 +126,7 @@ class CommunityCommentService
         return $query->get();
     }
 
-    public function replies(Comment $comment)
+    public function replies(Comment $comment, User $user)
     {
         if ($comment->parent_comment_id !== null) {
             throw ValidationException::withMessages([
@@ -133,7 +136,10 @@ class CommunityCommentService
 
         return Comment::query()
             ->with('user')
-            ->withCount('replies')
+            ->withCount(['replies', 'likes'])
+            ->withExists([
+                'likes as is_liked' => fn ($query) => $query->where('user_id', $user->id),
+            ])
             ->where('parent_comment_id', $comment->id)
             ->oldest()
             ->get();

@@ -47,6 +47,11 @@ class Comment extends Model
             ->withTimestamps();
     }
 
+    public function likes(): HasMany
+    {
+        return $this->hasMany(CommentLike::class, 'comment_id');
+    }
+
     public function pointTransactions(): MorphMany
     {
         return $this->morphMany(PointTransaction::class, 'reference');

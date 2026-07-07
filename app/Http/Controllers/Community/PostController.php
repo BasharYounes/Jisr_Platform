@@ -24,6 +24,7 @@ class PostController extends Controller
     public function index(Request $request): JsonResponse
     {
         $posts = $this->communityPostService->index(
+            $request->user(),
             $request->only(['type', 'search', 'per_page'])
         );
 
@@ -48,7 +49,10 @@ class PostController extends Controller
 
     public function show(Post $post): JsonResponse
     {
-        $post->load('user');
+        $post->load('user')
+            ->loadExists([
+                'likes as is_liked' => fn ($query) => $query->where('user_id', request()->user()->id),
+            ]);
 
         return $this->success(
             'Community post retrieved successfully.',

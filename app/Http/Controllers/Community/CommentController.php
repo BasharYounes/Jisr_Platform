@@ -25,7 +25,7 @@ class CommentController extends Controller
     public function indexByPost(GetPostCommentsRequest $request, Post $post): JsonResponse
     {
         $filter = $request->validated('filter') ?? 'oldest';
-        $comments = $this->communityCommentService->getPostComments($post, $filter);
+        $comments = $this->communityCommentService->getPostComments($post, $request->user(), $filter);
 
         return $this->success(
             'Post comments retrieved successfully.',
@@ -76,9 +76,9 @@ class CommentController extends Controller
         return $this->success('Comment deleted successfully.');
     }
 
-    public function replies(Comment $comment): JsonResponse
+    public function replies(Request $request, Comment $comment): JsonResponse
     {
-        $replies = $this->communityCommentService->replies($comment);
+        $replies = $this->communityCommentService->replies($comment, $request->user());
 
         return $this->success(
             'Replies retrieved successfully.',
