@@ -5,11 +5,16 @@ namespace App\Services\Community;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
+use App\Services\Points\PointService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CommunityCommentService
 {
+    public function __construct(
+        private readonly PointService $pointService
+    ) {}
+
     public function create(Post $post, User $user, array $data): Comment
     {
         return DB::transaction(function () use ($post, $user, $data) {
@@ -41,6 +46,13 @@ class CommunityCommentService
             // TODO: Create in-app notification for post owner later.
             // شرطها لاحقاً:
             // if ($post->User_id !== $user->id) { notify post owner }
+
+            $this->pointService->award(
+                user: $user,
+                actionType: 'community_comment_created',
+                reference: $comment,
+                description: 'Created a community comment.'
+            );
 
             return $comment->load('user')->loadCount('replies');
         });
