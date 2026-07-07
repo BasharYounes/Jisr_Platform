@@ -14,10 +14,13 @@ class CommunityPostService
         private readonly PointService $pointService
     ) {}
 
-    public function index(array $filters = []): LengthAwarePaginator
+    public function index(User $user, array $filters = []): LengthAwarePaginator
     {
         return Post::query()
             ->with('user')
+            ->withExists([
+                'likes as is_liked' => fn ($query) => $query->where('user_id', $user->id),
+            ])
             ->when(
                 isset($filters['type']),
                 fn ($query) => $query->where('Type', $filters['type'])

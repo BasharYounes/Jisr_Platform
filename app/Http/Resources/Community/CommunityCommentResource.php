@@ -17,7 +17,9 @@ class CommunityCommentResource extends JsonResource
             'parent_comment_id' => $this->parent_comment_id,
             'content' => $this->content,
             'replies_count' => (int) ($this->replies_count ?? 0),
+            'likes_count' => (int) ($this->likes_count ?? 0),
             'is_owner' => $user ? $user->id === $this->user_id : false,
+            'is_liked' => (bool) ($this->is_liked ?? false),
             'user' => [
                 'id' => $this->user?->id,
                 'name' => $this->user?->name,

@@ -18,6 +18,7 @@ class CommunityPostResource extends JsonResource
             'like_count' => (int) $this->LikeCount,
             'comment_count' => (int) $this->CommentCount,
             'is_owner' => $user ? $user->id === $this->User_id : false,
+            'is_liked' => (bool) ($this->is_liked ?? false),
             'user' => [
                 'id' => $this->user?->id,
                 'name' => $this->user?->name,
