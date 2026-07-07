@@ -9,6 +9,10 @@ use App\Http\Controllers\Api\CVController;
 use App\Http\Controllers\Api\LearningController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Community\CommentController;
+use App\Http\Controllers\Community\CommentLikeController;
+use App\Http\Controllers\Community\PostController;
+use App\Http\Controllers\Community\PostLikeController;
 use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskAssignmentController;
 use App\Http\Controllers\Company\CompanyTaskController;
@@ -23,6 +27,7 @@ use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
 use App\Http\Controllers\Matching\MatchingController;
+use App\Http\Controllers\Points\MyPointController;
 use App\Http\Controllers\Skill\SkillController;
 use App\Http\Controllers\Student\PortfolioProjectController;
 use App\Http\Controllers\Student\StudentProjectTemplateController;
@@ -245,7 +250,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
 
     Route::controller(OpportunityInterviewController::class)->prefix('interviews')->group(function () {
         Route::post('/{applicationId}', 'schedule')->whereNumber('applicationId');
-        Route::patch('/{interviewId}/reschedule', 'reschedule')->whereNumber('interviewId');
+        Route::post('/{interviewId}/reschedule', 'reschedule')->whereNumber('interviewId');
         Route::patch('/{interviewId}/cancel', 'cancel')->whereNumber('interviewId');
         Route::patch('/{interviewId}/complete', 'complete')->whereNumber('interviewId');
     });
@@ -318,4 +323,33 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/application
     Route::get('/', 'index');
     Route::get('/{applicationId}', 'show')->whereNumber('applicationId');
     Route::patch('/{applicationId}/withdraw', 'withdraw')->whereNumber('applicationId');
+});
+
+// ==============
+// Community Techincal Posts
+// ==============
+Route::middleware(['auth:sanctum'])->prefix('community')->group(function () {
+    Route::get('/posts', [PostController::class, 'index']);
+    Route::post('/posts', [PostController::class, 'store']);
+    Route::get('/posts/{post}', [PostController::class, 'show']);
+    Route::put('/posts/{post}', [PostController::class, 'update']);
+    Route::delete('/posts/{post}', [PostController::class, 'destroy']);
+    // Comment
+    Route::get('/posts/{post}/comments', [CommentController::class, 'indexByPost']);
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+    // Replies
+    Route::get('/comments/{comment}/replies', [CommentController::class, 'replies']);
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+    // Like
+    Route::post('/posts/{post}/like', [PostLikeController::class, 'toggle']);
+    Route::post('/comments/{comment}/like', [CommentLikeController::class, 'toggle']);
+});
+
+// ==============
+// Me / Points
+// ==============
+Route::middleware('auth:sanctum')->prefix('me')->group(function () {
+    Route::get('/points', [MyPointController::class, 'summary']);
+    Route::get('/points/history', [MyPointController::class, 'history']);
 });

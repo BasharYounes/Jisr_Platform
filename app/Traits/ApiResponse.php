@@ -18,7 +18,7 @@ trait ApiResponse
             'status' => true,
             'message' => $message,
             'data' => $data,
-        ], $statusCode);
+        ], $statusCode, [], JSON_UNESCAPED_UNICODE);
     }
 
     /**
@@ -33,7 +33,7 @@ trait ApiResponse
             'status' => false,
             'message' => $message,
             'errors' => $errors,
-        ], $statusCode);
+        ], $statusCode, [], JSON_UNESCAPED_UNICODE);
     }
 
     /**

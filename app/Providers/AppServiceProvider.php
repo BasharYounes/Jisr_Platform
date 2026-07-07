@@ -18,7 +18,9 @@ use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Interfaces\NotificationRepositoryInterface;
 use App\Interfaces\OpportunityApplicationRepositoryInterface;
+use App\Interfaces\OpportunityInterviewRepositoryInterface;
 use App\Interfaces\OpportunityRepositoryInterface;
+use App\Interfaces\PointRepositoryInterface;
 use App\Interfaces\PortfolioProjectRepositoryInterface;
 use App\Interfaces\SkillRepositoryInterface;
 use App\Interfaces\StudentRepositoryInterface;
@@ -30,6 +32,7 @@ use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
 use App\Listeners\NotifyStudentProjectStatusChanged;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 use App\Models\CompanyTaskAssignment;
+use App\Models\OpportunityInterview;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Models\ProjectEvaluation;
@@ -52,7 +55,9 @@ use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\NotificationRepository;
 use App\Repositories\OpportunityApplicationRepository;
+use App\Repositories\OpportunityInterviewRepository;
 use App\Repositories\OpportunityRepository;
+use App\Repositories\PointRepository;
 use App\Repositories\PortfolioProjectRepository;
 use App\Repositories\SkillRepository;
 use App\Repositories\StudentRepository;
@@ -179,6 +184,11 @@ class AppServiceProvider extends ServiceProvider
             ConversationRepository::class
         );
 
+        $this->app->bind(
+            PointRepositoryInterface::class,
+            PointRepository::class
+        );
+
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
                 ? app(GeminiClient::class)
@@ -223,6 +233,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'user' => User::class,
             'company_task_assignment' => CompanyTaskAssignment::class,
+            'opportunity_interview' => OpportunityInterview::class,
         ]);
 
     }
