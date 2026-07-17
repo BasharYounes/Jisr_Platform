@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+// Notification imports
+use App\Jobs\SendFirebaseNotificationJob;
+use App\Models\User;
+//
+
 class CompanyTaskApplicationService
 {
     public function __construct(
@@ -41,7 +46,7 @@ class CompanyTaskApplicationService
 
     public function acceptApplication(int $companyId, int $applicationId, array $data = []): CompanyTaskAssignment
     {
-        $assignment = DB::transaction(function () use ($companyId, $applicationId, $data) {
+        return DB::transaction(function () use ($companyId, $applicationId, $data) {
             $application = $this->applicationRepository->findCompanyApplicationOrFail(
                 $companyId,
                 $applicationId
@@ -50,11 +55,13 @@ class CompanyTaskApplicationService
             $this->ensureApplicationIsPending($application);
             $this->ensureAcceptedLimitNotReached($application);
             $this->ensureAssignmentDoesNotExist($application);
+
             $application = $this->applicationRepository->update($application, [
                 'status' => 'accepted',
                 'reviewed_at' => now(),
                 'company_notes' => $data['company_notes'] ?? null,
             ]);
+
             $assignment = $this->assignmentRepository->create([
                 'company_task_id' => $application->company_task_id,
                 'company_task_application_id' => $application->id,
@@ -62,16 +69,26 @@ class CompanyTaskApplicationService
                 'status' => 'working',
                 'started_at' => now(),
             ]);
+
             $this->taskAssignmentConversationService->createForAssignment($assignment);
+
+            $student = User::query()->findOrFail($application->student_user_id);
+            $taskTitle = $application->task?->title ?? 'مهمة شركة';
+
+            SendFirebaseNotificationJob::dispatch(
+                $student,
+                'تم قبول طلبك',
+                "تم قبول طلبك على المهمة: {$taskTitle}",
+                [
+                    'type' => 'company_task_application_accepted',
+                    'decision' => 'accepted',
+                    'application_id' => (string) $application->id,
+                    'company_task_id' => (string) $application->company_task_id,
+                ],
+            );
 
             return $assignment;
         });
-
-        DB::afterCommit(function () {
-            // later: send notification
-        });
-
-        return $assignment;
     }
 
     public function rejectApplication(int $companyId, int $applicationId, array $data = []): CompanyTaskApplication
@@ -84,11 +101,28 @@ class CompanyTaskApplicationService
 
             $this->ensureApplicationIsPending($application);
 
-            return $this->applicationRepository->update($application, [
+            $application = $this->applicationRepository->update($application, [
                 'status' => 'rejected',
                 'reviewed_at' => now(),
                 'company_notes' => $data['company_notes'] ?? null,
             ]);
+
+            $student = User::query()->findOrFail($application->student_user_id);
+            $taskTitle = $application->task?->title ?? 'مهمة شركة';
+
+            SendFirebaseNotificationJob::dispatch(
+                $student,
+                'تم رفض طلبك',
+                "تم رفض طلبك على المهمة: {$taskTitle}",
+                [
+                    'type' => 'company_task_application_rejected',
+                    'decision' => 'rejected',
+                    'application_id' => (string) $application->id,
+                    'company_task_id' => (string) $application->company_task_id,
+                ],
+            );
+
+            return $application;
         });
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domains\Supervisor\Actions\CreateProjectTaskAction;
+use App\Domains\Supervisor\Actions\SyncProjectTaskToAssignmentsAction;
 use App\Domains\Supervisor\Requests\CreateProjectTaskRequest;
 use App\Models\ProjectTask;
 use App\Models\ProjectTemplate;
@@ -33,12 +34,15 @@ class ProjectTaskController extends Controller
     public function store(
         CreateProjectTaskRequest $request,
         ProjectTemplate $projectTemplate,
-        CreateProjectTaskAction $action
+        CreateProjectTaskAction $action,
+        SyncProjectTaskToAssignmentsAction $syncProjectTaskToAssignmentsAction
     ) {
         $task = $action->execute(
             $projectTemplate,
             $request->validated()
         );
+
+        $syncProjectTaskToAssignmentsAction->execute($task);
 
         return ApiResponse::success(
             'Project task created successfully',

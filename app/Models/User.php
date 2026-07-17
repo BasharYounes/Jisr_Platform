@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+// use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -173,7 +174,7 @@ class User extends Authenticatable
 
     public function cvs()
     {
-        return $this->hasMany(Cv::class);
+        return $this->hasMany(CV::class);
     }
 
     public function verificationRequests()
@@ -246,5 +247,10 @@ class User extends Authenticatable
     public function otpCodes()
     {
         return $this->hasMany(OtpCode::class);
+    }
+
+    public function deviceTokens(): HasMany
+    {
+        return $this->hasMany(UserDeviceToken::class);
     }
 }
