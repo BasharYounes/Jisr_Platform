@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\ProjectAssignmentReadyForEvaluation;
 use App\Events\ProjectAssignmentStatusChanged;
 use App\Interfaces\CompanyHomeRepositoryInterface;
+use App\Interfaces\CompanyOpportunityRepositoryInterface;
 use App\Interfaces\CompanyRepositoryInterface;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
@@ -16,6 +17,10 @@ use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Interfaces\NotificationRepositoryInterface;
+use App\Interfaces\OpportunityApplicationRepositoryInterface;
+use App\Interfaces\OpportunityInterviewRepositoryInterface;
+use App\Interfaces\OpportunityRepositoryInterface;
+use App\Interfaces\PointRepositoryInterface;
 use App\Interfaces\PortfolioProjectRepositoryInterface;
 use App\Interfaces\SkillRepositoryInterface;
 use App\Interfaces\StudentRepositoryInterface;
@@ -27,6 +32,7 @@ use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
 use App\Listeners\NotifyStudentProjectStatusChanged;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 use App\Models\CompanyTaskAssignment;
+use App\Models\OpportunityInterview;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Models\ProjectEvaluation;
@@ -36,6 +42,7 @@ use App\Policies\ProjectAssignmentPolicy;
 use App\Policies\ProjectAssignmentTaskPolicy;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Repositories\CompanyHomeRepository;
+use App\Repositories\CompanyOpportunityRepository;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CompanyTaskApplicationRepository;
 use App\Repositories\CompanyTaskAssignmentRepository;
@@ -47,6 +54,10 @@ use App\Repositories\ConversationParticipantRepository;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use App\Repositories\NotificationRepository;
+use App\Repositories\OpportunityApplicationRepository;
+use App\Repositories\OpportunityInterviewRepository;
+use App\Repositories\OpportunityRepository;
+use App\Repositories\PointRepository;
 use App\Repositories\PortfolioProjectRepository;
 use App\Repositories\SkillRepository;
 use App\Repositories\StudentRepository;
@@ -148,6 +159,36 @@ class AppServiceProvider extends ServiceProvider
             CompanyTaskReviewRepository::class
         );
 
+        $this->app->bind(
+            CompanyOpportunityRepositoryInterface::class,
+            CompanyOpportunityRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityApplicationRepositoryInterface::class,
+            OpportunityApplicationRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityRepositoryInterface::class,
+            OpportunityRepository::class
+        );
+
+        $this->app->bind(
+            OpportunityInterviewRepositoryInterface::class,
+            OpportunityInterviewRepository::class
+        );
+
+        $this->app->bind(
+            ConversationRepositoryInterface::class,
+            ConversationRepository::class
+        );
+
+        $this->app->bind(
+            PointRepositoryInterface::class,
+            PointRepository::class
+        );
+
         $this->app->bind(AIClientInterface::class, function () {
             return env('AI_PROVIDER') === 'gemini'
                 ? app(GeminiClient::class)
@@ -192,6 +233,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'user' => User::class,
             'company_task_assignment' => CompanyTaskAssignment::class,
+            'opportunity_interview' => OpportunityInterview::class,
         ]);
 
     }

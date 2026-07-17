@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CV extends Model
@@ -13,7 +14,7 @@ class CV extends Model
 
     protected $fillable = [
         'UserId',
-        'FileUrl',
+        'FilePath',
         'IsPrimary',
         'UploadedAt',
     ];
@@ -23,25 +24,13 @@ class CV extends Model
         'UploadedAt' => 'datetime',
     ];
 
-    public $timestamps = false;
-
-    // public function analysis(): HasOne
-    // {
-    //     return $this->hasOne(CVAnalysis::class, 'CvId', 'CvID');
-    // }
-
-    public function assessmentSessions(): HasMany
-    {
-        return $this->hasMany(AssessmentSession::class, 'CvID', 'CvID');
-    }
-
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'UserId', 'id');
     }
 
-    public function getRouteKeyName(): string
+    public function applications(): HasMany
     {
-        return 'CvID';
+        return $this->hasMany(Application::class, 'cv_id', 'CvID');
     }
 }

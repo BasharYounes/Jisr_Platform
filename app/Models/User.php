@@ -5,11 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -252,5 +252,9 @@ class User extends Authenticatable
     public function deviceTokens(): HasMany
     {
         return $this->hasMany(UserDeviceToken::class);
+    }
+    public function opportunityInterviews(): HasMany
+    {
+        return $this->hasMany(OpportunityInterview::class, 'student_user_id');
     }
 }

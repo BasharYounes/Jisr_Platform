@@ -4,8 +4,9 @@ namespace App\Services\CompanyTasks;
 
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
+use App\Interfaces\CompanyTaskRepositoryInterface;
 use App\Models\CompanyTaskApplication;
-use App\Models\CompanyTaskAssignment;
+// use App\Models\CompanyTaskAssignment;
 use App\Services\Conversations\TaskAssignmentConversationService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ class CompanyTaskApplicationService
     public function __construct(
         private readonly CompanyTaskApplicationRepositoryInterface $applicationRepository,
         private readonly CompanyTaskAssignmentRepositoryInterface $assignmentRepository,
+        private readonly CompanyTaskRepositoryInterface $companyTaskRepository,
         private readonly TaskAssignmentConversationService $taskAssignmentConversationService,
     ) {}
 
@@ -44,15 +46,23 @@ class CompanyTaskApplicationService
         );
     }
 
-    public function acceptApplication(int $companyId, int $applicationId, array $data = []): CompanyTaskAssignment
-    {
-        return DB::transaction(function () use ($companyId, $applicationId, $data) {
+    public function acceptApplication(
+        int $companyId,
+        int $applicationId,
+        array $data = []
+    ) {
+        $assignment = DB::transaction(function () use (
+            $companyId,
+            $applicationId,
+            $data
+        ) {
             $application = $this->applicationRepository->findCompanyApplicationOrFail(
                 $companyId,
                 $applicationId
             );
 
             $this->ensureApplicationIsPending($application);
+            $this->ensureTaskCanAcceptStudents($application);
             $this->ensureAcceptedLimitNotReached($application);
             $this->ensureAssignmentDoesNotExist($application);
 
@@ -69,6 +79,8 @@ class CompanyTaskApplicationService
                 'status' => 'working',
                 'started_at' => now(),
             ]);
+
+            $this->markTaskAsInProgressIfNeeded($application);
 
             $this->taskAssignmentConversationService->createForAssignment($assignment);
 
@@ -91,6 +103,37 @@ class CompanyTaskApplicationService
         });
     }
 
+    private function ensureTaskCanAcceptStudents(
+        CompanyTaskApplication $application
+    ): void {
+        $taskStatus = $application->task?->status;
+
+        if (in_array($taskStatus, ['published', 'in_progress'], true)) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'task' => [
+                'لا يمكن قبول طلاب على تاسك في حالته الحالية. | Students cannot be accepted for this task in its current status.',
+            ],
+        ]);
+    }
+
+    private function markTaskAsInProgressIfNeeded(
+        CompanyTaskApplication $application
+    ): void {
+        $task = $application->task;
+
+        if ($task?->status !== 'published') {
+            return;
+        }
+
+        $this->companyTaskRepository->update($task, [
+            'status' => 'in_progress',
+        ]);
+    }
+
+    // Reject application
     public function rejectApplication(int $companyId, int $applicationId, array $data = []): CompanyTaskApplication
     {
         return DB::transaction(function () use ($companyId, $applicationId, $data) {

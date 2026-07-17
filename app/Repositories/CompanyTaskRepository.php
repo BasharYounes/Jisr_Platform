@@ -39,18 +39,22 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
             ->firstOrFail();
     }
 
-    public function getByCompany(int $companyId): Collection
-    {
+    public function getByCompany(
+        int $companyId,
+        ?string $status = null
+    ): Collection {
         return CompanyTask::query()
             ->with(['skills'])
             ->withCount([
                 'assignments as accepted_students_count' => function ($query) {
                     $query->where('status', '!=', 'cancelled');
                 },
-
                 'submissions as submissions_count',
             ])
             ->where('company_id', $companyId)
+            ->when($status !== null, function ($query) use ($status): void {
+                $query->where('status', $status);
+            })
             ->latest()
             ->get();
     }
@@ -111,5 +115,114 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
             ->where('status', 'published')
             ->where('deadline', '>=', now())
             ->firstOrFail();
+    }
+
+    public function getUnreviewedAssignmentsForTask(
+        CompanyTask $task
+    ): Collection {
+        return $task->assignments()
+            ->where('status', '!=', 'cancelled')
+            ->where(function ($query): void {
+                $query
+                    ->where('status', '!=', 'reviewed')
+                    ->orWhereDoesntHave('reviews');
+            })
+            ->with([
+                'task.skills',
+                'application',
+                'student.studentProfile',
+                'student.skills',
+                'student.portfolioProjects',
+                'progressUpdates',
+                'submissions',
+                'reviews',
+            ])
+            ->get();
+    }
+
+    public function close(
+        CompanyTask $task
+    ): CompanyTask {
+        $task->update([
+            'status' => 'closed',
+        ]);
+
+        return $task->fresh([
+            'company',
+            'skills',
+        ]);
+    }
+
+    public function findCompanyTaskWithAssignmentsOrFail(
+        int $companyId,
+        int $taskId
+    ): CompanyTask {
+        return CompanyTask::query()
+            ->where('company_id', $companyId)
+            ->whereKey($taskId)
+            ->with([
+                'company',
+                'skills',
+                'applications',
+                'assignments.task.skills',
+                'assignments.application',
+                'assignments.student.studentProfile',
+                'assignments.student.skills',
+                'assignments.student.portfolioProjects',
+                'assignments.progressUpdates',
+                'assignments.submissions',
+                'assignments.reviews',
+            ])
+            ->firstOrFail();
+    }
+
+    public function getCancellationBlockingAssignmentsForTask(
+        CompanyTask $task
+    ): Collection {
+        return $task->assignments()
+            ->whereIn('status', [
+                'working',
+                'submitted',
+                'reviewed',
+            ])
+            ->with([
+                'task.skills',
+                'application',
+                'student.studentProfile',
+                'student.skills',
+                'student.portfolioProjects',
+                'progressUpdates',
+                'submissions',
+                'reviews',
+            ])
+            ->get();
+    }
+
+    public function rejectPendingApplicationsForCancelledTask(
+        CompanyTask $task,
+        ?string $reason = null
+    ): int {
+        return $task->applications()
+            ->where('status', 'pending')
+            ->update([
+                'status' => 'rejected',
+                'reviewed_at' => now(),
+                'company_notes' => $reason
+                    ?: 'تم رفض الطلب بسبب إلغاء التاسك من قبل الشركة. | Application rejected because the task was cancelled by the company.',
+                'updated_at' => now(),
+            ]);
+    }
+
+    public function cancel(
+        CompanyTask $task
+    ): CompanyTask {
+        $task->update([
+            'status' => 'cancelled',
+        ]);
+
+        return $task->fresh([
+            'company',
+            'skills',
+        ]);
     }
 }
