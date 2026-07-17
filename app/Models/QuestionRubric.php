@@ -20,6 +20,9 @@ class QuestionRubric extends Model
         'SampleGoodAnswer',
         'SampleBadAnswer',
         'OrderIndex',
+        'CriterionCode',
+        'FeedbackOnPass',
+        'FeedbackOnFail',
     ];
 
     protected $casts = [
@@ -32,5 +35,26 @@ class QuestionRubric extends Model
     public function questionBank()
     {
         return $this->belongsTo(QuestionBank::class, 'QuestionID', 'QuestionID');
+    }
+
+    public function criterionRules()
+    {
+        return $this->hasMany(
+            CriterionRule::class,
+            'QuestionRubricID',
+            'QuestionRubricID'
+        );
+    }
+
+    public function blockingContradictionRules()
+    {
+        return $this->belongsToMany(
+            AssessmentContradictionRule::class,
+            'assessment_contradiction_rule_rubrics',
+            'QuestionRubricID',
+            'ContradictionRuleID',
+            'QuestionRubricID',
+            'ContradictionRuleID'
+        );
     }
 }

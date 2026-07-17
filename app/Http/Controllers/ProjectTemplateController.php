@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Supervisor\Actions\AssignProjectAction;
 use App\Domains\Supervisor\Actions\CreateProjectTemplateAction;
 use App\Domains\Supervisor\Actions\UpdateProjectTemplateAction;
 use App\Domains\Supervisor\Requests\CreateProjectTemplateRequest;
@@ -26,11 +27,19 @@ class ProjectTemplateController extends Controller
      */
     public function create(
         CreateProjectTemplateRequest $request,
-        CreateProjectTemplateAction $createProjectTemplateAction
+        CreateProjectTemplateAction $createProjectTemplateAction,
+        AssignProjectAction $assignProjectAction
+
     ) {
+        
         $template = $createProjectTemplateAction->execute(
             $request->validated()
         );
+
+        $assignProjectAction->execute([
+            'project_template_id' => $template->id,
+            'supervisor_id' => auth()->id(),
+        ]);
 
         return ApiResponse::success('Project template created successfully',
             new ProjectTemplateResource($template),

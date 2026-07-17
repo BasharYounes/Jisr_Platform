@@ -28,6 +28,7 @@ class ProjectAssignmentController extends Controller
     public function index()
     {
         $assignments = ProjectAssignment::query()
+            ->where('supervisor_id', auth()->id())
             ->with([
                 'students',
                 'supervisor',
