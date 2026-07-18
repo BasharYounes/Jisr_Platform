@@ -14,7 +14,7 @@ class CV extends Model
 
     protected $fillable = [
         'UserId',
-        'FilePath',
+        'FileUrl',
         'IsPrimary',
         'UploadedAt',
     ];
