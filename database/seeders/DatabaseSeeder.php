@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             SkillAliasSeeder::class,
             SkillLevelDefinitionSeeder::class,
 
-            BackendQuestionBankSeeder::class,
             DemoOpportunitiesSeeder::class,
             PointRulesSeeder::class,
 
