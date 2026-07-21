@@ -4,11 +4,13 @@ namespace App\Domains\Supervisor\Actions;
 
 use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
 use App\Domains\Supervisor\Enums\ProjectAssignmentTaskStatus;
+use App\Domains\Supervisor\Enums\ProjectEvaluationAppealStatus;
 use App\Domains\Supervisor\Enums\ProjectEvaluationStatus;
 use App\Events\ProjectAssignmentStatusChanged;
 use App\Models\ProjectEvaluation;
 use DomainException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ApproveProjectEvaluationAction
 {
@@ -42,6 +44,45 @@ class ApproveProjectEvaluationAction
                 throw new DomainException(
                     'Project evaluation can only be approved after all assignment tasks are completed.'
                 );
+            }
+
+            if (
+                $evaluation->appeal_deadline_at === null
+            ) {
+                throw ValidationException::withMessages([
+                    'appeal_window' => [
+                        'The evaluation cannot be approved before its appeal window is initialized.',
+                    ],
+                ]);
+            }
+
+            if (
+                now()->lessThanOrEqualTo(
+                    $evaluation->appeal_deadline_at
+                )
+            ) {
+                throw ValidationException::withMessages([
+                    'appeal_window' => [
+                        'The evaluation cannot be approved before the 48-hour appeal window expires.',
+                    ],
+                ]);
+            }
+
+            $hasPendingAppeals =
+                $evaluation
+                    ->appeals()
+                    ->where(
+                        'status',
+                        ProjectEvaluationAppealStatus::Pending->value
+                    )
+                    ->exists();
+
+            if ($hasPendingAppeals) {
+                throw ValidationException::withMessages([
+                    'appeals' => [
+                        'The evaluation cannot be approved while pending appeals exist.',
+                    ],
+                ]);
             }
 
             $evaluation->update([

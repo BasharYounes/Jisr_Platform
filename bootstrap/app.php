@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use App\Http\Middleware\EnsureUserIsActive;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,6 +22,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
+        $middleware->api(
+            append: [
+                EnsureUserIsActive::class,
+            ]
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

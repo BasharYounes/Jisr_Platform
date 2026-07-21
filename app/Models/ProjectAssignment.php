@@ -59,6 +59,14 @@ class ProjectAssignment extends Model
         return $this->hasOne(ProjectEvaluation::class, 'project_assignment_id');
     }
 
+    public function evaluations()
+    {
+        return $this->hasMany(
+            ProjectEvaluation::class,
+            'project_assignment_id'
+        );
+    }
+
     public function members()
     {
         return $this->hasMany(ProjectAssignmentMember::class, 'project_assignment_id');
