@@ -54,6 +54,8 @@ class AuthService
             ]);
         }
 
+        $this->ensureUserIsActive($user);
+
         if ($user->hasRole('company')) {
 
             if ($user->is_verified_by_admin === 'pending') {
@@ -90,6 +92,8 @@ class AuthService
     {
         $user = $this->userRepository->findByEmailOrFail($data['email']);
 
+        $this->ensureUserIsActive($user);
+
         if (! $this->otpService->verifyOtpByType($user, $data['code'], 'login')) {
             throw ValidationException::withMessages([
                 'code' => ['OTP Expired or invalid'],
@@ -107,6 +111,8 @@ class AuthService
     public function forgetPassword(string $email): array
     {
         $user = $this->userRepository->findByEmailOrFail($email);
+
+        $this->ensureUserIsActive($user);
 
         $attempts = $this->otpService->ensureCanRequestOtp($user);
 
@@ -140,6 +146,7 @@ class AuthService
     public function verifyPasswordResetOtp(array $data): array
     {
         $user = $this->userRepository->findByEmailOrFail($data['email']);
+        $this->ensureUserIsActive($user);
         $attempts = $user->otp_attempts ?? 0;
         if (! $this->otpService->verifyOtpByType($user, $data['code'], 'password_reset')) {
             throw ValidationException::withMessages([
@@ -178,6 +185,8 @@ class AuthService
     {
         $user = $this->userRepository->findByEmailOrFail($data['email']);
 
+        $this->ensureUserIsActive($user);
+
         $attempts = $this->otpService->ensureCanRequestOtp($user);
 
         $this->userRepository->updateOtpMeta($user, [
@@ -214,5 +223,17 @@ class AuthService
             'status' => true,
             'message' => 'Logged out from all devices',
         ];
+    }
+
+    private function ensureUserIsActive(
+        User $user
+    ): void {
+        if (! (bool) $user->is_active) {
+            throw ValidationException::withMessages([
+                'email' => [
+                    'Your account is blocked and cannot access the system.',
+                ],
+            ]);
+        }
     }
 }

@@ -6,6 +6,10 @@ use App\Http\Controllers\ProjectTaskController;
 use App\Http\Controllers\ProjectTemplateController;
 use App\Http\Controllers\Supervisor\ProjectTemplateApplicationController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Supervisor\SupervisorLeadController;
+use App\Http\Controllers\Supervisor\ProjectEvaluationAppealReviewController;
+use App\Http\Controllers\Supervisor\ProjectAssignmentSupervisorController;
+use App\Http\Controllers\Supervisor\SupervisorAccessController;
 
 Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
     // Create project template
@@ -113,4 +117,60 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'project-evaluations/{projectEvaluation}/approve',
         [ProjectEvaluationController::class, 'approve']
     );
+
+    Route::post(
+        'project-evaluations/{projectEvaluation}/revision-requests',
+        [ProjectEvaluationController::class, 'requestRevision']
+    )->middleware('role:supervisor_lead');
+
+    // Supervisor lead: list supervisors in the same specialization
+    Route::get(
+        'supervisors',
+        [SupervisorLeadController::class, 'index']
+    )->middleware('role:supervisor_lead');
+
+    Route::patch(
+        'project-evaluations/{projectEvaluation}',
+        [ProjectEvaluationController::class, 'update']
+    )->middleware('role:supervisor');
+
+    Route::post(
+        'project-evaluations/{projectEvaluation}/resubmit',
+        [ProjectEvaluationController::class, 'resubmit']
+    )->middleware('role:supervisor');
+
+    Route::prefix('evaluation-appeals')
+    ->middleware('role:supervisor_lead')
+    ->controller(
+        ProjectEvaluationAppealReviewController::class
+    )
+    ->group(function (): void {
+        Route::get('/', 'index');
+
+        Route::get(
+            '/{projectEvaluationAppeal}',
+            'show'
+        );
+
+        Route::patch(
+            '/{projectEvaluationAppeal}/review',
+            'review'
+        );
+    });
+
+    Route::patch(
+        'project-assignments/{projectAssignment}/supervisor',
+        [ProjectAssignmentSupervisorController::class, 'update']
+    )->middleware('role:supervisor_lead');
+
+    Route::post(
+        'supervisors/{supervisor}/block',
+        [SupervisorAccessController::class, 'block']
+    )->middleware('role:supervisor_lead');
+
+    Route::post(
+        'supervisors/{supervisor}/unblock',
+        [SupervisorAccessController::class, 'unblock']
+    )->middleware('role:supervisor_lead');
+
 });

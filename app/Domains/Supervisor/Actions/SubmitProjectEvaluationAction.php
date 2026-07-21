@@ -171,6 +171,8 @@ class SubmitProjectEvaluationAction
 
                 $evaluation->save();
 
+                $evaluation->initializeAppealWindowIfMissing();
+
                 /*
                  * نحفظ مسارات الصور القديمة قبل حذف عناصر التقييم.
                  * نحذف الملفات فعلياً فقط بعد نجاح الـTransaction.

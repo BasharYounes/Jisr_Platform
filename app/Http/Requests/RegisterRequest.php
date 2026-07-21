@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\SupervisorSpecialization;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -45,7 +47,10 @@ class RegisterRequest extends FormRequest
             // 'description' => 'nullable|string|max:1000',
 
             // supervisor fields
-            'specialization' => 'required_if:role,supervisor|string|max:128',
+            'specialization' => [
+                'required_if:role,supervisor',
+                Rule::enum(SupervisorSpecialization::class),
+            ],
             'is_volunteer' => 'nullable|boolean',
 
         ];
