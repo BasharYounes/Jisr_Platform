@@ -45,6 +45,7 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminUserRoleController;
 use App\Http\Controllers\Student\ProjectEvaluationAppealController;
+use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -381,4 +382,18 @@ Route::middleware([
             '/{projectEvaluation}/appeals',
             'store'
         );
+    });
+
+    Route::middleware('auth:sanctum')
+    ->prefix('market-analysis')
+    ->controller(MarketInsightsController::class)
+    ->group(function () {
+        Route::get('/career-paths/{careerPathId}/skill-demand', 'skillDemand')
+            ->whereNumber('careerPathId');
+        Route::get('/career-paths/{careerPathId}/trends', 'trendSnapshot')
+            ->whereNumber('careerPathId');
+        Route::get('/career-paths/{careerPathId}/skills/{skillId}/evidence', 'skillEvidence')
+            ->whereNumber('careerPathId')
+            ->whereNumber('skillId');
+        Route::get('/career-paths', 'careerPaths');
     });

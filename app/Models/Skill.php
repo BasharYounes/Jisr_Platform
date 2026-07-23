@@ -81,4 +81,32 @@ class Skill extends Model
     {
         return $this->hasMany(MarketTrend::class);
     }
+
+    public function marketJobPostingOccurrences()
+    {
+        return $this->hasMany(
+            MarketJobPostingSkillOccurrence::class,
+            'skill_id',
+            'id'
+        );
+    }
+
+    public function marketJobPostings()
+    {
+        return $this->belongsToMany(
+            MarketJobPosting::class,
+            'market_job_posting_skill_occurrences',
+            'skill_id',
+            'market_job_posting_id'
+        )
+            ->withPivot([
+                'skill_alias_id',
+                'matched_text',
+                'language',
+                'confidence',
+                'extraction_method',
+                'context',
+            ])
+            ->withTimestamps();
+    }
 }
