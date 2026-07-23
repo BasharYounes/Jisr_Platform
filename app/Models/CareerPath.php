@@ -36,4 +36,13 @@ class CareerPath extends Model
     {
         return $this->hasMany(AssessmentSession::class, 'CareerPathID', 'CareerPathID');
     }
+
+    public function marketJobPostings()
+    {
+        return $this->hasMany(
+            MarketJobPosting::class,
+            'career_path_id',
+            'CareerPathID'
+        );
+    }
 }
