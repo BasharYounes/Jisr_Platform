@@ -17,7 +17,7 @@ class LearningPathService
 
         return collect($gaps)
             ->where('gap', '>', 0)
-            ->sortByDesc('gap')
+            ->sortByDesc(fn ($gap) => $this->resolveLearningPriorityScore($gap))
             ->map(function ($gap) {
                 return [
                     'skill_id' => $gap['skill_id'],
@@ -25,6 +25,8 @@ class LearningPathService
                     'current_level' => $gap['actual_level'],
                     'target_level' => $gap['required_level'],
                     'priority' => $gap['priority'],
+
+                    'market' => $gap['market'] ?? null,
 
                     'confidence_score' => $gap['confidence_score'] ?? null,
                     'topic_coverage_ratio' => $gap['topic_coverage_ratio'] ?? null,
@@ -41,5 +43,16 @@ class LearningPathService
             })
             ->values()
             ->toArray();
+    }
+
+    private function resolveLearningPriorityScore(array $gap): float
+    {
+        $gapScore = ((float) $gap['gap']) * 100;
+
+        $marketScore = isset($gap['market']['demand_score'])
+            ? ((float) $gap['market']['demand_score']) / 100
+            : 0;
+
+        return $gapScore + $marketScore;
     }
 }

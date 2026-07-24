@@ -7,6 +7,7 @@ use App\Models\AssessmentSession;
 use App\Services\Recommendations\SkillGapService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class RecommendationController extends Controller
 {
@@ -14,9 +15,9 @@ class RecommendationController extends Controller
         private readonly SkillGapService $skillGapService
     ) {}
 
-    public function skillGaps(AssessmentSession $session): JsonResponse
+    public function skillGaps(AssessmentSession $session, Request $request): JsonResponse
     {
-        if ($session->UserID !== auth()->id()) {
+        if ((int) $session->UserID !== (int) $request->user()->id) {
             return ApiResponse::error('Unauthorized access to this assessment session.', 403);
         }
 
@@ -24,6 +25,5 @@ class RecommendationController extends Controller
             'assessment_session_id' => $session->AssessmentSessionID,
             'gaps' => $this->skillGapService->calculateForSession($session),
         ]);
-
     }
 }

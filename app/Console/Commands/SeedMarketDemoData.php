@@ -28,28 +28,29 @@ class SeedMarketDemoData extends Command
         $careerPathConfigs = [
             [
                 'name' => 'Backend Developer',
+                'description' => 'Backend development track focused on server-side applications, APIs, databases, and backend engineering practices.',
                 'dataset' => database_path('seeders/data/backend_test_jobs.json'),
                 'source_name' => 'backend_test_dataset',
             ],
             [
                 'name' => 'Frontend Developer',
+                'description' => 'Frontend development track focused on user interfaces, web technologies, responsive design, and client-side application development.',
                 'dataset' => database_path('seeders/data/frontend_test_jobs.json'),
                 'source_name' => 'frontend_test_dataset',
             ],
             [
                 'name' => 'Mobile Developer',
+                'description' => 'Mobile development track focused on Flutter, mobile platforms, APIs, Firebase, and application state management.',
                 'dataset' => database_path('seeders/data/mobile_test_jobs.json'),
                 'source_name' => 'mobile_test_dataset',
             ],
         ];
 
         foreach ($careerPathConfigs as $config) {
-            $careerPathId = $this->getCareerPathId($config['name']);
-
-            if ($careerPathId === null) {
-                $this->error("Career path not found: {$config['name']}");
-                return self::FAILURE;
-            }
+            $careerPathId = $this->ensureCareerPath(
+                name: $config['name'],
+                description: $config['description']
+            );
 
             if (! file_exists($config['dataset'])) {
                 $this->error("Dataset file not found: {$config['dataset']}");
@@ -110,6 +111,31 @@ class SeedMarketDemoData extends Command
 
         $this->call('db:seed', [
             '--class' => MarketAnalysisMobileSeeder::class,
+        ]);
+    }
+
+    private function ensureCareerPath(string $name, string $description): int
+    {
+        $careerPathId = DB::table('career_paths')
+            ->where('Name', $name)
+            ->value('CareerPathID');
+
+        if ($careerPathId !== null) {
+            DB::table('career_paths')
+                ->where('CareerPathID', $careerPathId)
+                ->update([
+                    'Description' => $description,
+                    'updated_at' => now(),
+                ]);
+
+            return (int) $careerPathId;
+        }
+
+        return (int) DB::table('career_paths')->insertGetId([
+            'Name' => $name,
+            'Description' => $description,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
