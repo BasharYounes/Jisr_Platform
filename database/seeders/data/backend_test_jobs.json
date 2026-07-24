@@ -1,0 +1,47 @@
+[
+  {
+    "id": "backend-job-001",
+    "title": "Laravel Backend Developer",
+    "description": "We are looking for a backend developer with PHP, Laravel, MySQL, REST API, Git, Docker and Testing experience.",
+    "company_name": "Backend Alpha",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-10"
+  },
+  {
+    "id": "backend-job-002",
+    "title": "مطور Backend Laravel",
+    "description": "مطلوب مطور لديه خبرة في لارافيل و PHP و MySQL و REST API واستخدام Git والعمل ضمن فريق.",
+    "company_name": "Backend Beta",
+    "location": "Damascus",
+    "language": "mixed",
+    "published_at": "2026-07-11"
+  },
+  {
+    "id": "backend-job-003",
+    "title": "Backend API Developer",
+    "description": "The candidate should have PHP, Laravel, MySQL, REST APIs, Git and Unit Testing experience.",
+    "company_name": "Backend Gamma",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-12"
+  },
+  {
+    "id": "backend-job-004",
+    "title": "Junior PHP Backend Developer",
+    "description": "We need a junior backend developer familiar with PHP, Laravel, MySQL and Git.",
+    "company_name": "Backend Delta",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-13"
+  },
+  {
+    "id": "backend-job-005",
+    "title": "Backend Developer with Docker",
+    "description": "Required skills include PHP, Laravel, MySQL, REST API, Docker, Git and Teamwork.",
+    "company_name": "Backend Epsilon",
+    "location": "Hybrid",
+    "language": "en",
+    "published_at": "2026-07-14"
+  }
+]
