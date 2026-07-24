@@ -4,9 +4,14 @@ namespace App\Services\Recommendations;
 
 use App\Models\AssessmentSession;
 use App\Models\CareerPathSkill;
+use App\Services\MarketAnalysis\MarketSkillDemandContextService;
 
 class SkillGapService
 {
+    public function __construct(
+        private readonly MarketSkillDemandContextService $marketSkillDemandContextService
+    ) {}
+
     public function calculateForSession(AssessmentSession $session): array
     {
         $session->load('skillSessions.skill');
@@ -19,7 +24,15 @@ class SkillGapService
             ->where('CareerPathID', $session->CareerPathID)
             ->get();
 
-        return $requiredSkills->map(function ($requiredSkill) use ($session, $finalResultsBySkillId) {
+        $marketContexts = $this->marketSkillDemandContextService->getForSkills(
+            careerPathId: (int) $session->CareerPathID,
+            skillIds: $requiredSkills
+                ->pluck('SkillID')
+                ->map(fn ($skillId) => (int) $skillId)
+                ->toArray()
+        );
+
+        return $requiredSkills->map(function ($requiredSkill) use ($session, $finalResultsBySkillId, $marketContexts) {
             $skillSession = $session->skillSessions
                 ->firstWhere('SkillID', $requiredSkill->SkillID);
 
@@ -40,14 +53,18 @@ class SkillGapService
                 ? (float) $finalResult['topic_coverage_ratio']
                 : null;
 
+            $skillId = (int) $requiredSkill->SkillID;
+
             return [
-                'skill_id' => $requiredSkill->SkillID,
+                'skill_id' => $skillId,
                 'skill_name' => $requiredSkill->skill?->name,
                 'required_level' => $requiredLevel,
                 'actual_level' => (float) $actualLevel,
                 'gap' => round($gap, 1),
                 'priority' => $this->resolvePriority($gap),
                 'status' => $gap <= 0 ? 'sufficient' : 'needs_improvement',
+
+                'market' => $marketContexts[$skillId] ?? null,
 
                 'confidence_score' => $confidenceScore,
                 'topic_coverage_ratio' => $topicCoverageRatio,
