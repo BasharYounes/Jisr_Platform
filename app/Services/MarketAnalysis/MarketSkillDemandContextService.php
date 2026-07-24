@@ -36,7 +36,13 @@ class MarketSkillDemandContextService
             ->where('CareerPathID', $careerPathId)
             ->value('Name') ?? 'هذا المسار';
 
-        $trends = DB::table('market_trends')
+        $requestedSkills = DB::table('skills')
+            ->whereIn('id', $skillIds)
+            ->select('id', 'name', 'normalized_name')
+            ->get()
+            ->keyBy('id');
+
+        $trendsBySkillId = DB::table('market_trends')
             ->join('skills', 'skills.id', '=', 'market_trends.skill_id')
             ->where('market_trends.career_path_id', $careerPathId)
             ->where('market_trends.analyzed_date', $latestSnapshotDate)
@@ -44,6 +50,7 @@ class MarketSkillDemandContextService
             ->select([
                 'market_trends.skill_id',
                 'skills.name as skill_name',
+                'skills.normalized_name',
                 'market_trends.demand_score',
                 'market_trends.trend_direction',
                 'market_trends.source_job_count',
@@ -52,9 +59,47 @@ class MarketSkillDemandContextService
             ->get()
             ->keyBy('skill_id');
 
+        $requestedNormalizedNames = $requestedSkills
+            ->pluck('normalized_name')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $trendsByNormalizedName = DB::table('market_trends')
+            ->join('skills', 'skills.id', '=', 'market_trends.skill_id')
+            ->where('market_trends.career_path_id', $careerPathId)
+            ->where('market_trends.analyzed_date', $latestSnapshotDate)
+            ->whereIn('skills.normalized_name', $requestedNormalizedNames)
+            ->select([
+                'market_trends.skill_id',
+                'skills.name as skill_name',
+                'skills.normalized_name',
+                'market_trends.demand_score',
+                'market_trends.trend_direction',
+                'market_trends.source_job_count',
+                'market_trends.analyzed_date',
+            ])
+            ->get()
+            ->keyBy('normalized_name');
+
         return $skillIds
-            ->mapWithKeys(function (int $skillId) use ($trends, $careerPathName, $sampleSize) {
-                $trend = $trends->get($skillId);
+            ->mapWithKeys(function (int $skillId) use (
+                $requestedSkills,
+                $trendsBySkillId,
+                $trendsByNormalizedName,
+                $careerPathName,
+                $sampleSize
+            ) {
+                $requestedSkill = $requestedSkills->get($skillId);
+
+                $trend = $trendsBySkillId->get($skillId);
+
+                $matchedBy = 'skill_id';
+
+                if ($trend === null && $requestedSkill?->normalized_name) {
+                    $trend = $trendsByNormalizedName->get($requestedSkill->normalized_name);
+                    $matchedBy = $trend ? 'normalized_name' : 'none';
+                }
 
                 if ($trend === null) {
                     return [
@@ -64,13 +109,15 @@ class MarketSkillDemandContextService
 
                 return [
                     $skillId => $this->buildAvailableContext(
-                        skillName: (string) $trend->skill_name,
+                        skillName: (string) ($requestedSkill?->name ?? $trend->skill_name),
                         careerPathName: $careerPathName,
                         demandScore: (float) $trend->demand_score,
                         trendDirection: (string) $trend->trend_direction,
                         sourceJobCount: (int) $trend->source_job_count,
                         sampleSize: (int) $sampleSize,
-                        analyzedDate: (string) $trend->analyzed_date
+                        analyzedDate: (string) $trend->analyzed_date,
+                        matchedBy: $matchedBy,
+                        matchedMarketSkillId: (int) $trend->skill_id
                     ),
                 ];
             })
@@ -97,7 +144,9 @@ class MarketSkillDemandContextService
         string $trendDirection,
         int $sourceJobCount,
         int $sampleSize,
-        string $analyzedDate
+        string $analyzedDate,
+        string $matchedBy,
+        int $matchedMarketSkillId
     ): array {
         $demandLevel = $this->resolveDemandLevel($demandScore);
 
@@ -110,6 +159,9 @@ class MarketSkillDemandContextService
             'source_job_count' => $sourceJobCount,
             'sample_size' => $sampleSize,
             'analyzed_date' => $analyzedDate,
+
+            'matched_by' => $matchedBy,
+            'matched_market_skill_id' => $matchedMarketSkillId,
 
             'student_message' => $this->buildStudentMessage(
                 skillName: $skillName,

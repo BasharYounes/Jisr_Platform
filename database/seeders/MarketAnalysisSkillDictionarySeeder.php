@@ -122,6 +122,37 @@ class MarketAnalysisSkillDictionarySeeder extends Seeder
                 ],
             ],
             [
+                'name' => 'Python',
+                'category' => 'Programming Language',
+                'aliases' => [
+                    ['alias' => 'Python', 'language' => 'en'],
+                    ['alias' => 'python', 'language' => 'en'],
+                    ['alias' => 'بايثون', 'language' => 'ar'],
+                    ['alias' => 'لغة بايثون', 'language' => 'ar'],
+                ],
+            ],
+            [
+                'name' => 'Flask',
+                'category' => 'Framework',
+                'aliases' => [
+                    ['alias' => 'Flask', 'language' => 'en'],
+                    ['alias' => 'Python Flask', 'language' => 'en'],
+                    ['alias' => 'فلاسك', 'language' => 'ar'],
+                    ['alias' => 'إطار فلاسك', 'language' => 'ar'],
+                ],
+            ],
+            [
+                'name' => 'SQL',
+                'category' => 'Database',
+                'aliases' => [
+                    ['alias' => 'SQL', 'language' => 'en'],
+                    ['alias' => 'SQL Queries', 'language' => 'en'],
+                    ['alias' => 'Database Queries', 'language' => 'en'],
+                    ['alias' => 'استعلامات SQL', 'language' => 'ar'],
+                    ['alias' => 'قواعد البيانات', 'language' => 'ar'],
+                ],
+            ],
+            [
                 'name' => 'Communication',
                 'category' => 'Soft Skill',
                 'aliases' => [
