@@ -31,17 +31,13 @@ class StoreEvaluationRevisionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'reason.required' =>
-                'The revision reason is required.',
+            'reason.required' => 'The revision reason is required.',
 
-            'reason.string' =>
-                'The revision reason must be a valid text.',
+            'reason.string' => 'The revision reason must be a valid text.',
 
-            'reason.min' =>
-                'The revision reason must contain at least 10 characters.',
+            'reason.min' => 'The revision reason must contain at least 10 characters.',
 
-            'reason.max' =>
-                'The revision reason may not exceed 3000 characters.',
+            'reason.max' => 'The revision reason may not exceed 3000 characters.',
         ];
     }
 }

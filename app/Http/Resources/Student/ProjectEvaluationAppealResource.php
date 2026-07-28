@@ -19,27 +19,21 @@ class ProjectEvaluationAppealResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'project_evaluation_id' =>
-                $this->project_evaluation_id,
+            'project_evaluation_id' => $this->project_evaluation_id,
 
             'reason' => $this->reason,
 
             'status' => $status,
 
-            'evaluation_snapshot' =>
-                $this->evaluation_snapshot,
+            'evaluation_snapshot' => $this->evaluation_snapshot,
 
-            'review_notes' =>
-                $this->review_notes,
+            'review_notes' => $this->review_notes,
 
-            'reviewed_at' =>
-                $this->reviewed_at?->toISOString(),
+            'reviewed_at' => $this->reviewed_at?->toISOString(),
 
-            'revision_request_id' =>
-                $this->revision_request_id,
+            'revision_request_id' => $this->revision_request_id,
 
-            'created_at' =>
-                $this->created_at?->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
         ];
     }
 }

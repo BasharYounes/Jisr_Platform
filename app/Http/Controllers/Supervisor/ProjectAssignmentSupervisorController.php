@@ -27,8 +27,7 @@ class ProjectAssignmentSupervisorController extends Controller
         $result = $action->execute(
             projectAssignment: $projectAssignment,
             changedBy: $request->user(),
-            newSupervisorId:
-                (int) $validated['new_supervisor_id'],
+            newSupervisorId: (int) $validated['new_supervisor_id'],
             reason: $validated['reason'],
         );
 

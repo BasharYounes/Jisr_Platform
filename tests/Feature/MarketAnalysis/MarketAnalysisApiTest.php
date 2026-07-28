@@ -4,9 +4,9 @@ namespace Tests\Feature\MarketAnalysis;
 
 use App\Models\MarketJobPosting;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -18,7 +18,7 @@ class MarketAnalysisApiTest extends TestCase
     {
         $userId = DB::table('users')->insertGetId([
             'name' => 'Market API Test User',
-            'email' => 'market_api_test_' . uniqid() . '@example.com',
+            'email' => 'market_api_test_'.uniqid().'@example.com',
             'password' => Hash::make('password'),
             'is_active' => 1,
             'email_verified' => 1,
@@ -46,7 +46,7 @@ class MarketAnalysisApiTest extends TestCase
         MarketJobPosting::create([
             'source_type' => 'test',
             'source_name' => 'phpunit',
-            'external_id' => 'api-career-path-' . uniqid(),
+            'external_id' => 'api-career-path-'.uniqid(),
             'title' => 'Backend Developer',
             'description' => 'PHP Laravel Git required.',
             'language' => 'en',
@@ -54,7 +54,7 @@ class MarketAnalysisApiTest extends TestCase
             'published_at' => now(),
             'imported_at' => now(),
             'status' => 'active',
-            'content_hash' => hash('sha256', 'api-career-path-' . uniqid()),
+            'content_hash' => hash('sha256', 'api-career-path-'.uniqid()),
         ]);
 
         $response = $this->getJson('/api/market-analysis/career-paths?only_with_market_data=1');
@@ -100,7 +100,7 @@ class MarketAnalysisApiTest extends TestCase
         $skillId = DB::table('skills')->insertGetId([
             'name' => 'API Trend Skill',
             'category' => 'Framework',
-            'normalized_name' => 'api_trend_skill_' . uniqid(),
+            'normalized_name' => 'api_trend_skill_'.uniqid(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -162,14 +162,14 @@ class MarketAnalysisApiTest extends TestCase
         $skillId = DB::table('skills')->insertGetId([
             'name' => 'API Evidence Skill',
             'category' => 'Soft Skill',
-            'normalized_name' => 'api_evidence_skill_' . uniqid(),
+            'normalized_name' => 'api_evidence_skill_'.uniqid(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         $aliasId = DB::table('skill_aliases')->insertGetId([
             'SkillID' => $skillId,
-            'Alias' => 'API Evidence Alias ' . uniqid(),
+            'Alias' => 'API Evidence Alias '.uniqid(),
             'LanguageCode' => 'en',
             'created_at' => now(),
             'updated_at' => now(),
@@ -178,7 +178,7 @@ class MarketAnalysisApiTest extends TestCase
         $posting = MarketJobPosting::create([
             'source_type' => 'test',
             'source_name' => 'phpunit',
-            'external_id' => 'api-evidence-' . uniqid(),
+            'external_id' => 'api-evidence-'.uniqid(),
             'title' => 'Backend Developer',
             'description' => 'Candidate should have API Evidence Skill.',
             'language' => 'en',
@@ -186,7 +186,7 @@ class MarketAnalysisApiTest extends TestCase
             'published_at' => now(),
             'imported_at' => now(),
             'status' => 'active',
-            'content_hash' => hash('sha256', 'api-evidence-' . uniqid()),
+            'content_hash' => hash('sha256', 'api-evidence-'.uniqid()),
         ]);
 
         DB::table('market_job_posting_skill_occurrences')->insert([

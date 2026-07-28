@@ -24,7 +24,7 @@ class TaskAssignmentConversationService
         ]);
 
         $existingConversation = $this->conversationRepository->findByConversationable(
-            $assignment::class,
+            $assignment->getMorphClass(),
             $assignment->id
         );
 

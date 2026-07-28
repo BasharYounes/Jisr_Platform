@@ -4,12 +4,12 @@ use App\Http\Controllers\ProjectAssignmentController;
 use App\Http\Controllers\ProjectEvaluationController;
 use App\Http\Controllers\ProjectTaskController;
 use App\Http\Controllers\ProjectTemplateController;
-use App\Http\Controllers\Supervisor\ProjectTemplateApplicationController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Supervisor\SupervisorLeadController;
-use App\Http\Controllers\Supervisor\ProjectEvaluationAppealReviewController;
 use App\Http\Controllers\Supervisor\ProjectAssignmentSupervisorController;
+use App\Http\Controllers\Supervisor\ProjectEvaluationAppealReviewController;
+use App\Http\Controllers\Supervisor\ProjectTemplateApplicationController;
 use App\Http\Controllers\Supervisor\SupervisorAccessController;
+use App\Http\Controllers\Supervisor\SupervisorLeadController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
     // Create project template
@@ -140,23 +140,23 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
     )->middleware('role:supervisor');
 
     Route::prefix('evaluation-appeals')
-    ->middleware('role:supervisor_lead')
-    ->controller(
-        ProjectEvaluationAppealReviewController::class
-    )
-    ->group(function (): void {
-        Route::get('/', 'index');
+        ->middleware('role:supervisor_lead')
+        ->controller(
+            ProjectEvaluationAppealReviewController::class
+        )
+        ->group(function (): void {
+            Route::get('/', 'index');
 
-        Route::get(
-            '/{projectEvaluationAppeal}',
-            'show'
-        );
+            Route::get(
+                '/{projectEvaluationAppeal}',
+                'show'
+            );
 
-        Route::patch(
-            '/{projectEvaluationAppeal}/review',
-            'review'
-        );
-    });
+            Route::patch(
+                '/{projectEvaluationAppeal}/review',
+                'review'
+            );
+        });
 
     Route::patch(
         'project-assignments/{projectAssignment}/supervisor',

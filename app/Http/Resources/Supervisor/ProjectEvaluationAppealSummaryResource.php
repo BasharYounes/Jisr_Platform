@@ -19,8 +19,7 @@ class ProjectEvaluationAppealSummaryResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'project_evaluation_id' =>
-                $this->project_evaluation_id,
+            'project_evaluation_id' => $this->project_evaluation_id,
 
             'reason' => $this->reason,
 
@@ -35,40 +34,32 @@ class ProjectEvaluationAppealSummaryResource extends JsonResource
             'evaluation' => [
                 'id' => $this->evaluation?->id,
 
-                'total_score' =>
-                    $this->evaluation?->total_score,
+                'total_score' => $this->evaluation?->total_score,
 
-                'final_grade' =>
-                    $this->evaluation?->final_grade,
+                'final_grade' => $this->evaluation?->final_grade,
 
-                'status' =>
-                    $this->evaluation?->status,
+                'status' => $this->evaluation?->status,
 
-                'appeal_deadline_at' =>
-                    $this->evaluation
-                        ?->appeal_deadline_at
-                        ?->toISOString(),
+                'appeal_deadline_at' => $this->evaluation
+                    ?->appeal_deadline_at
+                    ?->toISOString(),
 
                 'supervisor' => [
-                    'id' =>
-                        $this->evaluation
-                            ?->supervisor
-                            ?->id,
+                    'id' => $this->evaluation
+                        ?->supervisor
+                        ?->id,
 
-                    'name' =>
-                        $this->evaluation
-                            ?->supervisor
-                            ?->name,
+                    'name' => $this->evaluation
+                        ?->supervisor
+                        ?->name,
 
-                    'email' =>
-                        $this->evaluation
-                            ?->supervisor
-                            ?->email,
+                    'email' => $this->evaluation
+                        ?->supervisor
+                        ?->email,
                 ],
             ],
 
-            'reviewed_by' =>
-                $this->reviewedBy
+            'reviewed_by' => $this->reviewedBy
                     ? [
                         'id' => $this->reviewedBy->id,
                         'name' => $this->reviewedBy->name,
@@ -76,8 +67,7 @@ class ProjectEvaluationAppealSummaryResource extends JsonResource
                     ]
                     : null,
 
-            'created_at' =>
-                $this->created_at?->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
         ];
     }
 }

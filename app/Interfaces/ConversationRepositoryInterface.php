@@ -31,6 +31,11 @@ interface ConversationRepositoryInterface
         int $perPage = 15
     );
 
+    public function getUserOpportunityInterviewConversations(
+        int $userId,
+        int $perPage = 15
+    );
+
     public function getUserOpenConversations(
         int $userId,
         int $perPage = 15

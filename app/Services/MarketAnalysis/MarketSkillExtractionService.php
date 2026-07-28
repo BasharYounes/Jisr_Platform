@@ -17,7 +17,7 @@ class MarketSkillExtractionService
      */
     public function extractForJobPosting(MarketJobPosting $jobPosting): Collection
     {
-        $rawText = trim($jobPosting->title . "\n" . $jobPosting->description);
+        $rawText = trim($jobPosting->title."\n".$jobPosting->description);
         $normalizedText = $this->normalizeText($rawText);
 
         $aliases = $this->loadPreparedSkillAliases();
@@ -59,6 +59,7 @@ class MarketSkillExtractionService
         $records = collect($matchesBySkill)
             ->map(function (array $match) {
                 unset($match['alias_length']);
+
                 return $match;
             })
             ->values();
@@ -184,12 +185,12 @@ class MarketSkillExtractionService
          * such as: والعمل، بالعمل، للطلاب، كفريق.
          */
         if ($this->containsArabic($normalizedAlias)) {
-            $pattern = '/(?<![\p{L}\p{N}])(?:[وفبلك])?' . $escapedAlias . '(?![\p{L}\p{N}])/u';
+            $pattern = '/(?<![\p{L}\p{N}])(?:[وفبلك])?'.$escapedAlias.'(?![\p{L}\p{N}])/u';
 
             return preg_match($pattern, $normalizedText) === 1;
         }
 
-        $pattern = '/(?<![\p{L}\p{N}])' . $escapedAlias . '(?![\p{L}\p{N}])/u';
+        $pattern = '/(?<![\p{L}\p{N}])'.$escapedAlias.'(?![\p{L}\p{N}])/u';
 
         return preg_match($pattern, $normalizedText) === 1;
     }

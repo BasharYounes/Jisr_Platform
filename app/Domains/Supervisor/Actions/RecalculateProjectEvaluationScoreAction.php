@@ -94,8 +94,7 @@ class RecalculateProjectEvaluationScoreAction
                         $totalWeights,
                         2
                     ),
-                    'recalculated_at' =>
-                        now()->toISOString(),
+                    'recalculated_at' => now()->toISOString(),
                 ]
             ),
         ])->save();

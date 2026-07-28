@@ -68,28 +68,23 @@ class ReviewProjectEvaluationAppealAction
                     );
 
                 $lockedAppeal->update([
-                    'status' =>
-                        ProjectEvaluationAppealStatus::Accepted->value,
+                    'status' => ProjectEvaluationAppealStatus::Accepted->value,
 
                     'reviewed_by' => $reviewedBy->id,
 
-                    'review_notes' =>
-                        trim($reviewNotes),
+                    'review_notes' => trim($reviewNotes),
 
                     'reviewed_at' => now(),
 
-                    'revision_request_id' =>
-                        $revisionRequest->id,
+                    'revision_request_id' => $revisionRequest->id,
                 ]);
             } else {
                 $lockedAppeal->update([
-                    'status' =>
-                        ProjectEvaluationAppealStatus::Rejected->value,
+                    'status' => ProjectEvaluationAppealStatus::Rejected->value,
 
                     'reviewed_by' => $reviewedBy->id,
 
-                    'review_notes' =>
-                        trim($reviewNotes),
+                    'review_notes' => trim($reviewNotes),
 
                     'reviewed_at' => now(),
 
@@ -98,29 +93,27 @@ class ReviewProjectEvaluationAppealAction
             }
 
             return [
-                'appeal' =>
-                    $lockedAppeal
-                        ->refresh()
-                        ->load([
-                            'student:id,name,email',
-                            'reviewedBy:id,name,email',
-                            'revisionRequest.requestedBy:id,name,email',
-                            'revisionRequest.assignedTo:id,name,email',
+                'appeal' => $lockedAppeal
+                    ->refresh()
+                    ->load([
+                        'student:id,name,email',
+                        'reviewedBy:id,name,email',
+                        'revisionRequest.requestedBy:id,name,email',
+                        'revisionRequest.assignedTo:id,name,email',
 
-                            'evaluation.assignment.projectTemplate',
-                            'evaluation.student',
-                            'evaluation.supervisor',
-                            'evaluation.items.criteria',
-                            'evaluation.items.evidences',
-                        ]),
+                        'evaluation.assignment.projectTemplate',
+                        'evaluation.student',
+                        'evaluation.supervisor',
+                        'evaluation.items.criteria',
+                        'evaluation.items.evidences',
+                    ]),
 
-                'revision_request' =>
-                    $revisionRequest
-                        ?->refresh()
-                        ->load([
-                            'requestedBy:id,name,email',
-                            'assignedTo:id,name,email',
-                        ]),
+                'revision_request' => $revisionRequest
+                    ?->refresh()
+                    ->load([
+                        'requestedBy:id,name,email',
+                        'assignedTo:id,name,email',
+                    ]),
             ];
         });
     }
@@ -172,29 +165,22 @@ class ReviewProjectEvaluationAppealAction
         if ($revisionRequest === null) {
             $revisionRequest =
                 EvaluationRevisionRequest::create([
-                    'project_evaluation_id' =>
-                        $evaluation->id,
+                    'project_evaluation_id' => $evaluation->id,
 
-                    'requested_by' =>
-                        $reviewedBy->id,
+                    'requested_by' => $reviewedBy->id,
 
-                    'assigned_to' =>
-                        $evaluation->supervisor_id,
+                    'assigned_to' => $evaluation->supervisor_id,
 
-                    'source' =>
-                        EvaluationRevisionRequestSource::StudentAppeal->value,
+                    'source' => EvaluationRevisionRequestSource::StudentAppeal->value,
 
-                    'source_reference_id' =>
-                        $appeal->id,
+                    'source_reference_id' => $appeal->id,
 
-                    'reason' =>
-                        'Accepted student appeal #'
-                        . $appeal->id
-                        . ': '
-                        . $appeal->reason,
+                    'reason' => 'Accepted student appeal #'
+                        .$appeal->id
+                        .': '
+                        .$appeal->reason,
 
-                    'status' =>
-                        EvaluationRevisionRequestStatus::Pending->value,
+                    'status' => EvaluationRevisionRequestStatus::Pending->value,
                 ]);
         }
 
@@ -207,8 +193,7 @@ class ReviewProjectEvaluationAppealAction
             === ProjectEvaluationStatus::SUBMITTED->value
         ) {
             $evaluation->update([
-                'status' =>
-                    ProjectEvaluationStatus::NEEDS_REVISION->value,
+                'status' => ProjectEvaluationStatus::NEEDS_REVISION->value,
             ]);
         }
 

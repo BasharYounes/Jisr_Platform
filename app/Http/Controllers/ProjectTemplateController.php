@@ -31,7 +31,7 @@ class ProjectTemplateController extends Controller
         AssignProjectAction $assignProjectAction
 
     ) {
-        
+
         $template = $createProjectTemplateAction->execute(
             $request->validated()
         );

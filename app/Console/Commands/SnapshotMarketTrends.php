@@ -32,6 +32,7 @@ class SnapshotMarketTrends extends Command
 
         if ($careerPaths->isEmpty()) {
             $this->warn('No career paths found.');
+
             return self::SUCCESS;
         }
 
@@ -42,9 +43,9 @@ class SnapshotMarketTrends extends Command
             );
 
             $this->info(
-                "Career Path #{$result['career_path_id']} | " .
-                "Date: {$result['analyzed_date']} | " .
-                "Job Postings: {$result['total_job_postings']} | " .
+                "Career Path #{$result['career_path_id']} | ".
+                "Date: {$result['analyzed_date']} | ".
+                "Job Postings: {$result['total_job_postings']} | ".
                 "Saved Trends: {$result['saved_trends']}"
             );
         }

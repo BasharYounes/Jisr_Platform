@@ -87,47 +87,35 @@ class ChangeSupervisorAccessStatusAction
             AuditLog::create([
                 'user_id' => $lead->id,
 
-                'action' =>
-                    'supervisor_blocked',
+                'action' => 'supervisor_blocked',
 
-                'entity_type' =>
-                    User::class,
+                'entity_type' => User::class,
 
-                'entity_id' =>
-                    $lockedSupervisor->id,
+                'entity_id' => $lockedSupervisor->id,
 
                 'old_value' => [
-                    'supervisor' =>
-                        $oldSnapshot,
+                    'supervisor' => $oldSnapshot,
                 ],
 
                 'new_value' => [
-                    'supervisor' =>
-                        $newSnapshot,
+                    'supervisor' => $newSnapshot,
 
-                    'reason' =>
-                        trim($reason),
+                    'reason' => trim($reason),
 
-                    'tokens_revoked' =>
-                        $tokensRevoked,
+                    'tokens_revoked' => $tokensRevoked,
 
-                    'changed_at' =>
-                        now()->toISOString(),
+                    'changed_at' => now()->toISOString(),
                 ],
             ]);
 
             return [
-                'supervisor' =>
-                    $newSnapshot,
+                'supervisor' => $newSnapshot,
 
-                'tokens_revoked' =>
-                    $tokensRevoked,
+                'tokens_revoked' => $tokensRevoked,
 
-                'requires_new_login' =>
-                    true,
+                'requires_new_login' => true,
 
-                'reason' =>
-                    trim($reason),
+                'reason' => trim($reason),
             ];
         });
     }
@@ -180,44 +168,34 @@ class ChangeSupervisorAccessStatusAction
             AuditLog::create([
                 'user_id' => $lead->id,
 
-                'action' =>
-                    'supervisor_unblocked',
+                'action' => 'supervisor_unblocked',
 
-                'entity_type' =>
-                    User::class,
+                'entity_type' => User::class,
 
-                'entity_id' =>
-                    $lockedSupervisor->id,
+                'entity_id' => $lockedSupervisor->id,
 
                 'old_value' => [
-                    'supervisor' =>
-                        $oldSnapshot,
+                    'supervisor' => $oldSnapshot,
                 ],
 
                 'new_value' => [
-                    'supervisor' =>
-                        $newSnapshot,
+                    'supervisor' => $newSnapshot,
 
-                    'reason' =>
-                        trim($reason),
+                    'reason' => trim($reason),
 
-                    'changed_at' =>
-                        now()->toISOString(),
+                    'changed_at' => now()->toISOString(),
                 ],
             ]);
 
             return [
-                'supervisor' =>
-                    $newSnapshot,
+                'supervisor' => $newSnapshot,
 
                 /*
                  * Tokens المحذوفة أثناء الحظر لا تعود.
                  */
-                'requires_new_login' =>
-                    true,
+                'requires_new_login' => true,
 
-                'reason' =>
-                    trim($reason),
+                'reason' => trim($reason),
             ];
         });
     }
@@ -329,22 +307,19 @@ class ChangeSupervisorAccessStatusAction
             'name' => $supervisor->name,
             'email' => $supervisor->email,
 
-            'is_active' =>
-                (bool) $supervisor->is_active,
+            'is_active' => (bool) $supervisor->is_active,
 
-            'roles' =>
+            'roles' => $supervisor
+                ->getRoleNames()
+                ->sort()
+                ->values()
+                ->all(),
+
+            'specialization' => $this->enumValue(
                 $supervisor
-                    ->getRoleNames()
-                    ->sort()
-                    ->values()
-                    ->all(),
-
-            'specialization' =>
-                $this->enumValue(
-                    $supervisor
-                        ->supervisorProfile
-                        ?->specialization
-                ),
+                    ->supervisorProfile
+                    ?->specialization
+            ),
         ];
     }
 

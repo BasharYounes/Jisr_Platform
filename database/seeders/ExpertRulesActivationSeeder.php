@@ -45,9 +45,9 @@ class ExpertRulesActivationSeeder extends Seeder
 
                 if ($questions->count() !== count($topics)) {
                     throw new RuntimeException(
-                        'Activation expected ' . count($topics)
-                        . " {$skillName} questions, found "
-                        . $questions->count() . '.'
+                        'Activation expected '.count($topics)
+                        ." {$skillName} questions, found "
+                        .$questions->count().'.'
                     );
                 }
 

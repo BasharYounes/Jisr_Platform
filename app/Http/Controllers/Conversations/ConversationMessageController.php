@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Conversations;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Conversations\SendMessageRequest;
 use App\Http\Requests\Conversations\UpdateMessageRequest;
+use App\Http\Resources\Conversation\ConversationContextResource;
 use App\Http\Resources\Conversation\MessageResource;
 use App\Services\Conversations\ConversationMessageService;
 use App\Traits\ApiResponse;
@@ -21,17 +22,26 @@ class ConversationMessageController extends Controller
     /**
      * Get all messages for a conversation.
      */
-    public function index(Request $request, int $conversationId)
-    {
-        $messages = $this->conversationMessageService->getMessages(
+    public function index(
+        Request $request,
+        int $conversationId
+    ) {
+        $result = $this->conversationMessageService->getMessages(
             conversationId: $conversationId,
             userId: $request->user()->id,
             perPage: (int) $request->get('per_page', 30),
         );
 
+        $conversation = $result['conversation'];
+        $messages = $result['messages'];
+
         return $this->success(
             message: 'Messages retrieved successfully.',
             data: [
+                'conversation' => (
+                    new ConversationContextResource($conversation)
+                )->resolve($request),
+
                 'items' => MessageResource::collection($messages)->resolve(),
 
                 'pagination' => [

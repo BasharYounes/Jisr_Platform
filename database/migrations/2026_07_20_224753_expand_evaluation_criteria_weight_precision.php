@@ -30,7 +30,7 @@ return new class extends Migration
                 ->where('weight', '>', 99.99)
                 ->exists()
         ) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Cannot restore weight to DECIMAL(4,2) while values greater than 99.99 exist.'
             );
         }

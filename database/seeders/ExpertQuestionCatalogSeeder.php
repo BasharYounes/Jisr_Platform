@@ -130,10 +130,10 @@ class ExpertQuestionCatalogSeeder extends Seeder
 
                 if ($pendingQuestions->count() !== count($topics)) {
                     throw new RuntimeException(
-                        'Expected ' . count($topics)
-                        . " unclassified {$skillName} questions, found "
-                        . $pendingQuestions->count()
-                        . '. Check BackendQuestionBankSeeder before continuing.'
+                        'Expected '.count($topics)
+                        ." unclassified {$skillName} questions, found "
+                        .$pendingQuestions->count()
+                        .'. Check BackendQuestionBankSeeder before continuing.'
                     );
                 }
 
@@ -195,8 +195,8 @@ class ExpertQuestionCatalogSeeder extends Seeder
         if ($configuredCount !== count($topics)) {
             throw new RuntimeException(
                 "Expert topic catalog is incomplete for {$skillName}: "
-                . 'expected ' . count($topics)
-                . ", found {$configuredCount}."
+                .'expected '.count($topics)
+                .", found {$configuredCount}."
             );
         }
     }
@@ -216,7 +216,7 @@ class ExpertQuestionCatalogSeeder extends Seeder
         if ($hasAttempts || $hasRuleSets) {
             throw new RuntimeException(
                 "Cannot discard duplicate question {$questionId} for topic {$topic} "
-                . 'because it already has attempts or Expert Rules.'
+                .'because it already has attempts or Expert Rules.'
             );
         }
 

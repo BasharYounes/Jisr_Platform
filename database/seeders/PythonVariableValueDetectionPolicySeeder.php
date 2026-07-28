@@ -53,7 +53,7 @@ class PythonVariableValueDetectionPolicySeeder extends Seeder
             if (! empty($missingConceptCodes)) {
                 throw new RuntimeException(
                     'Missing required concepts: '
-                    . implode(', ', $missingConceptCodes)
+                    .implode(', ', $missingConceptCodes)
                 );
             }
 

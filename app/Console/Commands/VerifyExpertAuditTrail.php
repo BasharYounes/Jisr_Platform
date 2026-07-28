@@ -27,9 +27,9 @@ class VerifyExpertAuditTrail extends Command
 
     private const DEFAULT_ANSWER =
         'المتغير اسم يشير إلى قيمة. '
-        . 'القيمة هي البيانات. '
-        . 'في x = 5 يكون x متغيرًا و5 قيمة. '
-        . 'x = 5';
+        .'القيمة هي البيانات. '
+        .'في x = 5 يكون x متغيرًا و5 قيمة. '
+        .'x = 5';
 
     public function __construct(
         private readonly AssessmentExpertEvaluationOrchestratorService $orchestrator,
@@ -246,7 +246,7 @@ class VerifyExpertAuditTrail extends Command
         } catch (Throwable $exception) {
             $this->error(
                 'Audit-trail verification failed: '
-                . $exception->getMessage()
+                .$exception->getMessage()
             );
 
             return self::FAILURE;

@@ -50,10 +50,8 @@ class ManageUserRoleRequest extends FormRequest
         return [
             'operation.required' => 'The role operation is required.',
             'role.required' => 'The role is required.',
-            'role_data.specialization.enum' =>
-                'The selected supervisor specialization is invalid.',
-            'role_data.is_volunteer.boolean' =>
-                'The is_volunteer field must be true or false.',
+            'role_data.specialization.enum' => 'The selected supervisor specialization is invalid.',
+            'role_data.is_volunteer.boolean' => 'The is_volunteer field must be true or false.',
         ];
     }
 }
