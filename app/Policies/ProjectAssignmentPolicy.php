@@ -22,4 +22,33 @@ class ProjectAssignmentPolicy
     {
         return $user->hasRole('supervisor');
     }
+
+    public function changeSupervisor(
+        User $user,
+        ProjectAssignment $projectAssignment
+    ): bool {
+        if (! $user->hasRole('supervisor_lead')) {
+            return false;
+        }
+
+        $user->loadMissing('supervisorProfile');
+
+        $projectAssignment->loadMissing(
+            'supervisor.supervisorProfile'
+        );
+
+        $leadSpecialization =
+            $user->supervisorProfile?->specialization;
+
+        $currentSupervisorSpecialization =
+            $projectAssignment
+                ->supervisor
+                ?->supervisorProfile
+                ?->specialization;
+
+        return $leadSpecialization !== null
+            && $currentSupervisorSpecialization !== null
+            && $leadSpecialization
+                === $currentSupervisorSpecialization;
+    }
 }

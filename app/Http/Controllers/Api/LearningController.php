@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentSession;
 use App\Services\Recommendations\LearningPathService;
+use Illuminate\Http\Request;
 
 class LearningController extends Controller
 {
@@ -12,9 +13,9 @@ class LearningController extends Controller
         private readonly LearningPathService $learningPathService
     ) {}
 
-    public function path(AssessmentSession $session)
+    public function path(AssessmentSession $session, Request $request)
     {
-        if ($session->UserID !== auth()->id()) {
+        if ((int) $session->UserID !== (int) $request->user()->id) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);

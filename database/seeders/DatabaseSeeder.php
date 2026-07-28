@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,7 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
         $this->call([
             RoleSeeder::class,
             AdminSeeder::class,
@@ -20,14 +18,30 @@ class DatabaseSeeder extends Seeder
             SprintOneFoundationSeeder::class,
             SkillAliasSeeder::class,
             SkillLevelDefinitionSeeder::class,
-            BackendQuestionBankSeeder::class,
+
             DemoOpportunitiesSeeder::class,
             PointRulesSeeder::class,
             FullSkillsSeeder::class,
             DemoCompanyTaskWorkflowSeeder::class,
             DemoTaskConversationMessagesSeeder::class,
-            // SupervisorWorkflowTestSeeder::class,
-        ]);
+    
 
+            // Canonical Backend questions, then stable Expert-System catalog.
+            BackendQuestionBankSeeder::class,
+            ExpertQuestionCatalogSeeder::class,
+
+            // Expert Rules for all 60 Backend open-text questions.
+            PythonVariableValueExpertRuleSeeder::class,
+            PythonFundamentalsExpertRulesSeeder::class,
+            PythonAdvancedExpertRulesSeeder::class,
+            FlaskExpertRulesSeeder::class,
+            SqlExpertRulesSeeder::class,
+            GitExpertRulesSeeder::class,
+
+            // Runs only after the 60 Rule Sets pass structural validation.
+            ExpertRulesActivationSeeder::class,
+
+            SupervisorWorkflowTestSeeder::class,
+        ]);
     }
 }

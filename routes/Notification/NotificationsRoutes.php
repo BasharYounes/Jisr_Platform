@@ -2,16 +2,19 @@
 
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
+use App\Services\Notifications\NotificationService;
+use App\Support\NotificationTypes;
+use Illuminate\Http\Request;
+use App\Http\Controllers\DeviceTokenController;
 
 Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
     Route::get('/', [NotificationController::class, 'index']);
     Route::patch('/{notification}/read', [NotificationController::class, 'markAsRead']);
     Route::patch('/read-all', [NotificationController::class, 'markAllAsRead']);
+    Route::post('/device-tokens', [DeviceTokenController::class, 'store']);
+    Route::delete('/device-tokens', [DeviceTokenController::class, 'destroy']);
 });
 
-use App\Services\Notifications\NotificationService;
-use App\Support\NotificationTypes;
-use Illuminate\Http\Request;
 
 Route::middleware('auth:sanctum')->post('/debug/send-test-notification', function (
     Request $request,

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "mobile-job-001",
+    "title": "Flutter Mobile Developer",
+    "description": "We are looking for a mobile developer with Flutter, Dart, Firebase, REST API, Git, Testing, Android, iOS and Teamwork experience.",
+    "company_name": "Mobile Alpha",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-10"
+  },
+  {
+    "id": "mobile-job-002",
+    "title": "مطور تطبيقات Flutter",
+    "description": "مطلوب مطور تطبيقات لديه خبرة في فلاتر و دارت و فايربيس و REST APIs و GetX و Android و Git والعمل ضمن فريق.",
+    "company_name": "Mobile Beta",
+    "location": "Damascus",
+    "language": "mixed",
+    "published_at": "2026-07-11"
+  },
+  {
+    "id": "mobile-job-003",
+    "title": "Android Mobile Developer",
+    "description": "The candidate should have Android, Firebase, REST APIs, Git and Testing experience for mobile applications.",
+    "company_name": "Mobile Gamma",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-12"
+  },
+  {
+    "id": "mobile-job-004",
+    "title": "Flutter State Management Developer",
+    "description": "Required skills include Flutter, Dart, State Management, BLoC, Provider, REST API, Firebase and Git.",
+    "company_name": "Mobile Delta",
+    "location": "Hybrid",
+    "language": "en",
+    "published_at": "2026-07-13"
+  },
+  {
+    "id": "mobile-job-005",
+    "title": "Junior Flutter Developer",
+    "description": "We need a junior developer familiar with Flutter, Dart, REST API, Git and Teamwork.",
+    "company_name": "Mobile Epsilon",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-14"
+  },
+  {
+    "id": "mobile-job-006",
+    "title": "iOS Flutter Developer",
+    "description": "This role requires Flutter, Dart, iOS, Firebase and Testing for building reliable mobile apps.",
+    "company_name": "Mobile Zeta",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-15"
+  },
+  {
+    "id": "mobile-job-007",
+    "title": "مطور تطبيقات موبايل",
+    "description": "نبحث عن مطور لديه خبرة في فلاتر و دارت و إدارة الحالة و واجهات برمجية و فايربيس والعمل الجماعي.",
+    "company_name": "Mobile Eta",
+    "location": "Aleppo",
+    "language": "mixed",
+    "published_at": "2026-07-16"
+  },
+  {
+    "id": "mobile-job-008",
+    "title": "Cross Platform Mobile Developer",
+    "description": "Mobile developer with Flutter, Dart, Android, iOS, REST APIs, Git and Firebase knowledge.",
+    "company_name": "Mobile Theta",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-17"
+  },
+  {
+    "id": "mobile-job-009",
+    "title": "Flutter GetX Developer",
+    "description": "Flutter developer needed with Dart, GetX, REST API, Firebase, Git and Unit Testing experience.",
+    "company_name": "Mobile Iota",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-18"
+  },
+  {
+    "id": "mobile-job-010",
+    "title": "Mobile App Developer",
+    "description": "The role requires Android, iOS, Firebase, APIs, Testing and Team Work.",
+    "company_name": "Mobile Kappa",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-19"
+  }
+]

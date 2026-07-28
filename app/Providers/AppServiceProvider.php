@@ -33,7 +33,6 @@ use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
 use App\Listeners\NotifyStudentProjectStatusChanged;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 use App\Models\CompanyTaskAssignment;
-use App\Models\OpportunityInterview;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Models\ProjectEvaluation;
@@ -74,6 +73,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use App\Models\ProjectEvaluationAppeal;
+use App\Policies\ProjectEvaluationAppealPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -215,6 +216,11 @@ class AppServiceProvider extends ServiceProvider
             ProjectEvaluationPolicy::class
         );
 
+        Gate::policy(
+            ProjectEvaluationAppeal::class,
+            ProjectEvaluationAppealPolicy::class
+        );
+
         ProjectAssignment::observe(ProjectAssignmentObserver::class);
 
         Event::listen(
@@ -239,8 +245,8 @@ class AppServiceProvider extends ServiceProvider
 
         Relation::enforceMorphMap([
             'user' => User::class,
+            'project_assignment' => ProjectAssignment::class,
             'company_task_assignment' => CompanyTaskAssignment::class,
-            'opportunity_interview' => OpportunityInterview::class,
         ]);
 
     }

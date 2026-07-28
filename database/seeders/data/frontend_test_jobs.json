@@ -1,0 +1,92 @@
+[
+  {
+    "id": "frontend-job-001",
+    "title": "React Frontend Developer",
+    "description": "We are looking for a frontend developer with HTML, CSS, JavaScript, TypeScript, React, Git, Responsive Design, Testing and Teamwork experience.",
+    "company_name": "Frontend Alpha",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-10"
+  },
+  {
+    "id": "frontend-job-002",
+    "title": "مطور واجهات React",
+    "description": "مطلوب مطور واجهات لديه خبرة في HTML و CSS و جافاسكريبت و رياكت و تيلويند و تصميم متجاوب واستخدام Git والعمل ضمن فريق.",
+    "company_name": "Frontend Beta",
+    "location": "Damascus",
+    "language": "mixed",
+    "published_at": "2026-07-11"
+  },
+  {
+    "id": "frontend-job-003",
+    "title": "Vue Frontend Engineer",
+    "description": "The candidate should have strong HTML, CSS, JavaScript, Vue, Git, Responsive UI and Figma experience.",
+    "company_name": "Frontend Gamma",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-12"
+  },
+  {
+    "id": "frontend-job-004",
+    "title": "Senior React UI Developer",
+    "description": "Required skills include HTML5, CSS3, JS, React, TypeScript, Tailwind CSS, Mobile First design and Unit Testing.",
+    "company_name": "Frontend Delta",
+    "location": "Hybrid",
+    "language": "en",
+    "published_at": "2026-07-13"
+  },
+  {
+    "id": "frontend-job-005",
+    "title": "Junior Frontend Developer",
+    "description": "We need a junior developer familiar with HTML, CSS, JavaScript, Git and Teamwork.",
+    "company_name": "Frontend Epsilon",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-14"
+  },
+  {
+    "id": "frontend-job-006",
+    "title": "UI Frontend Developer",
+    "description": "This role requires Figma, HTML, CSS, Responsive Design and Tailwind for building clean web interfaces.",
+    "company_name": "Frontend Zeta",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-15"
+  },
+  {
+    "id": "frontend-job-007",
+    "title": "ReactJS Developer",
+    "description": "ReactJS developer needed with JavaScript, TypeScript, Git, Testing and frontend application development experience.",
+    "company_name": "Frontend Eta",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-16"
+  },
+  {
+    "id": "frontend-job-008",
+    "title": "مطور Vue Frontend",
+    "description": "نبحث عن مطور لديه خبرة في فيو و HTML و CSS و جافاسكريبت و واجهات متجاوبة والعمل الجماعي.",
+    "company_name": "Frontend Theta",
+    "location": "Aleppo",
+    "language": "mixed",
+    "published_at": "2026-07-17"
+  },
+  {
+    "id": "frontend-job-009",
+    "title": "TypeScript React Frontend Developer",
+    "description": "Frontend developer with TypeScript, React, CSS, HTML, Figma, Git and Responsive Design knowledge.",
+    "company_name": "Frontend Iota",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-18"
+  },
+  {
+    "id": "frontend-job-010",
+    "title": "Frontend Web Developer",
+    "description": "The role requires HTML, CSS, JavaScript, React, Tailwind, Git, Responsive Design and Team Work.",
+    "company_name": "Frontend Kappa",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-19"
+  }
+]

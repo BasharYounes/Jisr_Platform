@@ -28,8 +28,6 @@ class CVAnalysis extends Model
         'AnalyzedAt' => 'datetime',
     ];
 
-    public $timestamps = false;
-
     public function cv(): BelongsTo
     {
         return $this->belongsTo(CV::class, 'CvId', 'CvID');

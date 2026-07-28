@@ -3,7 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+// use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,14 +16,22 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
+
     protected $guard_name = 'web';
+
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'is_active',
+    ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -33,6 +41,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -181,7 +190,7 @@ class User extends Authenticatable
             'UserId',
             'id'
         );
-    }
+}
 
     public function verificationRequests()
     {
@@ -255,6 +264,10 @@ class User extends Authenticatable
         return $this->hasMany(OtpCode::class);
     }
 
+    public function deviceTokens(): HasMany
+    {
+        return $this->hasMany(UserDeviceToken::class);
+    }
     public function opportunityInterviews(): HasMany
     {
         return $this->hasMany(OpportunityInterview::class, 'student_user_id');

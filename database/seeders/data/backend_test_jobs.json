@@ -1,0 +1,47 @@
+[
+  {
+    "id": "backend-python-job-001",
+    "title": "Python Flask Backend Developer",
+    "description": "We are looking for a backend developer with Python, Flask, SQL, REST API, Git and Testing experience.",
+    "company_name": "Backend Alpha",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-10"
+  },
+  {
+    "id": "backend-python-job-002",
+    "title": "Junior Python Backend Developer",
+    "description": "The candidate should have Python, Flask, SQL, REST APIs, Git and Teamwork experience.",
+    "company_name": "Backend Beta",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-11"
+  },
+  {
+    "id": "backend-python-job-003",
+    "title": "Backend API Developer",
+    "description": "Required skills include Python, Flask, SQL, REST API, Git and Docker.",
+    "company_name": "Backend Gamma",
+    "location": "Hybrid",
+    "language": "en",
+    "published_at": "2026-07-12"
+  },
+  {
+    "id": "backend-python-job-004",
+    "title": "Junior Backend Developer",
+    "description": "We need a junior backend developer familiar with Python, SQL and Git.",
+    "company_name": "Backend Delta",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-13"
+  },
+  {
+    "id": "backend-python-job-005",
+    "title": "Flask Backend Developer",
+    "description": "Backend developer needed with Python, Flask, SQL, REST API, Git and Teamwork.",
+    "company_name": "Backend Epsilon",
+    "location": "Remote",
+    "language": "en",
+    "published_at": "2026-07-14"
+  }
+]

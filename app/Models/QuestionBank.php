@@ -21,11 +21,15 @@ class QuestionBank extends Model
         'DifficultyWeight',
         'IsActive',
         'CreatedByUserId',
+        'EvaluationEngine',
+        'RuleSetVersion',
+        'IsExpertReady',
     ];
 
     protected $casts = [
         'IsActive' => 'boolean',
         'DifficultyWeight' => 'decimal:2',
+        'IsExpertReady' => 'boolean',
     ];
 
     public function skill()
@@ -51,5 +55,14 @@ class QuestionBank extends Model
     public function attempts()
     {
         return $this->hasMany(AssessmentQuestionAttempt::class, 'QuestionID', 'QuestionID');
+    }
+
+    public function ruleSets()
+    {
+        return $this->hasMany(
+            AssessmentRuleSet::class,
+            'QuestionID',
+            'QuestionID'
+        );
     }
 }

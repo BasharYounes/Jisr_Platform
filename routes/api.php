@@ -44,6 +44,9 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminUserRoleController;
+use App\Http\Controllers\Student\ProjectEvaluationAppealController;
+use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +140,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::post('/companiesReject/{companyId}', [AdminController::class, 'rejectCompany']);
     Route::get('/companyDetails/{companyId}', [AdminController::class, 'getCompanyDetails']);
     // Route::post('/users/{id}/assign-role', [AdminController::class, 'assignRole']);
+    Route::patch(
+        '/users/{user}/roles',
+        AdminUserRoleController::class
+    );
 });
 
 // ============
@@ -361,3 +368,40 @@ Route::middleware('auth:sanctum')->prefix('me')->group(function () {
     Route::get('/points', [MyPointController::class, 'summary']);
     Route::get('/points/history', [MyPointController::class, 'history']);
 });
+
+
+
+
+Route::middleware([
+    'auth:sanctum',
+    'role:student',
+])
+    ->prefix('student/project-evaluations')
+    ->controller(
+        ProjectEvaluationAppealController::class
+    )
+    ->group(function (): void {
+        Route::get(
+            '/{projectEvaluation}',
+            'show'
+        );
+
+        Route::post(
+            '/{projectEvaluation}/appeals',
+            'store'
+        );
+    });
+
+    Route::middleware('auth:sanctum')
+    ->prefix('market-analysis')
+    ->controller(MarketInsightsController::class)
+    ->group(function () {
+        Route::get('/career-paths/{careerPathId}/skill-demand', 'skillDemand')
+            ->whereNumber('careerPathId');
+        Route::get('/career-paths/{careerPathId}/trends', 'trendSnapshot')
+            ->whereNumber('careerPathId');
+        Route::get('/career-paths/{careerPathId}/skills/{skillId}/evidence', 'skillEvidence')
+            ->whereNumber('careerPathId')
+            ->whereNumber('skillId');
+        Route::get('/career-paths', 'careerPaths');
+    });
