@@ -7,6 +7,7 @@ use App\Events\ProjectAssignmentStatusChanged;
 use App\Interfaces\CompanyHomeRepositoryInterface;
 use App\Interfaces\CompanyOpportunityRepositoryInterface;
 use App\Interfaces\CompanyRepositoryInterface;
+use App\Interfaces\CompanyStudentRepositoryInterface;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
 use App\Interfaces\CompanyTaskProgressRepositoryInterface;
@@ -44,6 +45,7 @@ use App\Policies\ProjectEvaluationPolicy;
 use App\Repositories\CompanyHomeRepository;
 use App\Repositories\CompanyOpportunityRepository;
 use App\Repositories\CompanyRepository;
+use App\Repositories\CompanyStudentRepository;
 use App\Repositories\CompanyTaskApplicationRepository;
 use App\Repositories\CompanyTaskAssignmentRepository;
 use App\Repositories\CompanyTaskProgressRepository;
@@ -187,6 +189,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PointRepositoryInterface::class,
             PointRepository::class
+        );
+
+        $this->app->bind(
+            CompanyStudentRepositoryInterface::class,
+            CompanyStudentRepository::class
         );
 
         $this->app->bind(AIClientInterface::class, function () {

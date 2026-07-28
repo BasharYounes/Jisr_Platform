@@ -33,9 +33,9 @@ class ConversationService
             ->getUserTaskAssignmentConversations($userId, $perPage);
     }
 
-    public function getMessages(int $conversationId, int $userId, int $perPage = 30)
+    public function getMessages(int $conversationId, int $userId, int $perPage = 30): array
     {
-        $this->conversationRepository
+        $conversation = $this->conversationRepository
             ->findUserConversationOrFail($conversationId, $userId);
 
         $messages = $this->messageRepository
@@ -44,7 +44,10 @@ class ConversationService
         $this->participantRepository
             ->markAsRead($conversationId, $userId);
 
-        return $messages;
+        return [
+            'conversation' => $conversation,
+            'messages' => $messages,
+        ];
     }
 
     public function getUserOpenConversations(int $userId, int $perPage = 15)

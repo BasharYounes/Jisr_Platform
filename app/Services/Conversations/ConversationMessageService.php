@@ -16,11 +16,27 @@ class ConversationMessageService
         private readonly ConversationParticipantRepositoryInterface $participantRepository,
     ) {}
 
-    public function getMessages(int $conversationId, int $userId, int $perPage = 30)
-    {
-        $this->conversationRepository->findUserConversationOrFail($conversationId, $userId);
+    public function getMessages(
+        int $conversationId,
+        int $userId,
+        int $perPage = 30
+    ): array {
+        $conversation = $this->conversationRepository
+            ->findUserConversationOrFail(
+                conversationId: $conversationId,
+                userId: $userId
+            );
 
-        return $this->messageRepository->getConversationMessages($conversationId, $perPage);
+        $messages = $this->messageRepository
+            ->getConversationMessages(
+                conversationId: $conversationId,
+                perPage: $perPage
+            );
+
+        return [
+            'conversation' => $conversation,
+            'messages' => $messages,
+        ];
     }
 
     public function sendMessage(int $conversationId, int $senderId, array $data): Message

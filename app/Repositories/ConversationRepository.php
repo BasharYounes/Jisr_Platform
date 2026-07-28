@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Models\CompanyTaskAssignment;
 use App\Models\Conversation;
+use App\Models\OpportunityInterview;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -51,6 +52,10 @@ class ConversationRepository implements ConversationRepositoryInterface
                             'task.company.users:id,name',
                             'task.skills:id,name',
                             'student:id,name,email,profile_picture_url',
+                        ],
+
+                        OpportunityInterview::class => [
+                            'opportunity:id,title,type,status',
                         ],
                     ]);
                 },
@@ -116,7 +121,7 @@ class ConversationRepository implements ConversationRepositoryInterface
                                 });
                         });
                 },
-        ])
+            ])
             ->latest()
             ->paginate($perPage);
     }

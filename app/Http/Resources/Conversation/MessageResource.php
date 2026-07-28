@@ -19,6 +19,7 @@ class MessageResource extends JsonResource
                 'id' => $this->sender->id,
                 'name' => $this->sender->name,
                 'email' => $this->sender->email,
+                'role' => $this->sender_role,
             ] : null,
 
             'is_mine' => $this->sender_id === $request->user()?->id,

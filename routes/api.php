@@ -13,6 +13,7 @@ use App\Http\Controllers\Community\CommentController;
 use App\Http\Controllers\Community\CommentLikeController;
 use App\Http\Controllers\Community\PostController;
 use App\Http\Controllers\Community\PostLikeController;
+use App\Http\Controllers\Company\CompanyStudentController;
 use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskAssignmentController;
 use App\Http\Controllers\Company\CompanyTaskController;
@@ -254,6 +255,12 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
         Route::patch('/{interviewId}/cancel', 'cancel')->whereNumber('interviewId');
         Route::patch('/{interviewId}/complete', 'complete')->whereNumber('interviewId');
     });
+});
+
+// Company Students Search & Details
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/students')->controller(CompanyStudentController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/{studentId}', 'show')->whereNumber('studentId');
 });
 
 // ============

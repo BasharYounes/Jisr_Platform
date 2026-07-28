@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
             BackendQuestionBankSeeder::class,
             DemoOpportunitiesSeeder::class,
             PointRulesSeeder::class,
+            FullSkillsSeeder::class,
+            DemoCompanyTaskWorkflowSeeder::class,
+            DemoTaskConversationMessagesSeeder::class,
             // SupervisorWorkflowTestSeeder::class,
         ]);
 
