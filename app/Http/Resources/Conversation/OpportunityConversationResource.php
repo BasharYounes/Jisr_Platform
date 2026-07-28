@@ -44,8 +44,7 @@ class OpportunityConversationResource extends JsonResource
                 ]
                 : null,
 
-            'unread_messages_count' =>
-                $this->unread_messages_count ?? 0,
+            'unread_messages_count' => $this->unread_messages_count ?? 0,
 
             'latest_message' => $this->latestMessage
                 ? [

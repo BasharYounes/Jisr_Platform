@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Conversations;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Conversation\ConversationResource;
 use App\Http\Resources\Conversation\MessageResource;
+use App\Http\Resources\Conversation\OpportunityConversationResource;
 use App\Http\Resources\Conversation\TaskConversationResource;
 use App\Services\Conversations\ConversationService;
 use App\Traits\ApiResponse;
@@ -75,7 +76,7 @@ class ConversationController extends Controller
         return $this->success(
             message: 'Opportunity conversations retrieved successfully.',
             data: [
-                'items' => \App\Http\Resources\Conversation\OpportunityConversationResource::collection(
+                'items' => OpportunityConversationResource::collection(
                     $conversations
                 )->resolve(),
 

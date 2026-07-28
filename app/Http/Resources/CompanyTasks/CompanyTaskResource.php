@@ -40,11 +40,9 @@ class CompanyTaskResource extends JsonResource
             'max_applicants' => $this->max_applicants,
             'max_accepted_students' => $this->max_accepted_students,
 
-            'accepted_students_count' =>
-                $this->accepted_students_count ?? 0,
+            'accepted_students_count' => $this->accepted_students_count ?? 0,
 
-            'submissions_count' =>
-                $this->submissions_count ?? 0,
+            'submissions_count' => $this->submissions_count ?? 0,
 
             'deliverables' => $this->deliverables,
             'acceptance_criteria' => $this->acceptance_criteria,
@@ -70,16 +68,13 @@ class CompanyTaskResource extends JsonResource
                                     'name' => $assignment->student?->name,
                                     'email' => $assignment->student?->email,
 
-                                    'profile_picture_url' =>
-                                        $assignment->student
-                                            ?->profile_picture_url,
+                                    'profile_picture_url' => $assignment->student
+                                        ?->profile_picture_url,
                                 ],
 
-                                'assignment_status' =>
-                                    $assignment->status,
+                                'assignment_status' => $assignment->status,
 
-                                'has_review' =>
-                                    $assignment->reviews->isNotEmpty(),
+                                'has_review' => $assignment->reviews->isNotEmpty(),
                             ];
                         })
                         ->values();
@@ -94,17 +89,13 @@ class CompanyTaskResource extends JsonResource
                             return [
                                 'id' => $skill->id,
                                 'name' => $skill->name,
-                                'category' =>
-                                    $skill->category ?? null,
+                                'category' => $skill->category ?? null,
 
-                                'required_level' =>
-                                    $skill->pivot->required_level,
+                                'required_level' => $skill->pivot->required_level,
 
-                                'weight' =>
-                                    (float) $skill->pivot->weight,
+                                'weight' => (float) $skill->pivot->weight,
 
-                                'mandatory' =>
-                                    (bool) $skill->pivot->mandatory,
+                                'mandatory' => (bool) $skill->pivot->mandatory,
                             ];
                         }
                     );
