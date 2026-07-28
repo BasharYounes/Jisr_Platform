@@ -207,6 +207,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks/revie
 Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationController::class)->group(function () {
     Route::get('/all', 'index');
     Route::get('/task-conversations', 'taskConversations');
+    Route::get('/opportunity-conversations', 'opportunityConversations');
     Route::get('/closed', 'closedConversations');
     Route::get('/{conversationId}', 'show');
     Route::get('/{conversationId}/messages', 'index');

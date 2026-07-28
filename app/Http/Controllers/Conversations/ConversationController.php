@@ -64,6 +64,31 @@ class ConversationController extends Controller
         );
     }
 
+    public function opportunityConversations(Request $request)
+    {
+        $conversations = $this->conversationService
+            ->getUserOpportunityConversations(
+                userId: $request->user()->id,
+                perPage: (int) $request->get('per_page', 15),
+            );
+
+        return $this->success(
+            message: 'Opportunity conversations retrieved successfully.',
+            data: [
+                'items' => \App\Http\Resources\Conversation\OpportunityConversationResource::collection(
+                    $conversations
+                )->resolve(),
+
+                'pagination' => [
+                    'current_page' => $conversations->currentPage(),
+                    'last_page' => $conversations->lastPage(),
+                    'per_page' => $conversations->perPage(),
+                    'total' => $conversations->total(),
+                ],
+            ]
+        );
+    }
+
     public function closedConversations(Request $request)
     {
         $conversations = $this->conversationService->getUserClosedConversations(

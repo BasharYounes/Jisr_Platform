@@ -33,6 +33,12 @@ class ConversationService
             ->getUserTaskAssignmentConversations($userId, $perPage);
     }
 
+    public function getUserOpportunityConversations(int $userId, int $perPage = 15)
+    {
+        return $this->conversationRepository
+            ->getUserOpportunityInterviewConversations($userId, $perPage);
+    }
+
     public function getMessages(int $conversationId, int $userId, int $perPage = 30): array
     {
         $conversation = $this->conversationRepository
