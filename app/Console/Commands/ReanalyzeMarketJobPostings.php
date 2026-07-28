@@ -31,6 +31,7 @@ class ReanalyzeMarketJobPostings extends Command
 
             if (! $careerPath) {
                 $this->error("Career path not found: {$careerPathId}");
+
                 return self::FAILURE;
             }
         }
@@ -51,6 +52,7 @@ class ReanalyzeMarketJobPostings extends Command
 
         if ($total === 0) {
             $this->warn('No market job postings found for the selected filters.');
+
             return self::SUCCESS;
         }
 

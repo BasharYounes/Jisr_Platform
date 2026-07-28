@@ -26,11 +26,9 @@ class EvaluationRevisionRequest extends Model
     protected function casts(): array
     {
         return [
-            'source' =>
-                EvaluationRevisionRequestSource::class,
+            'source' => EvaluationRevisionRequestSource::class,
 
-            'status' =>
-                EvaluationRevisionRequestStatus::class,
+            'status' => EvaluationRevisionRequestStatus::class,
 
             'source_reference_id' => 'integer',
             'resolved_at' => 'datetime',

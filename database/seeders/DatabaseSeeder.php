@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
             FullSkillsSeeder::class,
             DemoCompanyTaskWorkflowSeeder::class,
             DemoTaskConversationMessagesSeeder::class,
-    
 
             // Canonical Backend questions, then stable Expert-System catalog.
             BackendQuestionBankSeeder::class,

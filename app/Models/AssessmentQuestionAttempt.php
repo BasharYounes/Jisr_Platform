@@ -65,7 +65,6 @@ class AssessmentQuestionAttempt extends Model
     }
 }
 
-
 /*
 
 $result = $engine->evaluate(\App\Models\QuestionBank::findOrFail(117),[['concept_code' => 'variable_is_identifier_or_reference','value' => true,'is_negated' => true,'evidence' => 'المتغير لا يشير إلى قيمة.','sentence_index' => 0,'detection_method' => 'manual_test','similarity_score' => null,],['concept_code' => 'valid_python_assignment_example','value' => true,'is_negated' => false,'evidence' => 'x = 5','sentence_index' => 1,'detection_method' => 'manual_test','similarity_score' => null,],]);

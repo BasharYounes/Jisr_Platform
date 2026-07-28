@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Domains\Supervisor\Actions\ApproveProjectEvaluationAction;
+use App\Domains\Supervisor\Actions\RequestProjectEvaluationRevisionAction;
+use App\Domains\Supervisor\Actions\ResubmitProjectEvaluationAction;
 use App\Domains\Supervisor\Actions\SubmitProjectEvaluationAction;
+use App\Domains\Supervisor\Actions\UpdateProjectEvaluationAction;
+use App\Domains\Supervisor\Requests\ResubmitProjectEvaluationRequest;
+use App\Domains\Supervisor\Requests\StoreEvaluationRevisionRequest;
 use App\Domains\Supervisor\Requests\SubmitProjectEvaluationRequest;
+use App\Domains\Supervisor\Requests\UpdateProjectEvaluationRequest;
 use App\Http\Resources\ProjectEvaluationResource;
+use App\Http\Resources\Supervisor\EvaluationRevisionRequestResource;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectEvaluation;
 use App\Models\User;
 use App\Support\ApiResponse;
-use App\Domains\Supervisor\Actions\RequestProjectEvaluationRevisionAction;
-use App\Domains\Supervisor\Requests\StoreEvaluationRevisionRequest;
-use App\Http\Resources\Supervisor\EvaluationRevisionRequestResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
-use App\Domains\Supervisor\Actions\ResubmitProjectEvaluationAction;
-use App\Domains\Supervisor\Actions\UpdateProjectEvaluationAction;
-use App\Domains\Supervisor\Requests\ResubmitProjectEvaluationRequest;
-use App\Domains\Supervisor\Requests\UpdateProjectEvaluationRequest;
 
 class ProjectEvaluationController extends Controller
 {
@@ -111,15 +111,13 @@ class ProjectEvaluationController extends Controller
         return ApiResponse::success(
             'Project evaluation returned for revision successfully',
             [
-                'evaluation' =>
-                    (new ProjectEvaluationResource(
-                        $updatedEvaluation
-                    ))->resolve($request),
+                'evaluation' => (new ProjectEvaluationResource(
+                    $updatedEvaluation
+                ))->resolve($request),
 
-                'revision_request' =>
-                    (new EvaluationRevisionRequestResource(
-                        $revisionRequest
-                    ))->resolve($request),
+                'revision_request' => (new EvaluationRevisionRequestResource(
+                    $revisionRequest
+                ))->resolve($request),
             ],
             201
         );
@@ -161,24 +159,21 @@ class ProjectEvaluationController extends Controller
         $result = $action->execute(
             evaluation: $projectEvaluation,
             supervisor: $request->user(),
-            resolutionNote:
-                $request->validated(
-                    'resolution_note'
-                ),
+            resolutionNote: $request->validated(
+                'resolution_note'
+            ),
         );
 
         return ApiResponse::success(
             'Project evaluation resubmitted successfully',
             [
-                'evaluation' =>
-                    (new ProjectEvaluationResource(
-                        $result['evaluation']
-                    ))->resolve($request),
+                'evaluation' => (new ProjectEvaluationResource(
+                    $result['evaluation']
+                ))->resolve($request),
 
-                'revision_request' =>
-                    (new EvaluationRevisionRequestResource(
-                        $result['revision_request']
-                    ))->resolve($request),
+                'revision_request' => (new EvaluationRevisionRequestResource(
+                    $result['revision_request']
+                ))->resolve($request),
             ]
         );
     }

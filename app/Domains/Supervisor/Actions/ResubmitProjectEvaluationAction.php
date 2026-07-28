@@ -13,9 +13,7 @@ use Illuminate\Validation\ValidationException;
 class ResubmitProjectEvaluationAction
 {
     public function __construct(
-        private readonly
-        RecalculateProjectEvaluationScoreAction
-        $recalculateScore
+        private readonly RecalculateProjectEvaluationScoreAction $recalculateScore
     ) {}
 
     public function execute(
@@ -90,21 +88,18 @@ class ResubmitProjectEvaluationAction
             );
 
             $lockedEvaluation->update([
-                'status' =>
-                    ProjectEvaluationStatus::SUBMITTED->value,
+                'status' => ProjectEvaluationStatus::SUBMITTED->value,
 
                 'evaluated_at' => now(),
             ]);
 
             $lockedEvaluation
-            ->initializeAppealWindowIfMissing();
+                ->initializeAppealWindowIfMissing();
 
             $revisionRequest->update([
-                'status' =>
-                    EvaluationRevisionRequestStatus::Resolved->value,
+                'status' => EvaluationRevisionRequestStatus::Resolved->value,
 
-                'resolution_note' =>
-                    $resolutionNote !== null
+                'resolution_note' => $resolutionNote !== null
                         ? trim($resolutionNote)
                         : 'Evaluation updated and resubmitted.',
 
@@ -116,24 +111,22 @@ class ResubmitProjectEvaluationAction
              * لن نعيد ضبط موعد الـ48 ساعة هنا.
              */
             return [
-                'evaluation' =>
-                    $lockedEvaluation
-                        ->refresh()
-                        ->load([
-                            'assignment.projectTemplate',
-                            'student',
-                            'supervisor',
-                            'items.criteria',
-                            'items.evidences',
-                        ]),
+                'evaluation' => $lockedEvaluation
+                    ->refresh()
+                    ->load([
+                        'assignment.projectTemplate',
+                        'student',
+                        'supervisor',
+                        'items.criteria',
+                        'items.evidences',
+                    ]),
 
-                'revision_request' =>
-                    $revisionRequest
-                        ->refresh()
-                        ->load([
-                            'requestedBy:id,name,email',
-                            'assignedTo:id,name,email',
-                        ]),
+                'revision_request' => $revisionRequest
+                    ->refresh()
+                    ->load([
+                        'requestedBy:id,name,email',
+                        'assignedTo:id,name,email',
+                    ]),
             ];
         });
     }

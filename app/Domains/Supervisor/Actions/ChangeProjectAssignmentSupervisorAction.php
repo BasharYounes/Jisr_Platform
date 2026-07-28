@@ -96,10 +96,9 @@ class ChangeProjectAssignmentSupervisorAction
                     ->map(
                         fn (
                             ProjectEvaluation $evaluation
-                        ): array =>
-                            $this->snapshotEvaluation(
-                                $evaluation
-                            )
+                        ): array => $this->snapshotEvaluation(
+                            $evaluation
+                        )
                     )
                     ->values()
                     ->all();
@@ -144,15 +143,12 @@ class ChangeProjectAssignmentSupervisorAction
                         $pendingAppealIds
                     )
                     ->update([
-                        'status' =>
-                            ProjectEvaluationAppealStatus::Cancelled->value,
+                        'status' => ProjectEvaluationAppealStatus::Cancelled->value,
 
-                        'reviewed_by' =>
-                            $changedBy->id,
+                        'reviewed_by' => $changedBy->id,
 
-                        'review_notes' =>
-                            'Cancelled because the project supervisor was changed. Reason: '
-                            . trim($reason),
+                        'review_notes' => 'Cancelled because the project supervisor was changed. Reason: '
+                            .trim($reason),
 
                         'reviewed_at' => now(),
                         'updated_at' => now(),
@@ -164,12 +160,10 @@ class ChangeProjectAssignmentSupervisorAction
                         $pendingRevisionRequestIds
                     )
                     ->update([
-                        'status' =>
-                            EvaluationRevisionRequestStatus::Cancelled->value,
+                        'status' => EvaluationRevisionRequestStatus::Cancelled->value,
 
-                        'resolution_note' =>
-                            'Cancelled because the project supervisor was changed. Reason: '
-                            . trim($reason),
+                        'resolution_note' => 'Cancelled because the project supervisor was changed. Reason: '
+                            .trim($reason),
 
                         'resolved_at' => now(),
                         'updated_at' => now(),
@@ -196,72 +190,56 @@ class ChangeProjectAssignmentSupervisorAction
             }
 
             $lockedAssignment->update([
-                'supervisor_id' =>
-                    $newSupervisor->id,
+                'supervisor_id' => $newSupervisor->id,
             ]);
 
             AuditLog::create([
                 'user_id' => $changedBy->id,
 
-                'action' =>
-                    'project_assignment_supervisor_changed',
+                'action' => 'project_assignment_supervisor_changed',
 
-                'entity_type' =>
-                    ProjectAssignment::class,
+                'entity_type' => ProjectAssignment::class,
 
-                'entity_id' =>
-                    $lockedAssignment->id,
+                'entity_id' => $lockedAssignment->id,
 
                 'old_value' => [
-                    'assignment_status' =>
-                        $this->enumValue(
-                            $lockedAssignment->status
-                        ),
+                    'assignment_status' => $this->enumValue(
+                        $lockedAssignment->status
+                    ),
 
                     'supervisor' => [
-                        'id' =>
-                            $oldSupervisor?->id,
+                    'id' => $oldSupervisor?->id,
 
-                        'name' =>
-                            $oldSupervisor?->name,
+                    'name' => $oldSupervisor?->name,
 
-                        'email' =>
-                            $oldSupervisor?->email,
+                    'email' => $oldSupervisor?->email,
                     ],
 
                     /*
                      * يحتوي التقييمات وعناصرها
                      * واعتراضاتها وطلبات تعديلها.
                      */
-                    'evaluations' =>
-                        $evaluationSnapshots,
+                    'evaluations' => $evaluationSnapshots,
                 ],
 
                 'new_value' => [
                     'supervisor' => [
-                        'id' =>
-                            $newSupervisor->id,
+                    'id' => $newSupervisor->id,
 
-                        'name' =>
-                            $newSupervisor->name,
+                    'name' => $newSupervisor->name,
 
-                        'email' =>
-                            $newSupervisor->email,
+                    'email' => $newSupervisor->email,
                     ],
 
                     'reason' => trim($reason),
 
-                    'deleted_evaluation_ids' =>
-                        $evaluationIds->all(),
+                    'deleted_evaluation_ids' => $evaluationIds->all(),
 
-                    'cancelled_appeal_ids' =>
-                        $pendingAppealIds->all(),
+                    'cancelled_appeal_ids' => $pendingAppealIds->all(),
 
-                    'cancelled_revision_request_ids' =>
-                        $pendingRevisionRequestIds->all(),
+                    'cancelled_revision_request_ids' => $pendingRevisionRequestIds->all(),
 
-                    'changed_at' =>
-                        now()->toISOString(),
+                    'changed_at' => now()->toISOString(),
                 ],
             ]);
 
@@ -275,70 +253,55 @@ class ChangeProjectAssignmentSupervisorAction
 
             return [
                 'assignment' => [
-                    'id' =>
-                        $updatedAssignment->id,
+                    'id' => $updatedAssignment->id,
 
-                    'status' =>
-                        $this->enumValue(
-                            $updatedAssignment->status
-                        ),
+                    'status' => $this->enumValue(
+                        $updatedAssignment->status
+                    ),
 
-                    'progress_percentage' =>
-                        $updatedAssignment
-                            ->progress_percentage,
+                    'progress_percentage' => $updatedAssignment
+                        ->progress_percentage,
 
                     'project_template' => [
-                        'id' =>
-                            $updatedAssignment
-                                ->projectTemplate
-                                ?->id,
+                    'id' => $updatedAssignment
+                        ->projectTemplate
+                        ?->id,
 
-                        'title' =>
-                            $updatedAssignment
-                                ->projectTemplate
-                                ?->title,
+                    'title' => $updatedAssignment
+                        ->projectTemplate
+                        ?->title,
                     ],
                 ],
 
                 'old_supervisor' => [
-                    'id' =>
-                        $oldSupervisor?->id,
+                    'id' => $oldSupervisor?->id,
 
-                    'name' =>
-                        $oldSupervisor?->name,
+                    'name' => $oldSupervisor?->name,
 
-                    'email' =>
-                        $oldSupervisor?->email,
+                    'email' => $oldSupervisor?->email,
                 ],
 
                 'new_supervisor' => [
-                    'id' =>
-                        $newSupervisor->id,
+                    'id' => $newSupervisor->id,
 
-                    'name' =>
-                        $newSupervisor->name,
+                    'name' => $newSupervisor->name,
 
-                    'email' =>
-                        $newSupervisor->email,
+                    'email' => $newSupervisor->email,
 
-                    'specialization' =>
-                        $this->enumValue(
-                            $newSupervisor
-                                ->supervisorProfile
-                                ?->specialization
-                        ),
+                    'specialization' => $this->enumValue(
+                        $newSupervisor
+                            ->supervisorProfile
+                            ?->specialization
+                    ),
                 ],
 
                 'archived_data' => [
-                    'deleted_evaluations_count' =>
-                        $deletedEvaluationsCount,
+                    'deleted_evaluations_count' => $deletedEvaluationsCount,
 
-                    'cancelled_appeals_count' =>
-                        $pendingAppealIds->count(),
+                    'cancelled_appeals_count' => $pendingAppealIds->count(),
 
-                    'cancelled_revision_requests_count' =>
-                        $pendingRevisionRequestIds
-                            ->count(),
+                    'cancelled_revision_requests_count' => $pendingRevisionRequestIds
+                    ->count(),
                 ],
 
                 'reason' => trim($reason),
@@ -478,213 +441,166 @@ class ChangeProjectAssignmentSupervisorAction
         return [
             'id' => $evaluation->id,
 
-            'project_assignment_id' =>
-                $evaluation->project_assignment_id,
+            'project_assignment_id' => $evaluation->project_assignment_id,
 
             'student' => [
-                'id' =>
-                    $evaluation->student?->id,
+                'id' => $evaluation->student?->id,
 
-                'name' =>
-                    $evaluation->student?->name,
+                'name' => $evaluation->student?->name,
 
-                'email' =>
-                    $evaluation->student?->email,
+                'email' => $evaluation->student?->email,
             ],
 
             'supervisor' => [
-                'id' =>
-                    $evaluation->supervisor?->id,
+                'id' => $evaluation->supervisor?->id,
 
-                'name' =>
-                    $evaluation->supervisor?->name,
+                'name' => $evaluation->supervisor?->name,
 
-                'email' =>
-                    $evaluation->supervisor?->email,
+                'email' => $evaluation->supervisor?->email,
             ],
 
-            'status' =>
-                $this->enumValue(
-                    $evaluation->status
-                ),
+            'status' => $this->enumValue(
+                $evaluation->status
+            ),
 
-            'total_score' =>
-                $evaluation->total_score,
+            'total_score' => $evaluation->total_score,
 
-            'final_grade' =>
-                $evaluation->final_grade,
+            'final_grade' => $evaluation->final_grade,
 
-            'general_comment' =>
-                $evaluation->general_comment,
+            'general_comment' => $evaluation->general_comment,
 
-            'summary_metrics' =>
-                $evaluation->summary_metrics,
+            'summary_metrics' => $evaluation->summary_metrics,
 
-            'evaluated_at' =>
-                $evaluation
-                    ->evaluated_at
-                    ?->toISOString(),
+            'evaluated_at' => $evaluation
+                ->evaluated_at
+                ?->toISOString(),
 
-            'appeal_started_at' =>
-                $evaluation
-                    ->appeal_started_at
-                    ?->toISOString(),
+            'appeal_started_at' => $evaluation
+                ->appeal_started_at
+                ?->toISOString(),
 
-            'appeal_deadline_at' =>
-                $evaluation
-                    ->appeal_deadline_at
-                    ?->toISOString(),
+            'appeal_deadline_at' => $evaluation
+                ->appeal_deadline_at
+                ?->toISOString(),
 
-            'items' =>
-                $evaluation
-                    ->items
-                    ->map(function ($item): array {
-                        return [
-                            'id' => $item->id,
+            'items' => $evaluation
+                ->items
+                ->map(function ($item): array {
+                    return [
+                        'id' => $item->id,
 
-                            'score' =>
-                                $item->score,
+                        'score' => $item->score,
 
-                            'comment' =>
-                                $item->comment,
+                        'comment' => $item->comment,
 
-                            'evidence' =>
-                                $item->evidence,
+                        'evidence' => $item->evidence,
 
-                            'criteria' =>
-                                $item->criteria
-                                    ? [
-                                        'id' =>
-                                            $item
-                                                ->criteria
-                                                ->id,
+                        'criteria' => $item->criteria
+                                ? [
+                                    'id' => $item
+                                        ->criteria
+                                        ->id,
 
-                                        'name' =>
-                                            $item
-                                                ->criteria
-                                                ->name,
+                                    'name' => $item
+                                        ->criteria
+                                        ->name,
 
-                                        'max_score' =>
-                                            $item
-                                                ->criteria
-                                                ->max_score,
+                                    'max_score' => $item
+                                        ->criteria
+                                        ->max_score,
 
-                                        'weight' =>
-                                            $item
-                                                ->criteria
-                                                ->weight,
-                                    ]
-                                    : null,
+                                    'weight' => $item
+                                        ->criteria
+                                        ->weight,
+                                ]
+                                : null,
 
-                            'evidences' =>
-                                $item
-                                    ->evidences
-                                    ->map(
-                                        fn ($evidence): array =>
-                                            $evidence
-                                                ->getAttributes()
-                                    )
-                                    ->values()
-                                    ->all(),
-                        ];
-                    })
-                    ->values()
-                    ->all(),
+                        'evidences' => $item
+                            ->evidences
+                            ->map(
+                                fn ($evidence): array => $evidence
+                                    ->getAttributes()
+                            )
+                            ->values()
+                            ->all(),
+                    ];
+                })
+                ->values()
+                ->all(),
 
-            'appeals' =>
-                $evaluation
-                    ->appeals
-                    ->map(fn ($appeal): array => [
-                        'id' => $appeal->id,
+            'appeals' => $evaluation
+                ->appeals
+                ->map(fn ($appeal): array => [
+                    'id' => $appeal->id,
 
-                        'student_id' =>
-                            $appeal->student_id,
+                    'student_id' => $appeal->student_id,
 
-                        'reason' =>
-                            $appeal->reason,
+                    'reason' => $appeal->reason,
 
-                        'status' =>
-                            $this->enumValue(
-                                $appeal->status
-                            ),
+                    'status' => $this->enumValue(
+                        $appeal->status
+                    ),
 
-                        'evaluation_snapshot' =>
-                            $appeal
-                                ->evaluation_snapshot,
+                    'evaluation_snapshot' => $appeal
+                        ->evaluation_snapshot,
 
-                        'reviewed_by' =>
-                            $appeal->reviewed_by,
+                    'reviewed_by' => $appeal->reviewed_by,
 
-                        'review_notes' =>
-                            $appeal->review_notes,
+                    'review_notes' => $appeal->review_notes,
 
-                        'reviewed_at' =>
-                            $appeal
-                                ->reviewed_at
-                                ?->toISOString(),
+                    'reviewed_at' => $appeal
+                        ->reviewed_at
+                        ?->toISOString(),
 
-                        'revision_request_id' =>
-                            $appeal
-                                ->revision_request_id,
+                    'revision_request_id' => $appeal
+                        ->revision_request_id,
 
-                        'created_at' =>
-                            $appeal
-                                ->created_at
-                                ?->toISOString(),
-                    ])
-                    ->values()
-                    ->all(),
+                    'created_at' => $appeal
+                        ->created_at
+                        ?->toISOString(),
+                ])
+                ->values()
+                ->all(),
 
-            'revision_requests' =>
-                $evaluation
-                    ->revisionRequests
-                    ->map(
-                        fn (
-                            EvaluationRevisionRequest
-                            $request
-                        ): array => [
-                            'id' => $request->id,
+            'revision_requests' => $evaluation
+                ->revisionRequests
+                ->map(
+                    fn (
+                        EvaluationRevisionRequest $request
+                    ): array => [
+                        'id' => $request->id,
 
-                            'requested_by' =>
-                                $request->requested_by,
+                        'requested_by' => $request->requested_by,
 
-                            'assigned_to' =>
-                                $request->assigned_to,
+                        'assigned_to' => $request->assigned_to,
 
-                            'source' =>
-                                $this->enumValue(
-                                    $request->source
-                                ),
+                        'source' => $this->enumValue(
+                            $request->source
+                        ),
 
-                            'source_reference_id' =>
-                                $request
-                                    ->source_reference_id,
+                        'source_reference_id' => $request
+                            ->source_reference_id,
 
-                            'reason' =>
-                                $request->reason,
+                        'reason' => $request->reason,
 
-                            'status' =>
-                                $this->enumValue(
-                                    $request->status
-                                ),
+                        'status' => $this->enumValue(
+                            $request->status
+                        ),
 
-                            'resolution_note' =>
-                                $request
-                                    ->resolution_note,
+                        'resolution_note' => $request
+                            ->resolution_note,
 
-                            'resolved_at' =>
-                                $request
-                                    ->resolved_at
-                                    ?->toISOString(),
+                        'resolved_at' => $request
+                            ->resolved_at
+                            ?->toISOString(),
 
-                            'created_at' =>
-                                $request
-                                    ->created_at
-                                    ?->toISOString(),
-                        ]
-                    )
-                    ->values()
-                    ->all(),
+                        'created_at' => $request
+                            ->created_at
+                            ?->toISOString(),
+                    ]
+                )
+                ->values()
+                ->all(),
         ];
     }
 

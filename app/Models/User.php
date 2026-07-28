@@ -16,9 +16,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
-
     protected $guard_name = 'web';
-
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +29,6 @@ class User extends Authenticatable
         'password',
         'is_active',
     ];
-
 
     /**
      * The attributes that should be hidden for serialization.
@@ -190,7 +187,7 @@ class User extends Authenticatable
             'UserId',
             'id'
         );
-}
+    }
 
     public function verificationRequests()
     {
@@ -268,6 +265,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserDeviceToken::class);
     }
+
     public function opportunityInterviews(): HasMany
     {
         return $this->hasMany(OpportunityInterview::class, 'student_user_id');

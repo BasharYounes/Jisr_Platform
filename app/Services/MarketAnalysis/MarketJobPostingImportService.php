@@ -60,7 +60,7 @@ class MarketJobPostingImportService
                     'description' => $description,
                     'company_name' => $data['company_name'] ?? null,
                     'location' => $data['location'] ?? null,
-                    'language' => $data['language'] ?? $this->detectLanguage($title . ' ' . $description),
+                    'language' => $data['language'] ?? $this->detectLanguage($title.' '.$description),
                     'career_path_id' => $data['career_path_id'] ?? null,
                     'published_at' => $this->parseDate($data['published_at'] ?? null),
                     'imported_at' => now(),
@@ -89,10 +89,10 @@ class MarketJobPostingImportService
          * Otherwise, hash the actual job content.
          */
         if ($sourceName && $externalId) {
-            return hash('sha256', $sourceName . '|' . $externalId);
+            return hash('sha256', $sourceName.'|'.$externalId);
         }
 
-        return hash('sha256', Str::lower($title) . '|' . Str::lower($description));
+        return hash('sha256', Str::lower($title).'|'.Str::lower($description));
     }
 
     private function detectLanguage(string $text): string

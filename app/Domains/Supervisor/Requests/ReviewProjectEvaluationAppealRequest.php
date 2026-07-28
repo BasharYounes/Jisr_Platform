@@ -35,17 +35,13 @@ class ReviewProjectEvaluationAppealRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'decision.required' =>
-                'The appeal review decision is required.',
+            'decision.required' => 'The appeal review decision is required.',
 
-            'review_notes.required' =>
-                'The review notes are required.',
+            'review_notes.required' => 'The review notes are required.',
 
-            'review_notes.min' =>
-                'The review notes must contain at least 10 characters.',
+            'review_notes.min' => 'The review notes must contain at least 10 characters.',
 
-            'review_notes.max' =>
-                'The review notes may not exceed 3000 characters.',
+            'review_notes.max' => 'The review notes may not exceed 3000 characters.',
         ];
     }
 }

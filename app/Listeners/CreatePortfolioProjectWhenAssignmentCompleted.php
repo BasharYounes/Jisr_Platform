@@ -40,22 +40,17 @@ class CreatePortfolioProjectWhenAssignmentCompleted
             PortfolioProject::updateOrCreate(
                 [
                     'user_id' => $member->student_id,
-                    'portfolioable_type' =>
-                        $assignment->getMorphClass(),
+                    'portfolioable_type' => $assignment->getMorphClass(),
                     'portfolioable_id' => $assignment->id,
                 ],
                 [
                     'source' => 'project_assignment',
-                    'title' =>
-                        $assignment->projectTemplate->title,
-                    'description' =>
-                        $assignment->projectTemplate->description,
-                    'project_url' =>
-                        $assignment->github_link
+                    'title' => $assignment->projectTemplate->title,
+                    'description' => $assignment->projectTemplate->description,
+                    'project_url' => $assignment->github_link
                         ?: $assignment->submission_url,
                     'completion_date' => now(),
-                    'grade' =>
-                        $studentEvaluation?->final_grade,
+                    'grade' => $studentEvaluation?->final_grade,
                 ]
             );
         }

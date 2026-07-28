@@ -14,8 +14,7 @@ class FirebaseMessagingService
 {
     public function __construct(
         private readonly Messaging $messaging,
-    ) {
-    }
+    ) {}
 
     /**
      * Send one Firebase notification to all registered Android devices

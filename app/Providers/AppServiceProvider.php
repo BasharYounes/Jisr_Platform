@@ -36,10 +36,12 @@ use App\Models\CompanyTaskAssignment;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Models\ProjectEvaluation;
+use App\Models\ProjectEvaluationAppeal;
 use App\Models\User;
 use App\Observers\ProjectAssignmentObserver;
 use App\Policies\ProjectAssignmentPolicy;
 use App\Policies\ProjectAssignmentTaskPolicy;
+use App\Policies\ProjectEvaluationAppealPolicy;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Repositories\CompanyHomeRepository;
 use App\Repositories\CompanyOpportunityRepository;
@@ -73,8 +75,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use App\Models\ProjectEvaluationAppeal;
-use App\Policies\ProjectEvaluationAppealPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {

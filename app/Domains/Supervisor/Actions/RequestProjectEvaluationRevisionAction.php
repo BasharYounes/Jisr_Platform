@@ -75,24 +75,19 @@ class RequestProjectEvaluationRevisionAction
 
             $revisionRequest =
                 EvaluationRevisionRequest::create([
-                    'project_evaluation_id' =>
-                        $lockedEvaluation->id,
+                    'project_evaluation_id' => $lockedEvaluation->id,
 
-                    'requested_by' =>
-                        $requestedBy->id,
+                    'requested_by' => $requestedBy->id,
 
-                    'assigned_to' =>
-                        $lockedEvaluation->supervisor_id,
+                    'assigned_to' => $lockedEvaluation->supervisor_id,
 
-                    'source' =>
-                        EvaluationRevisionRequestSource::LeadReview->value,
+                    'source' => EvaluationRevisionRequestSource::LeadReview->value,
 
                     'source_reference_id' => null,
 
                     'reason' => trim($reason),
 
-                    'status' =>
-                        EvaluationRevisionRequestStatus::Pending->value,
+                    'status' => EvaluationRevisionRequestStatus::Pending->value,
                 ]);
 
             /*
@@ -100,8 +95,7 @@ class RequestProjectEvaluationRevisionAction
              * للمشرف الأصلي كي يعدله.
              */
             $lockedEvaluation->update([
-                'status' =>
-                    ProjectEvaluationStatus::NEEDS_REVISION->value,
+                'status' => ProjectEvaluationStatus::NEEDS_REVISION->value,
             ]);
 
             return $revisionRequest->load([

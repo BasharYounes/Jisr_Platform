@@ -19,10 +19,8 @@ class SupervisorSummaryResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'profile_picture_url' => $this->profile_picture_url,
-            'specialization' =>
-                $this->supervisorProfile?->specialization?->value,
-            'is_volunteer' =>
-                $this->supervisorProfile?->is_volunteer,
+            'specialization' => $this->supervisorProfile?->specialization?->value,
+            'is_volunteer' => $this->supervisorProfile?->is_volunteer,
             'is_active' => (bool) $this->is_active,
         ];
     }

@@ -18,8 +18,7 @@ class AssessmentExpertEvaluationOrchestratorService
     public function __construct(
         private readonly GeminiEvidenceExtractionService $evidenceService,
         private readonly ExpertRuleEngineService $expertRuleEngine,
-    ) {
-    }
+    ) {}
 
     /**
      * Executes the official expert-evaluation pipeline and saves
@@ -175,8 +174,8 @@ class AssessmentExpertEvaluationOrchestratorService
 
         if (! $ruleSet) {
             throw new LogicException(
-                "No active Rule Set was found for question "
-                . "{$question->QuestionID} version {$version}."
+                'No active Rule Set was found for question '
+                ."{$question->QuestionID} version {$version}."
             );
         }
 
@@ -221,7 +220,7 @@ class AssessmentExpertEvaluationOrchestratorService
             ) {
                 throw new LogicException(
                     'Cannot persist evidence for unknown concept: '
-                    . (string) $conceptCode
+                    .(string) $conceptCode
                 );
             }
 

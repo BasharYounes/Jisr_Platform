@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SupervisorSpecialization;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Enums\SupervisorSpecialization;
 use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest

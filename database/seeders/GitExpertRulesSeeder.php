@@ -49,8 +49,8 @@ class GitExpertRulesSeeder extends Seeder
         if ($attemptCount > 0) {
             throw new RuntimeException(
                 'Cannot seed Git questions because one or more '
-                . 'questions already have assessment attempts. '
-                . 'Create a new Rule Set version instead of replacing rules.'
+                .'questions already have assessment attempts. '
+                .'Create a new Rule Set version instead of replacing rules.'
             );
         }
     }
@@ -128,7 +128,7 @@ class GitExpertRulesSeeder extends Seeder
             DB::table('criterion_rules')->insert([
                 'RuleSetID' => $ruleSetId,
                 'QuestionRubricID' => $rubricIds[$rubric['code']],
-                'RuleCode' => $rubric['code'] . '_FULL',
+                'RuleCode' => $rubric['code'].'_FULL',
                 'RuleType' => 'award_full',
                 'Priority' => 10,
                 'ConditionsJson' => $this->json([

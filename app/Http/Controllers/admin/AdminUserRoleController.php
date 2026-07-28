@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Domains\Admin\Actions\ManageUserRoleAction;
 use App\Domains\Admin\Enums\ManagedUserRole;
 use App\Domains\Admin\Enums\UserRoleOperation;
-use App\Enums\SupervisorSpecialization;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ManageUserRoleRequest;
 use App\Models\User;
@@ -59,8 +58,7 @@ class AdminUserRoleController extends Controller
                 'supervisor_profile' => $profile
                     ? [
                         'specialization' => $specialization,
-                        'is_volunteer' =>
-                            (bool) $profile->is_volunteer,
+                        'is_volunteer' => (bool) $profile->is_volunteer,
                     ]
                     : null,
             ]

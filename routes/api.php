@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminUserRoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\AssessmentAnswerController;
@@ -27,10 +28,12 @@ use App\Http\Controllers\CompanyOpportunity\OpportunityInterviewController;
 use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
+use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
 use App\Http\Controllers\Matching\MatchingController;
 use App\Http\Controllers\Points\MyPointController;
 use App\Http\Controllers\Skill\SkillController;
 use App\Http\Controllers\Student\PortfolioProjectController;
+use App\Http\Controllers\Student\ProjectEvaluationAppealController;
 use App\Http\Controllers\Student\StudentProjectTemplateController;
 use App\Http\Controllers\Student\StudentTaskApplicationController;
 use App\Http\Controllers\Student\StudentTaskController;
@@ -44,9 +47,6 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AdminUserRoleController;
-use App\Http\Controllers\Student\ProjectEvaluationAppealController;
-use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -369,9 +369,6 @@ Route::middleware('auth:sanctum')->prefix('me')->group(function () {
     Route::get('/points/history', [MyPointController::class, 'history']);
 });
 
-
-
-
 Route::middleware([
     'auth:sanctum',
     'role:student',
@@ -392,7 +389,7 @@ Route::middleware([
         );
     });
 
-    Route::middleware('auth:sanctum')
+Route::middleware('auth:sanctum')
     ->prefix('market-analysis')
     ->controller(MarketInsightsController::class)
     ->group(function () {

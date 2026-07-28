@@ -10,9 +10,7 @@ use Illuminate\Validation\ValidationException;
 class UpdateProjectEvaluationAction
 {
     public function __construct(
-        private readonly
-        RecalculateProjectEvaluationScoreAction
-        $recalculateScore
+        private readonly RecalculateProjectEvaluationScoreAction $recalculateScore
     ) {}
 
     public function execute(
@@ -91,8 +89,7 @@ class UpdateProjectEvaluationAction
                 }
 
                 foreach (
-                    $payloadItems as
-                    $itemId => $itemData
+                    $payloadItems as $itemId => $itemData
                 ) {
                     $evaluationItem =
                         $evaluationItems->get(

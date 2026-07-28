@@ -46,8 +46,8 @@ class AssessmentRuleSetResolverService
             : '';
 
         throw new LogicException(
-            "No active Expert System rule set exists for "
-            . "QuestionID {$question->QuestionID}{$versionText}."
+            'No active Expert System rule set exists for '
+            ."QuestionID {$question->QuestionID}{$versionText}."
         );
     }
 }

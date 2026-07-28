@@ -2,20 +2,19 @@
 
 namespace App\Services\Assessment;
 
+use App\Models\AssessmentRuleSet;
 use App\Models\QuestionBank;
 use App\Services\AI\AIClientInterface;
 use Illuminate\Support\Facades\DB;
 use JsonException;
 use LogicException;
-use App\Models\AssessmentRuleSet;
 
 class GeminiEvidenceExtractionService
 {
     public function __construct(
         private readonly AIClientInterface $aiClient,
         private readonly AssessmentRuleSetResolverService $ruleSetResolver,
-    ) {
-    }
+    ) {}
 
     public function extract(
         QuestionBank $question,
@@ -147,7 +146,7 @@ class GeminiEvidenceExtractionService
                 if (! is_array($groupConditions)) {
                     throw new LogicException(
                         "Rule {$rule->RuleCode} has invalid "
-                        . "{$groupName} conditions."
+                        ."{$groupName} conditions."
                     );
                 }
 
@@ -155,7 +154,7 @@ class GeminiEvidenceExtractionService
                     if (! is_array($condition)) {
                         throw new LogicException(
                             "Rule {$rule->RuleCode} contains "
-                            . 'an invalid condition.'
+                            .'an invalid condition.'
                         );
                     }
 
@@ -167,7 +166,7 @@ class GeminiEvidenceExtractionService
                     ) {
                         throw new LogicException(
                             "Rule {$rule->RuleCode} has a condition "
-                            . 'without a concept code.'
+                            .'without a concept code.'
                         );
                     }
 
@@ -177,8 +176,7 @@ class GeminiEvidenceExtractionService
         }
 
         foreach (
-            $this->resolveContradictionTriggerCodes($ruleSet)
-            as $conceptCode => $_
+            $this->resolveContradictionTriggerCodes($ruleSet) as $conceptCode => $_
         ) {
             $codes[$conceptCode] = true;
         }
@@ -186,7 +184,7 @@ class GeminiEvidenceExtractionService
         if (empty($codes)) {
             throw new LogicException(
                 "Rule set {$ruleSet->RuleSetCode} "
-                . 'does not reference any concepts.'
+                .'does not reference any concepts.'
             );
         }
 
@@ -209,7 +207,7 @@ class GeminiEvidenceExtractionService
             ) {
                 throw new LogicException(
                     "Contradiction rule {$rule->Code} "
-                    . 'has no trigger concept.'
+                    .'has no trigger concept.'
                 );
             }
 
@@ -349,8 +347,8 @@ PROMPT;
                 || ! isset($allowedConceptCodes[$conceptCode])
             ) {
                 throw new LogicException(
-                    "Gemini returned an unknown concept: "
-                    . (string) $conceptCode
+                    'Gemini returned an unknown concept: '
+                    .(string) $conceptCode
                 );
             }
 
@@ -362,15 +360,15 @@ PROMPT;
 
             if (! str_contains($studentAnswer, $evidence)) {
                 throw new LogicException(
-                    "Gemini evidence must be copied exactly "
-                    . 'from the student answer.'
+                    'Gemini evidence must be copied exactly '
+                    .'from the student answer.'
                 );
             }
 
             if (isset($seenConceptCodes[$conceptCode])) {
                 throw new LogicException(
-                    "Gemini returned duplicate concept: "
-                    . $conceptCode
+                    'Gemini returned duplicate concept: '
+                    .$conceptCode
                 );
             }
 
