@@ -49,4 +49,18 @@ return [
         'timeout' => env('GEMINI_TIMEOUT', 60),
     ],
 
+    'arbeitnow' => [
+        'base_url' => env(
+            'ARBEITNOW_BASE_URL',
+            'https://www.arbeitnow.com/api/job-board-api'
+        ),
+
+        'timeout' => (int) env('ARBEITNOW_TIMEOUT', 15),
+
+        'connect_timeout' => (int) env(
+            'ARBEITNOW_CONNECT_TIMEOUT',
+            5
+        ),
+    ],
+
 ];
