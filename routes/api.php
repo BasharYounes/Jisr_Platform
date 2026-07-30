@@ -47,6 +47,11 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+// use App\Http\Controllers\Admin\AdminUserRoleController;
+// use App\Http\Controllers\Student\ProjectEvaluationAppealController;
+// use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
+use App\Http\Controllers\Admin\MarketAnalysisDashboardController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -109,6 +114,13 @@ Route::get('/dev1/login-as-test', function () {
     return response()->json(['token' => $token]);
 });
 
+
+/*
+$admin = User::firstOrCreate(['email' => 'admin@test.com'],['name' => 'admin User', 'password' => bcrypt('123456')]);
+$token = $admin->createToken('dev-token')->plainTextToken;
+$admin->assignRole('admin');
+*/
+
 Route::get('/dev/test-gemini', function (AIClientInterface $ai) {
     return $ai->generateJson(
         'Return valid JSON only.',
@@ -143,6 +155,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::patch(
         '/users/{user}/roles',
         AdminUserRoleController::class
+    );
+
+    Route::get(
+        '/market-analysis/dashboard',
+        MarketAnalysisDashboardController::class
     );
 });
 

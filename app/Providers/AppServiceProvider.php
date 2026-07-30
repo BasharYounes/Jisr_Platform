@@ -75,6 +75,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+// use App\Models\ProjectEvaluationAppeal;
+// use App\Policies\ProjectEvaluationAppealPolicy;
+use App\Interfaces\JobSourceAdapterInterface;
+use App\Services\MarketAnalysis\Adapters\ArbeitnowJobSourceAdapter;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -190,6 +195,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PointRepositoryInterface::class,
             PointRepository::class
+        );
+
+        $this->app->bind(
+            JobSourceAdapterInterface::class,
+            ArbeitnowJobSourceAdapter::class
         );
 
         $this->app->bind(
