@@ -73,7 +73,7 @@ class AuditExpertReadiness extends Command
 
                 $missing[] =
                     'حدد هل يحتاج تصحيحًا مباشرًا deterministic '
-                    . 'أم Expert Rules خاصة';
+                    .'أم Expert Rules خاصة';
             } else {
                 if (
                     (string) $question->EvaluationEngine

@@ -64,9 +64,25 @@ class CompanyTaskService
         );
     }
 
-    public function getCompanyTaskDetails(int $companyId, int $taskId): CompanyTask
-    {
-        return $this->companyTaskRepository->findCompanyTaskOrFail($companyId, $taskId);
+    public function getCompanyTaskDetails(
+        int $companyId,
+        int $taskId
+    ): CompanyTask {
+        $task = $this->companyTaskRepository
+            ->findCompanyTaskOrFail(
+                companyId: $companyId,
+                taskId: $taskId
+            );
+
+        $blockingAssignments = $this->companyTaskRepository
+            ->getUnreviewedAssignmentsForTask($task);
+
+        $task->setRelation(
+            'closeBlockingAssignments',
+            $blockingAssignments
+        );
+
+        return $task;
     }
 
     public function publishTask(int $companyId, int $taskId): CompanyTask

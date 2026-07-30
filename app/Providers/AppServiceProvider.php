@@ -7,6 +7,7 @@ use App\Events\ProjectAssignmentStatusChanged;
 use App\Interfaces\CompanyHomeRepositoryInterface;
 use App\Interfaces\CompanyOpportunityRepositoryInterface;
 use App\Interfaces\CompanyRepositoryInterface;
+use App\Interfaces\CompanyStudentRepositoryInterface;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
 use App\Interfaces\CompanyTaskProgressRepositoryInterface;
@@ -35,14 +36,17 @@ use App\Models\CompanyTaskAssignment;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Models\ProjectEvaluation;
+use App\Models\ProjectEvaluationAppeal;
 use App\Models\User;
 use App\Observers\ProjectAssignmentObserver;
 use App\Policies\ProjectAssignmentPolicy;
 use App\Policies\ProjectAssignmentTaskPolicy;
+use App\Policies\ProjectEvaluationAppealPolicy;
 use App\Policies\ProjectEvaluationPolicy;
 use App\Repositories\CompanyHomeRepository;
 use App\Repositories\CompanyOpportunityRepository;
 use App\Repositories\CompanyRepository;
+use App\Repositories\CompanyStudentRepository;
 use App\Repositories\CompanyTaskApplicationRepository;
 use App\Repositories\CompanyTaskAssignmentRepository;
 use App\Repositories\CompanyTaskProgressRepository;
@@ -71,10 +75,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use App\Models\ProjectEvaluationAppeal;
-use App\Policies\ProjectEvaluationAppealPolicy;
+// use App\Models\ProjectEvaluationAppeal;
+// use App\Policies\ProjectEvaluationAppealPolicy;
 use App\Interfaces\JobSourceAdapterInterface;
 use App\Services\MarketAnalysis\Adapters\ArbeitnowJobSourceAdapter;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -195,6 +200,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             JobSourceAdapterInterface::class,
             ArbeitnowJobSourceAdapter::class
+        );
+
+        $this->app->bind(
+            CompanyStudentRepositoryInterface::class,
+            CompanyStudentRepository::class
         );
 
         $this->app->bind(AIClientInterface::class, function () {

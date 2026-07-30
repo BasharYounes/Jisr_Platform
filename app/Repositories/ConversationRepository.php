@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Models\CompanyTaskAssignment;
 use App\Models\Conversation;
+use App\Models\OpportunityInterview;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -51,6 +52,10 @@ class ConversationRepository implements ConversationRepositoryInterface
                             'task.company.users:id,name',
                             'task.skills:id,name',
                             'student:id,name,email,profile_picture_url',
+                        ],
+
+                        OpportunityInterview::class => [
+                            'opportunity:id,title,type,status',
                         ],
                     ]);
                 },
@@ -116,7 +121,63 @@ class ConversationRepository implements ConversationRepositoryInterface
                                 });
                         });
                 },
-        ])
+            ])
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    public function getUserOpportunityInterviewConversations(int $userId, int $perPage = 15)
+    {
+        $type = (new OpportunityInterview)->getMorphClass();
+
+        return Conversation::query()
+            ->where('status', 'open')
+            ->where('conversationable_type', $type)
+            ->whereHas(
+                'participants',
+                fn ($query) => $query->where('user_id', $userId)
+            )
+            ->with([
+                'participants:id,name,email,profile_picture_url',
+                'latestMessage',
+
+                'conversationable' => function (MorphTo $morphTo) {
+                    $morphTo->morphWith([
+                        OpportunityInterview::class => [
+                            'opportunity:id,title,type,status',
+                        ],
+                    ]);
+                },
+            ])
+            ->withCount([
+                'messages as unread_messages_count' => function ($query) use ($userId) {
+                    $query
+                        ->where(function ($messageQuery) use ($userId) {
+                            $messageQuery
+                                ->whereNull('sender_id')
+                                ->orWhere('sender_id', '!=', $userId);
+                        })
+                        ->whereExists(function ($participantQuery) use ($userId) {
+                            $participantQuery
+                                ->selectRaw(1)
+                                ->from('conversation_participants as cp')
+                                ->whereColumn(
+                                    'cp.conversation_id',
+                                    'messages.conversation_id'
+                                )
+                                ->where('cp.user_id', $userId)
+                                ->where(function ($readQuery) {
+                                    $readQuery
+                                        ->whereNull('cp.last_read_at')
+                                        ->orWhereColumn(
+                                            'messages.created_at',
+                                            '>',
+                                            'cp.last_read_at'
+                                        );
+                                });
+                        });
+                },
+            ])
             ->latest()
             ->paginate($perPage);
     }

@@ -5,16 +5,16 @@ namespace App\Services\CompanyTasks;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
 use App\Interfaces\CompanyTaskRepositoryInterface;
-use App\Models\CompanyTaskApplication;
+use App\Jobs\SendFirebaseNotificationJob;
 // use App\Models\CompanyTaskAssignment;
+use App\Models\CompanyTaskApplication;
+use App\Models\User;
 use App\Services\Conversations\TaskAssignmentConversationService;
 use Illuminate\Database\Eloquent\Collection;
+// Notification imports
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-// Notification imports
-use App\Jobs\SendFirebaseNotificationJob;
-use App\Models\User;
 //
 
 class CompanyTaskApplicationService

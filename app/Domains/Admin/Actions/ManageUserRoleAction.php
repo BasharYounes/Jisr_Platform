@@ -114,16 +114,14 @@ class ManageUserRoleAction
         }
 
         match ($role) {
-            ManagedUserRole::Supervisor =>
-                $this->addSupervisorRole(
-                    $targetUser,
-                    $roleData
-                ),
+            ManagedUserRole::Supervisor => $this->addSupervisorRole(
+                $targetUser,
+                $roleData
+            ),
 
-            ManagedUserRole::SupervisorLead =>
-                $this->addSupervisorLeadRole(
-                    $targetUser
-                ),
+            ManagedUserRole::SupervisorLead => $this->addSupervisorLeadRole(
+                $targetUser
+            ),
         };
     }
 
@@ -200,13 +198,11 @@ class ManageUserRoleAction
             $profile = $targetUser
                 ->supervisorProfile()
                 ->create([
-                    'specialization' =>
-                        SupervisorSpecialization::from(
-                            $roleData['specialization']
-                        ),
+                    'specialization' => SupervisorSpecialization::from(
+                        $roleData['specialization']
+                    ),
 
-                    'is_volunteer' =>
-                        (bool) $roleData['is_volunteer'],
+                    'is_volunteer' => (bool) $roleData['is_volunteer'],
                 ]);
 
             $targetUser->setRelation(
@@ -323,15 +319,13 @@ class ManageUserRoleAction
         }
 
         match ($role) {
-            ManagedUserRole::Supervisor =>
-                $this->removeSupervisorRole(
-                    $targetUser
-                ),
+            ManagedUserRole::Supervisor => $this->removeSupervisorRole(
+                $targetUser
+            ),
 
-            ManagedUserRole::SupervisorLead =>
-                $this->removeSupervisorLeadRole(
-                    $targetUser
-                ),
+            ManagedUserRole::SupervisorLead => $this->removeSupervisorLeadRole(
+                $targetUser
+            ),
         };
     }
 

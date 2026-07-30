@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\DeviceTokenController;
 use App\Http\Controllers\NotificationController;
-use Illuminate\Support\Facades\Route;
 use App\Services\Notifications\NotificationService;
 use App\Support\NotificationTypes;
 use Illuminate\Http\Request;
-use App\Http\Controllers\DeviceTokenController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
     Route::get('/', [NotificationController::class, 'index']);
@@ -14,7 +14,6 @@ Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
     Route::post('/device-tokens', [DeviceTokenController::class, 'store']);
     Route::delete('/device-tokens', [DeviceTokenController::class, 'destroy']);
 });
-
 
 Route::middleware('auth:sanctum')->post('/debug/send-test-notification', function (
     Request $request,

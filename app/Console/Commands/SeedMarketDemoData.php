@@ -54,6 +54,7 @@ class SeedMarketDemoData extends Command
 
             if (! file_exists($config['dataset'])) {
                 $this->error("Dataset file not found: {$config['dataset']}");
+
                 return self::FAILURE;
             }
 

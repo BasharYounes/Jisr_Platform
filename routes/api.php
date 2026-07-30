@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminUserRoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\AssessmentAnswerController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Community\CommentController;
 use App\Http\Controllers\Community\CommentLikeController;
 use App\Http\Controllers\Community\PostController;
 use App\Http\Controllers\Community\PostLikeController;
+use App\Http\Controllers\Company\CompanyStudentController;
 use App\Http\Controllers\Company\CompanyTaskApplicationController;
 use App\Http\Controllers\Company\CompanyTaskAssignmentController;
 use App\Http\Controllers\Company\CompanyTaskController;
@@ -26,10 +28,12 @@ use App\Http\Controllers\CompanyOpportunity\OpportunityInterviewController;
 use App\Http\Controllers\Conversations\ConversationController;
 use App\Http\Controllers\Conversations\ConversationMessageController;
 use App\Http\Controllers\Conversations\ConversationParticipantController;
+use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
 use App\Http\Controllers\Matching\MatchingController;
 use App\Http\Controllers\Points\MyPointController;
 use App\Http\Controllers\Skill\SkillController;
 use App\Http\Controllers\Student\PortfolioProjectController;
+use App\Http\Controllers\Student\ProjectEvaluationAppealController;
 use App\Http\Controllers\Student\StudentProjectTemplateController;
 use App\Http\Controllers\Student\StudentTaskApplicationController;
 use App\Http\Controllers\Student\StudentTaskController;
@@ -43,10 +47,11 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AdminUserRoleController;
-use App\Http\Controllers\Student\ProjectEvaluationAppealController;
-use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
+// use App\Http\Controllers\Admin\AdminUserRoleController;
+// use App\Http\Controllers\Student\ProjectEvaluationAppealController;
+// use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
 use App\Http\Controllers\Admin\MarketAnalysisDashboardController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -226,6 +231,7 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks/revie
 Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationController::class)->group(function () {
     Route::get('/all', 'index');
     Route::get('/task-conversations', 'taskConversations');
+    Route::get('/opportunity-conversations', 'opportunityConversations');
     Route::get('/closed', 'closedConversations');
     Route::get('/{conversationId}', 'show');
     Route::get('/{conversationId}/messages', 'index');
@@ -274,6 +280,12 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
         Route::patch('/{interviewId}/cancel', 'cancel')->whereNumber('interviewId');
         Route::patch('/{interviewId}/complete', 'complete')->whereNumber('interviewId');
     });
+});
+
+// Company Students Search & Details
+Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/students')->controller(CompanyStudentController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/{studentId}', 'show')->whereNumber('studentId');
 });
 
 // ============
@@ -374,9 +386,6 @@ Route::middleware('auth:sanctum')->prefix('me')->group(function () {
     Route::get('/points/history', [MyPointController::class, 'history']);
 });
 
-
-
-
 Route::middleware([
     'auth:sanctum',
     'role:student',
@@ -397,7 +406,7 @@ Route::middleware([
         );
     });
 
-    Route::middleware('auth:sanctum')
+Route::middleware('auth:sanctum')
     ->prefix('market-analysis')
     ->controller(MarketInsightsController::class)
     ->group(function () {

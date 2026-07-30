@@ -9,14 +9,12 @@ use App\Models\QuestionRubric;
 use Illuminate\Support\Collection;
 use LogicException;
 
-
 class ExpertRuleEngineService
 {
-
     public function __construct(
         private readonly AssessmentRuleSetResolverService $ruleSetResolver
-    ) {
-    }
+    ) {}
+
     /**
      * Evaluates one answer using already-extracted facts.
      *
@@ -264,7 +262,7 @@ class ExpertRuleEngineService
         AssessmentRuleSet $ruleSet,
         array $factIndex
     ): Collection {
-        return  $ruleSet->contradictionRules
+        return $ruleSet->contradictionRules
             ->filter(function ($contradiction) use ($factIndex) {
                 if (! $contradiction->IsActive) {
                     return false;

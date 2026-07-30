@@ -24,8 +24,7 @@ class EvaluationRevisionRequestResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'project_evaluation_id' =>
-                $this->project_evaluation_id,
+            'project_evaluation_id' => $this->project_evaluation_id,
 
             'source' => $source,
 
@@ -33,34 +32,29 @@ class EvaluationRevisionRequestResource extends JsonResource
 
             'status' => $status,
 
-            'requested_by' =>
-                $this->whenLoaded(
-                    'requestedBy',
-                    fn (): array => [
-                        'id' => $this->requestedBy->id,
-                        'name' => $this->requestedBy->name,
-                        'email' => $this->requestedBy->email,
-                    ]
-                ),
+            'requested_by' => $this->whenLoaded(
+                'requestedBy',
+                fn (): array => [
+                    'id' => $this->requestedBy->id,
+                    'name' => $this->requestedBy->name,
+                    'email' => $this->requestedBy->email,
+                ]
+            ),
 
-            'assigned_to' =>
-                $this->whenLoaded(
-                    'assignedTo',
-                    fn (): array => [
-                        'id' => $this->assignedTo->id,
-                        'name' => $this->assignedTo->name,
-                        'email' => $this->assignedTo->email,
-                    ]
-                ),
+            'assigned_to' => $this->whenLoaded(
+                'assignedTo',
+                fn (): array => [
+                    'id' => $this->assignedTo->id,
+                    'name' => $this->assignedTo->name,
+                    'email' => $this->assignedTo->email,
+                ]
+            ),
 
-            'resolution_note' =>
-                $this->resolution_note,
+            'resolution_note' => $this->resolution_note,
 
-            'resolved_at' =>
-                $this->resolved_at?->toISOString(),
+            'resolved_at' => $this->resolved_at?->toISOString(),
 
-            'created_at' =>
-                $this->created_at?->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
         ];
     }
 }

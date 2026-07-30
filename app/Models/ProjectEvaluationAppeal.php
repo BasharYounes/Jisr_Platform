@@ -23,8 +23,7 @@ class ProjectEvaluationAppeal extends Model
     protected function casts(): array
     {
         return [
-            'status' =>
-                ProjectEvaluationAppealStatus::class,
+            'status' => ProjectEvaluationAppealStatus::class,
 
             'evaluation_snapshot' => 'array',
 

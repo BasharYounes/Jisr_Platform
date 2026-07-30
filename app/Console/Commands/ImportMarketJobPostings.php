@@ -24,6 +24,7 @@ class ImportMarketJobPostings extends Command
 
         if (! File::exists($filePath)) {
             $this->error("Dataset file not found: {$filePath}");
+
             return self::FAILURE;
         }
 
@@ -34,6 +35,7 @@ class ImportMarketJobPostings extends Command
 
             if (! $careerPath) {
                 $this->error("Career path not found: {$careerPathId}");
+
                 return self::FAILURE;
             }
         }
@@ -43,6 +45,7 @@ class ImportMarketJobPostings extends Command
 
         if (! is_array($items)) {
             $this->error('Invalid JSON dataset. Expected an array of job postings.');
+
             return self::FAILURE;
         }
 
@@ -50,7 +53,7 @@ class ImportMarketJobPostings extends Command
         $failed = 0;
 
         $this->info('Starting market job postings import...');
-        $this->info('Total records: ' . count($items));
+        $this->info('Total records: '.count($items));
 
         foreach ($items as $index => $item) {
             try {
@@ -60,6 +63,7 @@ class ImportMarketJobPostings extends Command
                 if (! $title || ! $description) {
                     $failed++;
                     $this->warn("Skipped record #{$index}: missing title or description.");
+
                     continue;
                 }
 
@@ -81,7 +85,7 @@ class ImportMarketJobPostings extends Command
                 $imported++;
             } catch (\Throwable $exception) {
                 $failed++;
-                $this->warn("Failed record #{$index}: " . $exception->getMessage());
+                $this->warn("Failed record #{$index}: ".$exception->getMessage());
             }
         }
 

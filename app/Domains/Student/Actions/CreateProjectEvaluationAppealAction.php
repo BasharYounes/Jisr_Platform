@@ -92,59 +92,46 @@ class CreateProjectEvaluationAppealAction
                 'evaluation' => [
                     'id' => $lockedEvaluation->id,
 
-                    'project_assignment_id' =>
-                        $lockedEvaluation
-                            ->project_assignment_id,
+                    'project_assignment_id' => $lockedEvaluation
+                        ->project_assignment_id,
 
-                    'student_id' =>
-                        $lockedEvaluation->student_id,
+                    'student_id' => $lockedEvaluation->student_id,
 
                     'supervisor' => [
-                        'id' =>
-                            $lockedEvaluation
-                                ->supervisor
-                                ?->id,
+                        'id' => $lockedEvaluation
+                            ->supervisor
+                            ?->id,
 
-                        'name' =>
-                            $lockedEvaluation
-                                ->supervisor
-                                ?->name,
+                        'name' => $lockedEvaluation
+                            ->supervisor
+                            ?->name,
 
-                        'email' =>
-                            $lockedEvaluation
-                                ->supervisor
-                                ?->email,
+                        'email' => $lockedEvaluation
+                            ->supervisor
+                            ?->email,
                     ],
 
-                    'status' =>
-                        $lockedEvaluation->status,
+                    'status' => $lockedEvaluation->status,
 
-                    'total_score' =>
-                        $lockedEvaluation->total_score,
+                    'total_score' => $lockedEvaluation->total_score,
 
-                    'final_grade' =>
-                        $lockedEvaluation->final_grade,
+                    'final_grade' => $lockedEvaluation->final_grade,
 
-                    'general_comment' =>
-                        $lockedEvaluation->general_comment,
+                    'general_comment' => $lockedEvaluation->general_comment,
 
-                    'summary_metrics' =>
-                        $lockedEvaluation->summary_metrics,
+                    'summary_metrics' => $lockedEvaluation->summary_metrics,
 
-                    'evaluated_at' =>
-                        $lockedEvaluation
-                            ->evaluated_at
-                            ?->toISOString(),
+                    'evaluated_at' => $lockedEvaluation
+                        ->evaluated_at
+                        ?->toISOString(),
 
-                    'appeal_started_at' =>
-                        $lockedEvaluation
-                            ->appeal_started_at
-                            ?->toISOString(),
+                    'appeal_started_at' => $lockedEvaluation
+                        ->appeal_started_at
+                        ?->toISOString(),
 
-                    'appeal_deadline_at' =>
-                        $lockedEvaluation
-                            ->appeal_deadline_at
-                            ?->toISOString(),
+                    'appeal_deadline_at' => $lockedEvaluation
+                        ->appeal_deadline_at
+                        ?->toISOString(),
                 ],
 
                 'items' => $lockedEvaluation
@@ -162,17 +149,12 @@ class CreateProjectEvaluationAppealAction
                                 ? [
                                     'id' => $criterion->id,
                                     'name' => $criterion->name,
-                                    'description' =>
-                                        $criterion->description,
-                                    'category' =>
-                                        $criterion->category,
-                                    'max_score' =>
-                                        $criterion->max_score,
-                                    'weight' =>
-                                        $criterion->weight,
-                                    'scoring_anchors' =>
-                                        $criterion
-                                            ->scoring_anchors,
+                                    'description' => $criterion->description,
+                                    'category' => $criterion->category,
+                                    'max_score' => $criterion->max_score,
+                                    'weight' => $criterion->weight,
+                                    'scoring_anchors' => $criterion
+                                        ->scoring_anchors,
                                 ]
                                 : null,
                         ];
@@ -182,15 +164,13 @@ class CreateProjectEvaluationAppealAction
             ];
 
             return ProjectEvaluationAppeal::create([
-                'project_evaluation_id' =>
-                    $lockedEvaluation->id,
+                'project_evaluation_id' => $lockedEvaluation->id,
 
                 'student_id' => $student->id,
 
                 'reason' => trim($reason),
 
-                'status' =>
-                    ProjectEvaluationAppealStatus::Pending->value,
+                'status' => ProjectEvaluationAppealStatus::Pending->value,
 
                 'evaluation_snapshot' => $snapshot,
             ]);

@@ -27,14 +27,11 @@ class ChangeSupervisorAccessStatusRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'reason.required' =>
-                'The access status change reason is required.',
+            'reason.required' => 'The access status change reason is required.',
 
-            'reason.min' =>
-                'The reason must contain at least 10 characters.',
+            'reason.min' => 'The reason must contain at least 10 characters.',
 
-            'reason.max' =>
-                'The reason may not exceed 3000 characters.',
+            'reason.max' => 'The reason may not exceed 3000 characters.',
         ];
     }
 }

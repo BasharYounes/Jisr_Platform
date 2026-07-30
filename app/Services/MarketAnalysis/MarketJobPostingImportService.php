@@ -185,10 +185,10 @@ class MarketJobPostingImportService
          * Otherwise, hash the actual job content.
          */
         if ($sourceName && $externalId) {
-            return hash('sha256', $sourceName . '|' . $externalId);
+            return hash('sha256', $sourceName.'|'.$externalId);
         }
 
-        return hash('sha256', Str::lower($title) . '|' . Str::lower($description));
+        return hash('sha256', Str::lower($title).'|'.Str::lower($description));
     }
 
     private function detectLanguage(string $text): string

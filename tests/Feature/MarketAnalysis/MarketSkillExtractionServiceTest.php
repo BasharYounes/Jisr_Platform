@@ -24,7 +24,7 @@ class MarketSkillExtractionServiceTest extends TestCase
         $skillId = DB::table('skills')->insertGetId([
             'name' => 'Teamwork Test',
             'category' => 'Soft Skill',
-            'normalized_name' => 'teamwork_test_' . uniqid(),
+            'normalized_name' => 'teamwork_test_'.uniqid(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -40,7 +40,7 @@ class MarketSkillExtractionServiceTest extends TestCase
         $posting = MarketJobPosting::create([
             'source_type' => 'test',
             'source_name' => 'phpunit',
-            'external_id' => 'arabic-prefix-' . uniqid(),
+            'external_id' => 'arabic-prefix-'.uniqid(),
             'title' => 'مطلوب مطور Backend',
             'description' => 'نبحث عن مطور لديه خبرة جيدة والعمل ضمن فريق اختبار.',
             'company_name' => 'Test Company',
@@ -50,7 +50,7 @@ class MarketSkillExtractionServiceTest extends TestCase
             'published_at' => now(),
             'imported_at' => now(),
             'status' => 'active',
-            'content_hash' => hash('sha256', 'arabic-prefix-' . uniqid()),
+            'content_hash' => hash('sha256', 'arabic-prefix-'.uniqid()),
         ]);
 
         app(MarketSkillExtractionService::class)->extractForJobPosting($posting);
@@ -76,7 +76,7 @@ class MarketSkillExtractionServiceTest extends TestCase
         $skillId = DB::table('skills')->insertGetId([
             'name' => 'Laravel Duplicate Test',
             'category' => 'Framework',
-            'normalized_name' => 'laravel_duplicate_test_' . uniqid(),
+            'normalized_name' => 'laravel_duplicate_test_'.uniqid(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -92,7 +92,7 @@ class MarketSkillExtractionServiceTest extends TestCase
         $posting = MarketJobPosting::create([
             'source_type' => 'test',
             'source_name' => 'phpunit',
-            'external_id' => 'duplicate-skill-' . uniqid(),
+            'external_id' => 'duplicate-skill-'.uniqid(),
             'title' => 'LaravelDuplicateTest Developer',
             'description' => 'LaravelDuplicateTest LaravelDuplicateTest LaravelDuplicateTest experience required.',
             'company_name' => 'Test Company',
@@ -102,7 +102,7 @@ class MarketSkillExtractionServiceTest extends TestCase
             'published_at' => now(),
             'imported_at' => now(),
             'status' => 'active',
-            'content_hash' => hash('sha256', 'duplicate-skill-' . uniqid()),
+            'content_hash' => hash('sha256', 'duplicate-skill-'.uniqid()),
         ]);
 
         app(MarketSkillExtractionService::class)->extractForJobPosting($posting);

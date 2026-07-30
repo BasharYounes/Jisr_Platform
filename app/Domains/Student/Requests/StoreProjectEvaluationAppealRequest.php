@@ -27,14 +27,11 @@ class StoreProjectEvaluationAppealRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'reason.required' =>
-                'The appeal reason is required.',
+            'reason.required' => 'The appeal reason is required.',
 
-            'reason.min' =>
-                'The appeal reason must contain at least 10 characters.',
+            'reason.min' => 'The appeal reason must contain at least 10 characters.',
 
-            'reason.max' =>
-                'The appeal reason may not exceed 3000 characters.',
+            'reason.max' => 'The appeal reason may not exceed 3000 characters.',
         ];
     }
 }

@@ -20,9 +20,9 @@ class VerifyGeminiEvidenceExtraction extends Command
 
     private const DEFAULT_ANSWER =
         'المتغير اسم يشير إلى قيمة. '
-        . 'القيمة هي البيانات. '
-        . 'في x = 5 يكون x متغيرًا و5 قيمة. '
-        . 'x = 5';
+        .'القيمة هي البيانات. '
+        .'في x = 5 يكون x متغيرًا و5 قيمة. '
+        .'x = 5';
 
     public function __construct(
         private readonly GeminiEvidenceExtractionService $evidenceService,
@@ -63,12 +63,12 @@ class VerifyGeminiEvidenceExtraction extends Command
         $this->info('Starting live Gemini evidence extraction...');
         $this->line("QuestionID: {$question->QuestionID}");
         $this->line("RuleSetVersion: {$question->RuleSetVersion}");
-        $this->line('Resolved AI client: ' . get_class($aiClient));
+        $this->line('Resolved AI client: '.get_class($aiClient));
 
         if (! $aiClient instanceof GeminiClient) {
             $this->error(
                 'Gemini is not active. '
-                . 'Set AI_PROVIDER=gemini in .env before running this command.'
+                .'Set AI_PROVIDER=gemini in .env before running this command.'
             );
 
             return self::FAILURE;
@@ -115,7 +115,7 @@ class VerifyGeminiEvidenceExtraction extends Command
         } catch (Throwable $exception) {
             $this->error(
                 'Gemini-to-Expert-System verification failed: '
-                . $exception->getMessage()
+                .$exception->getMessage()
             );
 
             return self::FAILURE;
@@ -155,7 +155,7 @@ class VerifyGeminiEvidenceExtraction extends Command
         $this->line("Rule set: {$evaluation['rule_set_code']}");
         $this->line(
             "Score: {$evaluation['total_score']} / "
-            . "{$evaluation['max_score']}"
+            ."{$evaluation['max_score']}"
         );
         $this->line(
             "Normalized score: {$evaluation['normalized_score']}"
@@ -210,7 +210,7 @@ class VerifyGeminiEvidenceExtraction extends Command
 
         $this->newLine();
         $this->line(
-            'Arabic feedback: ' . $evaluation['feedback_ar']
+            'Arabic feedback: '.$evaluation['feedback_ar']
         );
 
         $this->newLine();
@@ -220,7 +220,7 @@ class VerifyGeminiEvidenceExtraction extends Command
 
         $this->comment(
             'No answer, attempt, evaluation run, evidence record, '
-            . 'score, level, or telemetry event was saved.'
+            .'score, level, or telemetry event was saved.'
         );
 
         return self::SUCCESS;

@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
+use App\Domains\Supervisor\Enums\ProjectEvaluationStatus;
 use App\Models\ProjectEvaluation;
 use App\Models\User;
-use App\Domains\Supervisor\Enums\ProjectEvaluationStatus;
 
 class ProjectEvaluationPolicy
 {
@@ -82,6 +82,7 @@ class ProjectEvaluationPolicy
             && $leadSpecialization
                 === $evaluationSupervisorSpecialization;
     }
+
     public function update(
         User $user,
         ProjectEvaluation $evaluation
@@ -111,7 +112,6 @@ class ProjectEvaluationPolicy
                 === (int) $user->id
             && $evaluation->appeal_started_at !== null;
     }
-
 
     public function createAppeal(
         User $user,

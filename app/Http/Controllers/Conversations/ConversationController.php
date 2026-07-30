@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Conversations;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Conversation\ConversationResource;
 use App\Http\Resources\Conversation\MessageResource;
+use App\Http\Resources\Conversation\OpportunityConversationResource;
 use App\Http\Resources\Conversation\TaskConversationResource;
 use App\Services\Conversations\ConversationService;
 use App\Traits\ApiResponse;
@@ -51,6 +52,31 @@ class ConversationController extends Controller
             message: 'Task conversations retrieved successfully.',
             data: [
                 'items' => TaskConversationResource::collection(
+                    $conversations
+                )->resolve(),
+
+                'pagination' => [
+                    'current_page' => $conversations->currentPage(),
+                    'last_page' => $conversations->lastPage(),
+                    'per_page' => $conversations->perPage(),
+                    'total' => $conversations->total(),
+                ],
+            ]
+        );
+    }
+
+    public function opportunityConversations(Request $request)
+    {
+        $conversations = $this->conversationService
+            ->getUserOpportunityConversations(
+                userId: $request->user()->id,
+                perPage: (int) $request->get('per_page', 15),
+            );
+
+        return $this->success(
+            message: 'Opportunity conversations retrieved successfully.',
+            data: [
+                'items' => OpportunityConversationResource::collection(
                     $conversations
                 )->resolve(),
 

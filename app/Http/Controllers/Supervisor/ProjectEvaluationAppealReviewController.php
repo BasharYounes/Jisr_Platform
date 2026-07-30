@@ -48,23 +48,18 @@ class ProjectEvaluationAppealReviewController extends Controller
         return ApiResponse::success(
             'Project evaluation appeals retrieved successfully',
             [
-                'appeals' =>
-                    ProjectEvaluationAppealSummaryResource::collection(
-                        $appeals->getCollection()
-                    )->resolve($request),
+                'appeals' => ProjectEvaluationAppealSummaryResource::collection(
+                    $appeals->getCollection()
+                )->resolve($request),
 
                 'pagination' => [
-                    'current_page' =>
-                        $appeals->currentPage(),
+                'current_page' => $appeals->currentPage(),
 
-                    'last_page' =>
-                        $appeals->lastPage(),
+                'last_page' => $appeals->lastPage(),
 
-                    'per_page' =>
-                        $appeals->perPage(),
+                'per_page' => $appeals->perPage(),
 
-                    'total' =>
-                        $appeals->total(),
+                'total' => $appeals->total(),
                 ],
             ]
         );
@@ -113,23 +108,20 @@ class ProjectEvaluationAppealReviewController extends Controller
         $result = $action->execute(
             appeal: $projectEvaluationAppeal,
             reviewedBy: $request->user(),
-            decision:
-                ProjectEvaluationAppealDecision::from(
-                    $validated['decision']
-                ),
+            decision: ProjectEvaluationAppealDecision::from(
+                $validated['decision']
+            ),
             reviewNotes: $validated['review_notes'],
         );
 
         return ApiResponse::success(
             'Project evaluation appeal reviewed successfully',
             [
-                'appeal' =>
-                    (new ProjectEvaluationAppealResource(
-                        $result['appeal']
-                    ))->resolve($request),
+                'appeal' => (new ProjectEvaluationAppealResource(
+                    $result['appeal']
+                ))->resolve($request),
 
-                'revision_request' =>
-                    $result['revision_request']
+                'revision_request' => $result['revision_request']
                         ? (new EvaluationRevisionRequestResource(
                             $result['revision_request']
                         ))->resolve($request)

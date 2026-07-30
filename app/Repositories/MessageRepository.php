@@ -13,6 +13,21 @@ class MessageRepository implements MessageRepositoryInterface
     public function getConversationMessages(int $conversationId, int $perPage = 30): LengthAwarePaginator
     {
         return Message::query()
+            ->select('messages.*')
+            ->selectSub(function ($query) {
+                $query
+                    ->from('conversation_participants as participant')
+                    ->select('participant.role')
+                    ->whereColumn(
+                        'participant.conversation_id',
+                        'messages.conversation_id'
+                    )
+                    ->whereColumn(
+                        'participant.user_id',
+                        'messages.sender_id'
+                    )
+                    ->limit(1);
+            }, 'sender_role')
             ->where('conversation_id', $conversationId)
             ->with('sender:id,name,email')
             ->oldest()

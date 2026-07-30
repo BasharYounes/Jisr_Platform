@@ -31,49 +31,42 @@ class ProjectEvaluationAppealController extends Controller
             'items.criteria',
             'items.evidences',
 
-            'appeals' => fn ($query) =>
-                $query
-                    ->where(
-                        'student_id',
-                        $request->user()->id
-                    )
-                    ->latest('id'),
+            'appeals' => fn ($query) => $query
+                ->where(
+                    'student_id',
+                    $request->user()->id
+                )
+                ->latest('id'),
         ]);
 
         return ApiResponse::success(
             'Project evaluation retrieved successfully',
             [
-                'evaluation' =>
-                    (new ProjectEvaluationResource(
-                        $projectEvaluation
-                    ))->resolve($request),
+                'evaluation' => (new ProjectEvaluationResource(
+                    $projectEvaluation
+                ))->resolve($request),
 
                 'appeal_window' => [
-                    'started_at' =>
-                        $projectEvaluation
-                            ->appeal_started_at
-                            ?->toISOString(),
+                'started_at' => $projectEvaluation
+                    ->appeal_started_at
+                    ?->toISOString(),
 
-                    'deadline_at' =>
-                        $projectEvaluation
-                            ->appeal_deadline_at
-                            ?->toISOString(),
+                'deadline_at' => $projectEvaluation
+                    ->appeal_deadline_at
+                    ?->toISOString(),
 
-                    'is_open' =>
-                        $projectEvaluation
-                            ->isAppealWindowOpen(),
+                'is_open' => $projectEvaluation
+                    ->isAppealWindowOpen(),
 
-                    'duration_hours' =>
-                        (int) config(
-                            'evaluations.appeal_window_hours',
-                            48
-                        ),
+                'duration_hours' => (int) config(
+                    'evaluations.appeal_window_hours',
+                    48
+                ),
                 ],
 
-                'appeals' =>
-                    ProjectEvaluationAppealResource::collection(
-                        $projectEvaluation->appeals
-                    )->resolve($request),
+                'appeals' => ProjectEvaluationAppealResource::collection(
+                    $projectEvaluation->appeals
+                )->resolve($request),
             ]
         );
     }
