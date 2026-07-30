@@ -10,6 +10,8 @@ use App\Http\Controllers\Supervisor\ProjectTemplateApplicationController;
 use App\Http\Controllers\Supervisor\SupervisorAccessController;
 use App\Http\Controllers\Supervisor\SupervisorLeadController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Supervisor\ProjectAssignmentEvaluationController;
+
 
 Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
     // Create project template
@@ -172,5 +174,15 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'supervisors/{supervisor}/unblock',
         [SupervisorAccessController::class, 'unblock']
     )->middleware('role:supervisor_lead');
+
+    Route::get(
+        'project-assignments/{projectAssignment}/evaluations',
+        [ProjectAssignmentEvaluationController::class, 'index']
+    )->middleware('role:supervisor');
+
+    Route::get(
+        'project-assignments/{projectAssignment}/evaluations/summary',
+        [ProjectAssignmentEvaluationController::class, 'summary']
+    )->middleware('role:supervisor');
 
 });
