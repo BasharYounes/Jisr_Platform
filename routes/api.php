@@ -94,12 +94,16 @@ require __DIR__.'/Supervisor/SupervisorRoute.php';
 
 require __DIR__.'/Notification/NotificationsRoutes.php';
 
+require __DIR__.'/Chatbot/ChatbotRoutes.php';
+
 Route::get('/dev/login-as-test', function () {
     $user = User::firstOrCreate(
         ['email' => 'dev@test.com'],
         ['name' => 'Dev User', 'password' => bcrypt('123456')]
     );
     $token = $user->createToken('dev-token')->plainTextToken;
+
+    $user->assignRole('student');
 
     return response()->json(['token' => $token]);
 });

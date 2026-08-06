@@ -1,0 +1,485 @@
+{
+  "info": {
+    "_postman_id": "0182816c-06ca-4654-abde-92641575ea6c",
+    "name": "Jisr Chatbot - Step 13 End-to-End",
+    "description": "Live end-to-end verification for platform_help, skills_market_analysis, opportunity_matching, idempotency, resources, actions, wrong-mode handling, and deletion.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [],
+  "variable": [
+    {
+      "key": "platform_conversation_id",
+      "value": ""
+    },
+    {
+      "key": "platform_first_client_id",
+      "value": ""
+    },
+    {
+      "key": "platform_followup_client_id",
+      "value": ""
+    },
+    {
+      "key": "platform_followup_user_message_id",
+      "value": ""
+    },
+    {
+      "key": "platform_followup_assistant_message_id",
+      "value": ""
+    },
+    {
+      "key": "skills_conversation_id",
+      "value": ""
+    },
+    {
+      "key": "opportunity_conversation_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Create platform_help conversation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mode\": \"platform_help\",\n  \"message\": \"بعد ما خلصت الامتحان، وين بلاقي العلامة يلي طلعتلي؟\",\n  \"client_message_id\": \"{{platform_first_client_id}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('platform_first_client_id', pm.variables.replaceIn('{{$guid}}'));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Created and completed\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.status).to.eql(true);",
+              "    pm.expect(json.data.processing_status).to.eql(\"completed\");",
+              "    pm.expect(json.data.conversation.mode).to.eql(\"platform_help\");",
+              "    pm.expect(json.data.assistant_message.status).to.eql(\"completed\");",
+              "    pm.collectionVariables.set(\"platform_conversation_id\", json.data.conversation.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Add platform_help follow-up",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations/{{platform_conversation_id}}/messages",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What is Jisr?\",\n  \"client_message_id\": \"{{platform_followup_client_id}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('platform_followup_client_id', pm.variables.replaceIn('{{$guid}}'));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Follow-up completed\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.data.duplicated).to.eql(false);",
+              "    pm.expect(json.data.processing_status).to.eql(\"completed\");",
+              "    pm.collectionVariables.set(\"platform_followup_user_message_id\", json.data.user_message.id);",
+              "    pm.collectionVariables.set(\"platform_followup_assistant_message_id\", json.data.assistant_message.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Retry same message idempotently",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations/{{platform_conversation_id}}/messages",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What is Jisr?\",\n  \"client_message_id\": \"{{platform_followup_client_id}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Duplicate returns existing records\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.data.duplicated).to.eql(true);",
+              "    pm.expect(String(json.data.user_message.id)).to.eql(String(pm.collectionVariables.get(\"platform_followup_user_message_id\")));",
+              "    pm.expect(String(json.data.assistant_message.id)).to.eql(String(pm.collectionVariables.get(\"platform_followup_assistant_message_id\")));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - List conversations",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations?limit=10"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Conversation list contract\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.data.items).to.be.an(\"array\");",
+              "    pm.expect(json.data).to.have.keys(\"items\", \"next_cursor\", \"has_more\");",
+              "    pm.expect(json.data.items.some(item => String(item.id) === String(pm.collectionVariables.get(\"platform_conversation_id\")))).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Show conversation",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations/{{platform_conversation_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Conversation resource is clean\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    const conversation = pm.response.json().data;",
+              "    pm.expect(conversation.mode).to.eql(\"platform_help\");",
+              "    pm.expect(conversation).to.not.have.property(\"student_id\");",
+              "    pm.expect(conversation).to.not.have.property(\"deleted_at\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - List conversation messages",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations/{{platform_conversation_id}}/messages?limit=20"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Messages are ordered and public\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    const items = pm.response.json().data.items;",
+              "    pm.expect(items).to.be.an(\"array\");",
+              "    pm.expect(items.length).to.be.at.least(4);",
+              "    pm.expect(items[0].role).to.eql(\"user\");",
+              "    pm.expect(items[1].role).to.eql(\"assistant\");",
+              "    items.forEach(item => {",
+              "        pm.expect(item).to.not.have.property(\"client_message_id\");",
+              "        pm.expect(item).to.not.have.property(\"error_code\");",
+              "        pm.expect(item).to.not.have.property(\"conversation_id\");",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - skills_market_analysis with indirect question",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mode\": \"skills_market_analysis\",\n  \"message\": \"أنا هدفي ألاقي شغل Backend أسرع، وين أكبر نقطة ضعف عندي؟\",\n  \"client_message_id\": \"{{$guid}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Skills and market flow completed\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.data.conversation.mode).to.eql(\"skills_market_analysis\");",
+              "    pm.expect(json.data.processing_status).to.eql(\"completed\");",
+              "    pm.expect(json.data.assistant_message.content).to.be.a(\"string\").and.not.empty;",
+              "    pm.collectionVariables.set(\"skills_conversation_id\", json.data.conversation.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 - opportunity_matching with indirect question",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mode\": \"opportunity_matching\",\n  \"message\": \"شو في شي بيناسب خبرتي الحالية؟\",\n  \"client_message_id\": \"{{$guid}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Opportunity matching flow completed\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.data.conversation.mode).to.eql(\"opportunity_matching\");",
+              "    pm.expect(json.data.processing_status).to.eql(\"completed\");",
+              "    pm.expect(json.data.assistant_message.actions).to.be.an(\"array\");",
+              "    json.data.assistant_message.actions.forEach(action => {",
+              "        pm.expect(action.type).to.eql(\"open_opportunity\");",
+              "        pm.expect(action.opportunity_id).to.be.a(\"number\");",
+              "    });",
+              "    pm.collectionVariables.set(\"opportunity_conversation_id\", json.data.conversation.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 - Wrong-mode question is handled safely",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations/{{opportunity_conversation_id}}/messages",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"ما المهارات المسجلة عندي؟\",\n  \"client_message_id\": \"{{$guid}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Wrong-mode question does not return opportunity actions\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.data.processing_status).to.eql(\"completed\");",
+              "    pm.expect(json.data.assistant_message.actions).to.eql([]);",
+              "    pm.expect(json.data.assistant_message.content).to.include(\"هذا القسم مخصص للبحث عن فرص\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 - Delete platform conversation",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations/{{platform_conversation_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Conversation deleted\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().status).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 - Verify deleted conversation is unavailable",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/student/chatbot/conversations/{{platform_conversation_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Deleted conversation returns 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
