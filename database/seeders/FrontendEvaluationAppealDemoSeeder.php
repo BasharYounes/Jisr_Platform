@@ -30,7 +30,7 @@ class FrontendEvaluationAppealDemoSeeder extends Seeder
     private const SUPERVISOR_TOKEN_NAME = 'frontend-evaluation-demo-supervisor';
     private const STUDENT_TOKEN_NAME = 'frontend-evaluation-demo-student';
 
-    public function run(): void
+public function run(): void
     {
         Role::firstOrCreate([
             'name' => 'supervisor',
@@ -311,24 +311,38 @@ class FrontendEvaluationAppealDemoSeeder extends Seeder
 
     private function upsertDemoUser(string $email, string $name): User
     {
-        $user = User::withTrashed()
+        /*
+         * The users table has a deleted_at column, but the current User model
+         * does not use Laravel's SoftDeletes trait. Therefore withTrashed(),
+         * trashed(), and restore() are not available on this model.
+         *
+         * Because there is no SoftDeletes global scope on User, a normal query
+         * can still find a row whose deleted_at is not null. We explicitly clear
+         * deleted_at so rerunning this demo seeder also revives its own demo user
+         * without changing the application's User model behavior.
+         */
+        $user = User::query()
             ->where('email', $email)
             ->first();
 
         if ($user === null) {
             $user = new User();
-            $user->email = $email;
-        } elseif (method_exists($user, 'trashed') && $user->trashed()) {
-            $user->restore();
         }
 
-        $user->fill([
+        /*
+         * forceFill is intentional here. The current User::$fillable contains
+         * only name, email, password, and is_active, while this demo also needs
+         * email_verified, is_verified_by_admin, bio, and deleted_at.
+         */
+        $user->forceFill([
             'name' => $name,
+            'email' => $email,
             'password' => Hash::make(self::PASSWORD),
             'is_active' => true,
             'email_verified' => true,
             'is_verified_by_admin' => 'accepted',
             'bio' => 'Dedicated account created by FrontendEvaluationAppealDemoSeeder.',
+            'deleted_at' => null,
         ]);
 
         $user->save();
