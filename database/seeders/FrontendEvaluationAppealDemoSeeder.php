@@ -22,8 +22,8 @@ use Spatie\Permission\PermissionRegistrar;
 class FrontendEvaluationAppealDemoSeeder extends Seeder
 {
     private const SUPERVISOR_EMAIL = 'frontend.evaluation.supervisor@test.com';
-    private const STUDENT_EMAIL = 'frontend.evaluation.student@test.com';
-    private const PASSWORD = 'Demo@12345';
+    private const STUDENT_EMAIL = 'leleen830@gmail.com';
+    private const PASSWORD = '12345678';
 
     private const PROJECT_TITLE = '[FRONTEND DEMO] Evaluation & Appeal Project';
 
