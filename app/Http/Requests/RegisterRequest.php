@@ -2,10 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\SupervisorSpecialization;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -25,13 +23,13 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => 'required|in:student,company,supervisor',
+            'role' => 'required|in:student,company',
 
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
 
-            //  student fields
+            // Student fields
             // 'university' => 'required_if:role,student|string',
             // 'major' => 'nullable:role,student|string',
             // 'graduation_year' => 'nullable:role,student|integer|digits:4',
@@ -39,20 +37,12 @@ class RegisterRequest extends FormRequest
             // 'bio' => 'nullable|string|max:255',
             // 'profile_picture' => ['nullable', 'image', 'max:2048'],
 
-            //  company fields
+            // Company fields
             'industry' => 'required_if:role,company|string',
             'website' => 'nullable|url',
             'documentation_file' => 'required_if:role,company|file|max:2048|mimes:pdf,jpg,jpeg,png,doc,docx',
             'location' => 'required_if:role,company|string',
             // 'description' => 'nullable|string|max:1000',
-
-            // supervisor fields
-            'specialization' => [
-                'required_if:role,supervisor',
-                Rule::enum(SupervisorSpecialization::class),
-            ],
-            'is_volunteer' => 'nullable|boolean',
-
         ];
     }
 }

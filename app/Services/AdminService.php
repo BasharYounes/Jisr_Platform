@@ -4,148 +4,182 @@ namespace App\Services;
 
 use App\Events\CompanyRejected;
 use App\Events\CompanyVerified;
+use App\Models\Company;
+use App\Models\User;
 use App\Repositories\CompanyRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class AdminService
 {
-    protected CompanyRepository $companyRepository;
+    public function __construct(
+        protected CompanyRepository $companyRepository,
+        protected UserRepository $userRepository
+    ) {}
 
-    protected UserRepository $userRepository;
-
-    public function __construct(CompanyRepository $companyRepository, UserRepository $userRepository)
-    {
-        $this->companyRepository = $companyRepository;
-        $this->userRepository = $userRepository;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getUnverifiedCompanies()
+    public function getUnverifiedCompanies(): Collection
     {
         return $this->companyRepository->getUnverifiedCompanies();
     }
 
-    public function listUsers()
-    {
-        return $this->userRepository->listUsers();
+    public function listUsers(
+        ?string $role = null,
+        int $perPage = 20
+    ): LengthAwarePaginator {
+        return $this->userRepository->listUsers($role, $perPage);
     }
 
-    public function getCompanyDetailsByUserId(int $companyId)
+    public function blockUser(User $user): User
     {
-        $company = $this->companyRepository->findById($companyId);
-        $user = $company->load('users');
+        $this->ensureAccessStatusCanBeManaged($user);
 
-        if (! $company) {
-            return null;
-        }
+        return DB::transaction(function () use ($user): User {
+            $user->update([
+                'is_active' => false,
+            ]);
 
-        $pdfUrl = Storage::url($company->documentation_file);
+            $user->tokens()->delete();
 
-        return [
-            'company' => $company,
-            'documentation_file' => $pdfUrl,
-        ];
+            return $user->refresh()->load('roles');
+        });
     }
 
-    public function findById(int $id)
+    public function unblockUser(User $user): User
     {
-        $company = $this->companyRepository->findById($id);
-        $company->load('users');
+        $this->ensureAccessStatusCanBeManaged($user);
 
-        return $company;
+        $user->update([
+            'is_active' => true,
+        ]);
+
+        return $user->refresh()->load('roles');
+    }
+
+    public function getCompanyDetails(int $companyId): Company
+    {
+        return $this->companyRepository->findById($companyId);
+    }
+
+    public function findById(int $id): Company
+    {
+        return $this->companyRepository->findById($id);
     }
 
     public function verifyCompany(int $companyId): array
     {
         $company = $this->companyRepository->findById($companyId);
+        $owner = $this->companyOwner($company);
 
-        if (! $company) {
+        if (! $owner) {
             return [
                 'status' => false,
-                'message' => 'Company not found',
+                'message' => 'Company has no associated owner user',
             ];
         }
 
-        $company->load('users');
-        $user = $company->users->first();
+        $updatedOwner = DB::transaction(function () use ($owner): ?User {
+            $lockedOwner = User::query()
+                ->whereKey($owner->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        if (! $user) {
+            if ($lockedOwner->is_verified_by_admin !== 'pending') {
+                return null;
+            }
+
+            $lockedOwner->is_verified_by_admin = 'accepted';
+            $lockedOwner->save();
+
+            return $lockedOwner;
+        });
+
+        if (! $updatedOwner) {
             return [
                 'status' => false,
-                'message' => 'Company has no associated user',
+                'message' => 'Company verification can only be accepted while pending',
             ];
         }
 
-        if ($user->is_verified_by_admin === 'accepted') {
-            return [
-                'status' => false,
-                'message' => 'Company already verified',
-            ];
-        }
-
-        $user->is_verified_by_admin = 'accepted';
-        $user->save();
+        $company = $this->companyRepository->findById($companyId);
 
         event(new CompanyVerified(
             company: $company,
-            user: $user,
+            user: $updatedOwner,
         ));
 
         return [
             'status' => true,
             'message' => 'Company verified successfully',
+            'company' => $company,
         ];
     }
 
     public function rejectCompany(int $companyId): array
     {
         $company = $this->companyRepository->findById($companyId);
+        $owner = $this->companyOwner($company);
 
-        if (! $company) {
+        if (! $owner) {
             return [
                 'status' => false,
-                'message' => 'Company not found',
+                'message' => 'Company has no associated owner user',
             ];
         }
 
-        $company->load('users');
-        $user = $company->users->first();
+        $updatedOwner = DB::transaction(function () use ($owner): ?User {
+            $lockedOwner = User::query()
+                ->whereKey($owner->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        if (! $user) {
+            if ($lockedOwner->is_verified_by_admin !== 'pending') {
+                return null;
+            }
+
+            $lockedOwner->is_verified_by_admin = 'rejected';
+            $lockedOwner->save();
+
+            $lockedOwner->tokens()->delete();
+
+            return $lockedOwner;
+        });
+
+        if (! $updatedOwner) {
             return [
                 'status' => false,
-                'message' => 'Company has no associated user',
+                'message' => 'Company verification can only be rejected while pending',
             ];
         }
 
-        if ($user->is_verified_by_admin === 'rejected') {
-            return [
-                'status' => false,
-                'message' => 'Company already rejected',
-            ];
-        }
-
-        $user->is_verified_by_admin = 'rejected';
-        $user->save();
+        $company = $this->companyRepository->findById($companyId);
 
         event(new CompanyRejected(
             company: $company,
-            user: $user,
+            user: $updatedOwner,
         ));
-
-        $user->update([
-            'is_verified_by_admin' => 'rejected',
-        ]);
-
-        $user->delete();
 
         return [
             'status' => true,
             'message' => 'Company rejected successfully',
+            'company' => $company,
         ];
+    }
+
+    private function companyOwner(Company $company): ?User
+    {
+        return $company->users->firstWhere('pivot.role', 'owner')
+            ?? $company->users->first();
+    }
+
+    private function ensureAccessStatusCanBeManaged(User $user): void
+    {
+        if ($user->hasRole('admin')) {
+            throw new AuthorizationException(
+                'Admin accounts cannot be blocked or unblocked through this endpoint.'
+            );
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\CompanyRepositoryInterface;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class CompanyRepository implements CompanyRepositoryInterface
 {
@@ -13,33 +14,55 @@ class CompanyRepository implements CompanyRepositoryInterface
         return Company::create($data);
     }
 
-    public function findById(int $companyId): ?Company
+    public function findById(int $companyId): Company
     {
-
-        return Company::findOrFail($companyId);
-
+        return Company::query()
+            ->with([
+                'users' => fn ($query) => $query
+                    ->where('company_users.role', 'owner'),
+            ])
+            ->findOrFail($companyId);
     }
 
-    public function getUnverifiedCompanies()
+    public function getUnverifiedCompanies(): Collection
     {
-        return User::where('is_verified_by_admin', 'pending')->get();
+        return Company::query()
+            ->whereHas('users', function ($query): void {
+                $query
+                    ->where('company_users.role', 'owner')
+                    ->where('users.is_verified_by_admin', 'pending');
+            })
+            ->with([
+                'users' => fn ($query) => $query
+                    ->where('company_users.role', 'owner'),
+            ])
+            ->orderByDesc('companies.id')
+            ->get();
     }
 
-    public function getCompanyByUserId(int $userId)
+    public function getCompanyByUserId(int $userId): ?Company
     {
-        $user = User::findOrFail($userId);
-        $company = Company::where('user_id', $userId)->first();
-
-        return $company;
+        return Company::query()
+            ->whereHas('users', fn ($query) => $query->whereKey($userId))
+            ->first();
     }
 
     public function verify(Company $company): void
     {
-        $user = $company->user;
+        $company->load([
+            'users' => fn ($query) => $query
+                ->where('company_users.role', 'owner'),
+        ]);
 
-        if ($user) {
-            $user->is_verified_by_admin = 'accepted';
-            $user->save();
+        $owner = $company->users->first();
+
+        if (
+            $owner instanceof User
+            && $owner->is_verified_by_admin === 'pending'
+        ) {
+            $owner->update([
+                'is_verified_by_admin' => 'accepted',
+            ]);
         }
     }
 }
