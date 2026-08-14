@@ -4,14 +4,14 @@ use App\Http\Controllers\ProjectAssignmentController;
 use App\Http\Controllers\ProjectEvaluationController;
 use App\Http\Controllers\ProjectTaskController;
 use App\Http\Controllers\ProjectTemplateController;
+use App\Http\Controllers\Supervisor\ProjectAssignmentEvaluationController;
 use App\Http\Controllers\Supervisor\ProjectAssignmentSupervisorController;
 use App\Http\Controllers\Supervisor\ProjectEvaluationAppealReviewController;
 use App\Http\Controllers\Supervisor\ProjectTemplateApplicationController;
 use App\Http\Controllers\Supervisor\SupervisorAccessController;
+use App\Http\Controllers\Supervisor\SupervisorDiscoveryController;
 use App\Http\Controllers\Supervisor\SupervisorLeadController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Supervisor\ProjectAssignmentEvaluationController;
-
 
 Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
     // Create project template
@@ -51,21 +51,31 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'project-assignments',
         [ProjectAssignmentController::class, 'assignProject']
     );
-    // List all project assignments
+
+    // List all project assignments for the authenticated supervisor
     Route::get(
         'project-assignments/all',
         [ProjectAssignmentController::class, 'index']
     );
+
+    // Supervisor lead discovery: assignments managed by same-specialization supervisors
+    Route::get(
+        'lead/project-assignments',
+        [SupervisorDiscoveryController::class, 'leadAssignments']
+    )->middleware('role:supervisor_lead');
+
     // Get project assignment details
     Route::get(
         'project-assignments/{projectAssignment}',
         [ProjectAssignmentController::class, 'show']
     );
+
     // Create project task under a project template
     Route::post(
         'project-templates/{projectTemplate}/tasks',
         [ProjectTaskController::class, 'store']
     );
+
     // Assign task to student
     Route::patch(
         'assignment-tasks/{projectAssignmentTask}/assign-student',
@@ -107,6 +117,18 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'project-assignments/{projectAssignment}/students/{student}/evaluation',
         [ProjectEvaluationController::class, 'store']
     );
+
+    // Supervisor lead discovery: evaluations in current specialization
+    Route::get(
+        'project-evaluations',
+        [SupervisorDiscoveryController::class, 'leadEvaluations']
+    )->middleware('role:supervisor_lead');
+
+    // Normal supervisor discovery: only own evaluations
+    Route::get(
+        'my-project-evaluations',
+        [SupervisorDiscoveryController::class, 'myEvaluations']
+    )->middleware('role:supervisor');
 
     // Get project evaluation
     Route::get(
@@ -184,5 +206,4 @@ Route::middleware('auth:sanctum')->prefix('supervisor')->group(function () {
         'project-assignments/{projectAssignment}/evaluations/summary',
         [ProjectAssignmentEvaluationController::class, 'summary']
     )->middleware('role:supervisor');
-
 });
