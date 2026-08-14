@@ -51,4 +51,25 @@ class ProjectAssignmentPolicy
             && $leadSpecialization
                 === $currentSupervisorSpecialization;
     }
+
+    public function viewAsStudent(
+        User $user,
+        ProjectAssignment $projectAssignment
+    ): bool {
+        if (! $user->hasRole('student')) {
+            return false;
+        }
+
+        return $projectAssignment
+            ->members()
+            ->where(
+                'student_id',
+                $user->id
+            )
+            ->where(
+                'status',
+                'active'
+            )
+            ->exists();
+    }
 }

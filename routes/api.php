@@ -401,3 +401,17 @@ Route::middleware('auth:sanctum')
             ->whereNumber('skillId');
         Route::get('/career-paths', 'careerPaths');
     });
+
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:student',
+    ])
+        ->get(
+            'student/project-assignments/{projectAssignment}/evaluation',
+            [
+                ProjectEvaluationAppealController::class,
+                'showByAssignment',
+            ]
+        )
+        ->whereNumber('projectAssignment');

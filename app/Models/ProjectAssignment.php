@@ -67,6 +67,14 @@ class ProjectAssignment extends Model
         );
     }
 
+    public function latestEvaluation()
+    {
+        return $this->hasOne(
+            ProjectEvaluation::class,
+            'project_assignment_id'
+        )->latestOfMany();
+    }
+
     public function members()
     {
         return $this->hasMany(ProjectAssignmentMember::class, 'project_assignment_id');

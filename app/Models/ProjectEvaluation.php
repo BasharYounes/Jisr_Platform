@@ -66,6 +66,14 @@ class ProjectEvaluation extends Model
         );
     }
 
+    public function latestRevisionRequest(): HasOne
+    {
+        return $this->hasOne(
+            EvaluationRevisionRequest::class,
+            'project_evaluation_id'
+        )->latestOfMany();
+    }
+
     public function pendingRevisionRequest(): HasOne
     {
         return $this->hasOne(
