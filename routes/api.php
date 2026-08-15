@@ -89,7 +89,7 @@ Route::get('/opportunities/{id}/top-candidates', [MatchingController::class, 'to
 require __DIR__.'/MetricsResultAI/MetricsRoute.php';
 
 require __DIR__.'/Supervisor/SupervisorRoute.php';
-
+require __DIR__.'/Mentor/MentorRoutes.php';
 require __DIR__.'/Notification/NotificationsRoutes.php';
 require __DIR__.'/Chatbot/ChatbotRoutes.php';
 
@@ -112,6 +112,10 @@ Route::get('/dev1/login-as-test', function () {
     $token = $user->createToken('dev-token')->plainTextToken;
 
     return response()->json(['token' => $token]);
+});
+
+Route::get('test', function () {
+    return response()->json(['status' => 'ok']);
 });
 
 /*
