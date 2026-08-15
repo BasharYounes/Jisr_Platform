@@ -20,23 +20,14 @@ class SkillExtractionService
         return $this->aiClient->generateJson($systemPrompt, $userPrompt);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // بناء قائمة المهارات من قاعدة البيانات
-    // ─────────────────────────────────────────────────────────────
-
     /**
-     * يجلب كل المهارات مع aliases من DB ويبنيهم كنص منسق للـ prompt.
-     *
-     * المخرج مثال:
-     *   - Python  [also: python3, py, python programming]  (category: Programming Language)
-     *   - SQL     [also: mysql, postgresql, postgres]       (category: Database)
+     * Builds the canonical skills catalog that is provided to the model.
      */
     private function buildSkillsCatalog(): string
     {
         $skills = Skill::with('aliases')->get();
 
         if ($skills->isEmpty()) {
-            // fallback لو قاعدة البيانات فارغة لأي سبب
             return '- Python, Flask, SQL, Git';
         }
 
@@ -51,23 +42,25 @@ class SkillExtractionService
         return $lines->implode("\n");
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // بناء الـ System Prompt
-    // ─────────────────────────────────────────────────────────────
-
+    /**
+     * Prompt aligned with the reviewed skill-extraction evaluation prompt.
+     *
+     * The strict extraction rules come from the evaluated prompt, while the
+     * level guide is retained because the production flow persists
+     * initial_level and confidence values.
+     */
     private function buildSystemPrompt(string $skillsCatalog): string
     {
         return <<<PROMPT
-            You are an expert CV skill extraction engine for a talent platform.
+            You are a precise CV skill extraction engine for a talent platform.
 
-            Return valid JSON only. Do not use markdown. Do not wrap the response in code fences.
+            Return valid JSON only. No markdown. No code fences. No explanation.
 
             ════════════════════════════════════════
             YOUR TASK
             ════════════════════════════════════════
-            Extract technical skills from the student's resume.
-            Only extract skills that appear in the SKILLS CATALOG below.
-            If a skill is mentioned using an alternative name (alias), map it to the canonical skill name.
+            Extract ONLY the technical skills that are explicitly and clearly written
+            in the resume text below. Match them to the canonical names in the SKILLS CATALOG.
 
             ════════════════════════════════════════
             SKILLS CATALOG  (canonical name → aliases → category)
@@ -75,17 +68,41 @@ class SkillExtractionService
             {$skillsCatalog}
 
             ════════════════════════════════════════
-            EXTRACTION RULES
+            STRICT RULES — follow every rule exactly
             ════════════════════════════════════════
-            1. Return JSON only — no markdown, no explanation.
-            2. Only include skills that are clearly evidenced in the resume.
-            3. Do NOT invent or assume skills not mentioned.
-            4. If a skill is only listed by name with no context, assign initial_level between 0.5 and 1.5.
-            5. If a skill is mentioned with projects, work experience, or descriptions, assign higher levels.
-            6. Always use the canonical skill name (from the catalog), not the alias.
-            7. initial_level: number from 0 to 5 (decimals allowed, e.g. 2.5).
-            8. confidence: number from 0 to 1 reflecting how certain you are about the level estimate.
-            9. evidence: short phrase copied or paraphrased directly from the resume.
+            RULE 1 — CATALOG ONLY:
+              Extract ONLY skills present in the SKILLS CATALOG above.
+              If a skill is not in the catalog, ignore it completely.
+
+            RULE 2 — EXPLICIT EVIDENCE REQUIRED:
+              A skill must be directly and explicitly written in the resume.
+              Do NOT infer, assume, or guess skills from job titles, career-path context,
+              or surrounding text unless the skill itself is explicitly evidenced.
+              Example: "Software Engineer" does NOT imply Python or SQL unless written.
+
+            RULE 3 — 90% CONFIDENCE THRESHOLD:
+              If you are less than 90% sure a skill is clearly stated, do NOT include it.
+              It is better to miss a skill than to invent one.
+
+            RULE 4 — NO DUPLICATES:
+              Each canonical skill name must appear ONCE in the output, maximum.
+              If "mysql" and "postgresql" both appear, return "SQL" only once.
+
+            RULE 5 — CANONICAL NAME ONLY:
+              Always return the canonical name from the catalog, never the alias.
+              Examples:
+              "mysql" → "SQL"
+              "github" → "Git"
+              "reactjs" → "React"
+
+            RULE 6 — EVIDENCE:
+              evidence must be a short exact phrase or a very close paraphrase from the
+              resume that directly proves the returned skill.
+
+            RULE 7 — LEVEL AND CONFIDENCE:
+              initial_level must be a number from 0 to 5.
+              confidence must be a number from 0 to 1.
+              confidence reflects certainty about the returned assessment.
 
             ════════════════════════════════════════
             LEVEL GUIDE
@@ -95,38 +112,35 @@ class SkillExtractionService
             3 = Applied in multiple projects or internships
             4 = Advanced usage with architecture or optimization
             5 = Expert — led teams, designed systems, contributed to libraries
+
+            ════════════════════════════════════════
+            OUTPUT FORMAT
+            ════════════════════════════════════════
+            {
+              "skills": [
+                {
+                  "skill_name": "Python",
+                  "evidence": "exact phrase from resume proving this skill",
+                  "initial_level": 2.5,
+                  "confidence": 0.92
+                }
+              ]
+            }
+
+            If no catalog skills are found, return: {"skills": []}
             PROMPT;
     }
-
-    // ─────────────────────────────────────────────────────────────
-    // بناء الـ User Prompt
-    // ─────────────────────────────────────────────────────────────
 
     private function buildUserPrompt(string $resumeText, string $careerPath): string
     {
         return <<<PROMPT
         Career path context: {$careerPath}
 
-        Resume text:
-        {$resumeText}
+        Important: use the career path only as context. Never infer a skill from it.
 
-        Return JSON in this exact format:
-        {
-        "skills": [
-            {
-            "skill_name": "Python",
-            "evidence": "Built REST APIs using Python and Flask during internship at TechCorp",
-            "initial_level": 3.0,
-            "confidence": 0.85
-            },
-            {
-            "skill_name": "SQL",
-            "evidence": "mysql",
-            "initial_level": 1.0,
-            "confidence": 0.60
-            }
-        ]
-        }
+        Extract skills from this resume following ALL rules strictly:
+
+        {$resumeText}
         PROMPT;
     }
 }
