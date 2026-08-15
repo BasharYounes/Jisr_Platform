@@ -22,6 +22,11 @@ class CreateProjectEvaluationAppealAction
             $student,
             $reason
         ): ProjectEvaluationAppeal {
+            /*
+             * Locking the evaluation serializes concurrent appeal submissions
+             * for the same evaluation. This prevents double taps/concurrent
+             * requests from creating two pending appeals.
+             */
             $lockedEvaluation =
                 ProjectEvaluation::query()
                     ->whereKey($evaluation->id)
@@ -39,21 +44,13 @@ class CreateProjectEvaluationAppealAction
                 ]);
             }
 
-            $allowedStatuses = [
-                ProjectEvaluationStatus::SUBMITTED->value,
-                ProjectEvaluationStatus::NEEDS_REVISION->value,
-            ];
-
             if (
-                ! in_array(
-                    $lockedEvaluation->status,
-                    $allowedStatuses,
-                    true
-                )
+                $lockedEvaluation->status
+                !== ProjectEvaluationStatus::SUBMITTED->value
             ) {
                 throw ValidationException::withMessages([
                     'status' => [
-                        'An appeal can be submitted only for a submitted or needs_revision evaluation.',
+                        'An appeal can be submitted only for a submitted evaluation.',
                     ],
                 ]);
             }
@@ -77,6 +74,30 @@ class CreateProjectEvaluationAppealAction
                 throw ValidationException::withMessages([
                     'appeal_window' => [
                         'The 48-hour appeal window has expired.',
+                    ],
+                ]);
+            }
+
+            $hasPendingAppeal =
+                ProjectEvaluationAppeal::query()
+                    ->where(
+                        'project_evaluation_id',
+                        $lockedEvaluation->id
+                    )
+                    ->where(
+                        'student_id',
+                        $student->id
+                    )
+                    ->where(
+                        'status',
+                        ProjectEvaluationAppealStatus::Pending->value
+                    )
+                    ->exists();
+
+            if ($hasPendingAppeal) {
+                throw ValidationException::withMessages([
+                    'appeal' => [
+                        'You already have a pending appeal for this evaluation. Wait until it is reviewed before submitting another appeal.',
                     ],
                 ]);
             }
