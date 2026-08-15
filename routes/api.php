@@ -90,6 +90,7 @@ require __DIR__.'/MetricsResultAI/MetricsRoute.php';
 
 require __DIR__.'/Supervisor/SupervisorRoute.php';
 require __DIR__.'/Mentor/MentorRoutes.php';
+require __DIR__.'/Student/ProjectAssignmentTaskRoutes.php';
 require __DIR__.'/Notification/NotificationsRoutes.php';
 require __DIR__.'/Chatbot/ChatbotRoutes.php';
 
