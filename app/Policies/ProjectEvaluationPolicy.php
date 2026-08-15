@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Domains\Supervisor\Enums\ProjectEvaluationAppealStatus;
 use App\Domains\Supervisor\Enums\ProjectEvaluationStatus;
 use App\Models\ProjectEvaluation;
 use App\Models\User;
@@ -50,11 +51,6 @@ class ProjectEvaluationPolicy
             return false;
         }
 
-        /*
-         * حماية إضافية من مراجعة المستخدم لتقييم أنشأه بنفسه.
-         * ومع أننا اتفقنا أن المشرف الرئيسي لن يقيّم،
-         * نبقي الحماية داخل النظام.
-         */
         if (
             (int) $evaluation->supervisor_id
             === (int) $user->id
@@ -103,37 +99,69 @@ class ProjectEvaluationPolicy
         );
     }
 
-    public function viewAsStudent(
+    /**
+     * Authorization-only rule for attempting to submit an appeal.
+     *
+     * This deliberately checks identity/ownership only. Business rules such
+     * as pending appeal, evaluation status, and appeal deadline belong to the
+     * Action so legitimate students receive a descriptive 422 response rather
+     * than a generic 403 authorization response.
+     */
+    public function submitAppeal(
         User $user,
         ProjectEvaluation $evaluation
     ): bool {
         return $user->hasRole('student')
             && (int) $evaluation->student_id
-                === (int) $user->id
+                === (int) $user->id;
+    }
+
+    public function viewAsStudent(
+        User $user,
+        ProjectEvaluation $evaluation
+    ): bool {
+        return $this->submitAppeal(
+            $user,
+            $evaluation
+        )
             && $evaluation->appeal_started_at !== null;
     }
 
+    /**
+     * UI capability rule.
+     *
+     * This remains the source of truth for `can_appeal`.
+     * It answers whether an appeal can be created right now.
+     */
     public function createAppeal(
         User $user,
         ProjectEvaluation $evaluation
     ): bool {
-        if (! $this->viewAsStudent(
+        if (! $this->submitAppeal(
             $user,
             $evaluation
         )) {
             return false;
         }
 
-        $allowedStatuses = [
-            ProjectEvaluationStatus::SUBMITTED->value,
-            ProjectEvaluationStatus::NEEDS_REVISION->value,
-        ];
+        if (
+            $evaluation->status
+            !== ProjectEvaluationStatus::SUBMITTED->value
+        ) {
+            return false;
+        }
 
-        return in_array(
-            $evaluation->status,
-            $allowedStatuses,
-            true
-        )
-            && $evaluation->isAppealWindowOpen();
+        if (! $evaluation->isAppealWindowOpen()) {
+            return false;
+        }
+
+        return ! $evaluation
+            ->appeals()
+            ->where('student_id', $user->id)
+            ->where(
+                'status',
+                ProjectEvaluationAppealStatus::Pending->value
+            )
+            ->exists();
     }
 }
