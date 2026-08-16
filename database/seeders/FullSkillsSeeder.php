@@ -158,6 +158,293 @@ class FullSkillsSeeder extends Seeder
                 ],
             ],
 
+            'C++' => [
+                'category' => 'Programming Language',
+                'normalized' => 'cpp',
+                'aliases' => [
+                    'c++',
+                    'cpp',
+                    'cplusplus',
+                    'c plus plus',
+                ],
+                'levels' => [
+                    1 => [
+                        'title' => 'C++ Basics',
+                        'description' => 'Understands basic syntax, variables, conditions, loops, and functions.',
+                        'indicators' => [
+                            'basic syntax',
+                            'variables',
+                            'loops',
+                            'functions',
+                        ],
+                    ],
+                    2 => [
+                        'title' => 'Practical C++',
+                        'description' => 'Uses classes, collections, references, and basic memory management.',
+                        'indicators' => [
+                            'classes',
+                            'references',
+                            'STL basics',
+                            'memory basics',
+                        ],
+                    ],
+                    3 => [
+                        'title' => 'Intermediate C++',
+                        'description' => 'Applies OOP, templates, exception handling, and structured design.',
+                        'indicators' => [
+                            'OOP',
+                            'templates',
+                            'exceptions',
+                            'modular code',
+                        ],
+                    ],
+                    4 => [
+                        'title' => 'Advanced C++',
+                        'description' => 'Uses modern C++, concurrency, smart pointers, and performance techniques.',
+                        'indicators' => [
+                            'smart pointers',
+                            'modern C++',
+                            'concurrency',
+                            'optimization',
+                        ],
+                    ],
+                    5 => [
+                        'title' => 'C++ Expert',
+                        'description' => 'Designs high-performance and production-grade C++ systems.',
+                        'indicators' => [
+                            'system design',
+                            'advanced memory management',
+                            'profiling',
+                            'low-level optimization',
+                        ],
+                    ],
+                ],
+                'career_paths' => [
+                    'Backend Developer' => [
+                        'required_level' => 2.0,
+                        'weight' => 0.65,
+                        'is_core' => false,
+                    ],
+                ],
+            ],
+
+            'C#' => [
+                'category' => 'Programming Language',
+                'normalized' => 'csharp',
+                'aliases' => [
+                    'c#',
+                    'csharp',
+                    'c sharp',
+                ],
+                'levels' => [
+                    1 => [
+                        'title' => 'C# Basics',
+                        'description' => 'Understands C# syntax, variables, conditions, loops, and methods.',
+                        'indicators' => [
+                            'basic syntax',
+                            'variables',
+                            'loops',
+                            'methods',
+                        ],
+                    ],
+                    2 => [
+                        'title' => 'Practical C#',
+                        'description' => 'Uses classes, interfaces, collections, and exception handling.',
+                        'indicators' => [
+                            'classes',
+                            'interfaces',
+                            'collections',
+                            'exceptions',
+                        ],
+                    ],
+                    3 => [
+                        'title' => 'Intermediate C#',
+                        'description' => 'Applies LINQ, asynchronous programming, dependency injection, and testing.',
+                        'indicators' => [
+                            'LINQ',
+                            'async await',
+                            'dependency injection',
+                            'unit testing',
+                        ],
+                    ],
+                    4 => [
+                        'title' => 'Advanced C#',
+                        'description' => 'Builds maintainable services using advanced language and architecture patterns.',
+                        'indicators' => [
+                            'generics',
+                            'reflection',
+                            'design patterns',
+                            'clean architecture',
+                        ],
+                    ],
+                    5 => [
+                        'title' => 'C# Expert',
+                        'description' => 'Designs scalable production systems and advanced C# libraries.',
+                        'indicators' => [
+                            'system architecture',
+                            'performance tuning',
+                            'advanced concurrency',
+                            'library design',
+                        ],
+                    ],
+                ],
+                'career_paths' => [
+                    'Backend Developer' => [
+                        'required_level' => 2.5,
+                        'weight' => 0.85,
+                        'is_core' => false,
+                    ],
+                ],
+            ],
+
+            '.NET' => [
+                'category' => 'Development Platform',
+                'normalized' => 'dotnet',
+                'aliases' => [
+                    '.net',
+                    'dotnet',
+                    'dot net',
+                    '.net core',
+                    'dotnet core',
+                    '.net framework',
+                    'dotnet framework',
+                ],
+                'levels' => [
+                    1 => [
+                        'title' => '.NET Basics',
+                        'description' => 'Understands the .NET platform, projects, packages, and application execution.',
+                        'indicators' => [
+                            'dotnet CLI',
+                            'project structure',
+                            'NuGet basics',
+                            'build and run',
+                        ],
+                    ],
+                    2 => [
+                        'title' => 'Practical .NET',
+                        'description' => 'Builds structured .NET applications with configuration and dependency injection.',
+                        'indicators' => [
+                            'configuration',
+                            'dependency injection',
+                            'logging',
+                            'project references',
+                        ],
+                    ],
+                    3 => [
+                        'title' => 'Intermediate .NET',
+                        'description' => 'Builds testable applications using Entity Framework and asynchronous services.',
+                        'indicators' => [
+                            'Entity Framework',
+                            'async services',
+                            'unit tests',
+                            'application layers',
+                        ],
+                    ],
+                    4 => [
+                        'title' => 'Advanced .NET',
+                        'description' => 'Designs production services with caching, messaging, and clean architecture.',
+                        'indicators' => [
+                            'caching',
+                            'message queues',
+                            'clean architecture',
+                            'background services',
+                        ],
+                    ],
+                    5 => [
+                        'title' => '.NET Architecture',
+                        'description' => 'Designs scalable distributed systems using advanced .NET capabilities.',
+                        'indicators' => [
+                            'distributed systems',
+                            'performance profiling',
+                            'microservices',
+                            'advanced architecture',
+                        ],
+                    ],
+                ],
+                'career_paths' => [
+                    'Backend Developer' => [
+                        'required_level' => 2.5,
+                        'weight' => 0.90,
+                        'is_core' => false,
+                    ],
+                ],
+            ],
+
+            'ASP.NET' => [
+                'category' => 'Backend Framework',
+                'normalized' => 'aspnet',
+                'aliases' => [
+                    'asp.net',
+                    'aspnet',
+                    'asp net',
+                    'asp.net core',
+                    'aspnet core',
+                    'asp net core',
+                    'asp.net mvc',
+                    'aspnet mvc',
+                    'asp.net web api',
+                ],
+                'levels' => [
+                    1 => [
+                        'title' => 'ASP.NET Basics',
+                        'description' => 'Builds basic ASP.NET applications with routing and controllers.',
+                        'indicators' => [
+                            'routing',
+                            'controllers',
+                            'basic responses',
+                            'project setup',
+                        ],
+                    ],
+                    2 => [
+                        'title' => 'ASP.NET API Development',
+                        'description' => 'Builds REST endpoints with models, validation, and dependency injection.',
+                        'indicators' => [
+                            'REST endpoints',
+                            'model binding',
+                            'validation',
+                            'dependency injection',
+                        ],
+                    ],
+                    3 => [
+                        'title' => 'Intermediate ASP.NET',
+                        'description' => 'Implements authentication, Entity Framework, middleware, and API documentation.',
+                        'indicators' => [
+                            'authentication',
+                            'Entity Framework',
+                            'middleware',
+                            'Swagger',
+                        ],
+                    ],
+                    4 => [
+                        'title' => 'Advanced ASP.NET',
+                        'description' => 'Builds secure and scalable services with caching, testing, and background jobs.',
+                        'indicators' => [
+                            'caching',
+                            'integration testing',
+                            'background jobs',
+                            'security',
+                        ],
+                    ],
+                    5 => [
+                        'title' => 'ASP.NET Architecture',
+                        'description' => 'Designs production-grade ASP.NET systems and distributed APIs.',
+                        'indicators' => [
+                            'microservices',
+                            'distributed APIs',
+                            'performance tuning',
+                            'architecture patterns',
+                        ],
+                    ],
+                ],
+                'career_paths' => [
+                    'Backend Developer' => [
+                        'required_level' => 2.5,
+                        'weight' => 0.95,
+                        'is_core' => false,
+                    ],
+                ],
+            ],
+
             'REST API' => [
                 'category' => 'Architecture',
                 'normalized' => 'rest_api',

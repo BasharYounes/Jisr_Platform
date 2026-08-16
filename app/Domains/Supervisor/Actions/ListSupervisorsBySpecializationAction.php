@@ -2,6 +2,7 @@
 
 namespace App\Domains\Supervisor\Actions;
 
+use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\ValidationException;
@@ -23,9 +24,21 @@ class ListSupervisorsBySpecializationAction
             ]);
         }
 
+        $activeStatuses = [
+            ProjectAssignmentStatus::PENDING->value,
+            ProjectAssignmentStatus::ASSIGNED->value,
+            ProjectAssignmentStatus::IN_PROGRESS->value,
+            ProjectAssignmentStatus::SUBMITTED->value,
+            ProjectAssignmentStatus::UNDER_REVIEW->value,
+        ];
+
         return User::query()
             ->role('supervisor')
-            ->where('users.id', '!=', $supervisorLead->id)
+            ->where(
+                'users.id',
+                '!=',
+                $supervisorLead->id
+            )
             ->whereHas(
                 'supervisorProfile',
                 fn ($query) => $query->where(
@@ -33,7 +46,17 @@ class ListSupervisorsBySpecializationAction
                     $specialization->value
                 )
             )
-            ->with('supervisorProfile')
+            ->with([
+                'supervisorProfile',
+                'roles',
+            ])
+            ->withCount([
+                'supervisedAssignments as active_projects_count' =>
+                    fn ($query) => $query->whereIn(
+                        'status',
+                        $activeStatuses
+                    ),
+            ])
             ->orderBy('name')
             ->get();
     }

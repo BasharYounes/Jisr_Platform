@@ -6,19 +6,22 @@ use App\Models\MarketJobPosting;
 use App\Models\MarketJobPostingSkillOccurrence;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class MarketSkillExtractionService
 {
     private ?Collection $preparedAliases = null;
+
+    public function __construct(
+        private readonly MarketTextNormalizer $textNormalizer,
+    ) {}
 
     /**
      * Extract skills from a market job posting using rule-based alias matching.
      */
     public function extractForJobPosting(MarketJobPosting $jobPosting): Collection
     {
-        $rawText = trim($jobPosting->title."\n".$jobPosting->description);
-        $normalizedText = $this->normalizeText($rawText);
+        $rawText = trim($jobPosting->title . "\n" . $jobPosting->description);
+        $normalizedText = $this->textNormalizer->normalize($rawText);
 
         $aliases = $this->loadPreparedSkillAliases();
 
@@ -108,7 +111,9 @@ class MarketSkillExtractionService
             ->get()
             ->map(function ($alias) {
                 $alias->Alias = (string) $alias->Alias;
-                $alias->normalized_alias = $this->normalizeText($alias->Alias);
+                $alias->normalized_alias = $this->textNormalizer->normalize(
+                    $alias->Alias
+                );
                 $alias->alias_length = mb_strlen($alias->normalized_alias);
 
                 return $alias;
@@ -120,37 +125,6 @@ class MarketSkillExtractionService
             ->values();
 
         return $this->preparedAliases;
-    }
-
-    /**
-     * Normalize Arabic and English text for safer matching.
-     */
-    private function normalizeText(string $text): string
-    {
-        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $text = Str::lower($text);
-
-        // Normalize Arabic letter variants.
-        $text = str_replace(
-            ['أ', 'إ', 'آ', 'ٱ', 'ى', 'ة'],
-            ['ا', 'ا', 'ا', 'ا', 'ي', 'ه'],
-            $text
-        );
-
-        // Normalize separators commonly used in job descriptions.
-        $text = str_replace(
-            ['/', '\\', '|', '+', '#', '.', ',', ';', ':', '(', ')', '[', ']'],
-            ' ',
-            $text
-        );
-
-        // Keep letters, numbers, Arabic letters, and spaces. Replace other symbols with spaces.
-        $text = preg_replace('/[^\p{Arabic}\p{L}\p{N}\s]/u', ' ', $text);
-
-        // Collapse repeated spaces.
-        $text = preg_replace('/\s+/u', ' ', $text);
-
-        return trim($text);
     }
 
     /**

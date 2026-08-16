@@ -33,6 +33,7 @@ use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
 use App\Listeners\NotifyStudentProjectStatusChanged;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 use App\Models\CompanyTaskAssignment;
+use App\Models\OpportunityInterview;
 use App\Models\ProjectAssignment;
 use App\Models\ProjectAssignmentTask;
 use App\Models\ProjectEvaluation;
@@ -75,6 +76,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+// use App\Models\ProjectEvaluationAppeal;
+// use App\Policies\ProjectEvaluationAppealPolicy;
+use App\Interfaces\JobSourceAdapterInterface;
+use App\Services\MarketAnalysis\Adapters\ArbeitnowJobSourceAdapter;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -193,6 +199,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            JobSourceAdapterInterface::class,
+            ArbeitnowJobSourceAdapter::class
+        );
+
+        $this->app->bind(
             CompanyStudentRepositoryInterface::class,
             CompanyStudentRepository::class
         );
@@ -247,6 +258,7 @@ class AppServiceProvider extends ServiceProvider
             'user' => User::class,
             'project_assignment' => ProjectAssignment::class,
             'company_task_assignment' => CompanyTaskAssignment::class,
+            'opportunity_interview' => OpportunityInterview::class,
         ]);
 
     }

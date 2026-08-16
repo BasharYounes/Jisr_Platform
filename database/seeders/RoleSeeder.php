@@ -20,6 +20,7 @@ class RoleSeeder extends Seeder
             'company',
             'supervisor',
             'supervisor_lead',
+            'admin',
         ];
 
         foreach ($roles as $role) {
@@ -32,3 +33,6 @@ class RoleSeeder extends Seeder
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
+/*
+php artisan db:seed --class=RoleSeeder
+*/

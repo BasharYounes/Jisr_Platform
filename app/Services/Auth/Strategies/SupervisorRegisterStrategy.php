@@ -32,8 +32,6 @@ class SupervisorRegisterStrategy implements RegisterStrategyInterface
                 'is_volunteer' => (bool) ($data['is_volunteer'] ?? false),
             ]);
 
-            $token = $user->createToken('api-token')->plainTextToken;
-
             DB::afterCommit(function () use ($user, $supervisorProfile) {
                 event(new UserRegistered(
                     user: $user,
@@ -45,7 +43,6 @@ class SupervisorRegisterStrategy implements RegisterStrategyInterface
             return [
                 'user' => $user,
                 'supervisor_profile' => $supervisorProfile,
-                'token' => $token,
             ];
         });
     }

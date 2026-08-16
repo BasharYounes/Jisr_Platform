@@ -3,6 +3,7 @@
 namespace App\Interfaces;
 
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface UserRepositoryInterface
 {
@@ -10,7 +11,10 @@ interface UserRepositoryInterface
 
     public function findByEmailOrFail(string $email): User;
 
-    public function listUsers();
+    public function listUsers(
+        ?string $role = null,
+        int $perPage = 20
+    ): LengthAwarePaginator;
 
     public function getUserByOTP(string $OTP, string $type): User;
 

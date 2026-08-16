@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\OtpCode;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
 class UserRepository implements UserRepositoryInterface
@@ -19,9 +21,26 @@ class UserRepository implements UserRepositoryInterface
         return User::where('email', $email)->firstOrFail();
     }
 
-    public function listUsers()
-    {
-        return User::all();
+    public function listUsers(
+        ?string $role = null,
+        int $perPage = 20
+    ): LengthAwarePaginator {
+        $query = User::query()
+            ->select([
+                'id',
+                'name',
+                'email',
+                'is_active',
+                'is_verified_by_admin',
+                'profile_picture_url',
+                'created_at',
+            ])
+            ->with('roles:id,name')
+            ->orderBy('id');
+
+        $this->applyRoleFilter($query, $role);
+
+        return $query->paginate($perPage);
     }
 
     public function getUserByOTP(string $OTP, string $type): User
@@ -62,5 +81,27 @@ class UserRepository implements UserRepositoryInterface
         $user->update($data);
 
         return $user->fresh();
+    }
+
+    private function applyRoleFilter(Builder $query, ?string $role): void
+    {
+        if ($role === null) {
+            return;
+        }
+
+        if ($role === 'student') {
+            $query
+                ->role('student')
+                ->whereDoesntHave('roles', function (Builder $rolesQuery): void {
+                    $rolesQuery->whereIn('name', [
+                        'supervisor',
+                        'supervisor_lead',
+                    ]);
+                });
+
+            return;
+        }
+
+        $query->role($role);
     }
 }

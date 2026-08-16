@@ -1,5 +1,8 @@
 <?php
-
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminComplaintController;
+use App\Http\Controllers\Admin\AdminOpportunityController;
+use App\Http\Controllers\Admin\AdminSupervisorController;
 use App\Http\Controllers\Admin\AdminUserRoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\AI\AILearningPlanController;
@@ -47,6 +50,10 @@ use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+// use App\Http\Controllers\Admin\AdminUserRoleController;
+// use App\Http\Controllers\Student\ProjectEvaluationAppealController;
+// use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
+use App\Http\Controllers\Admin\MarketAnalysisDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,22 +69,18 @@ use Illuminate\Support\Facades\Route;
 Broadcast::routes([
     'middleware' => ['auth:sanctum'],
 ]);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cvs/upload', [CVController::class, 'upload']);
     Route::post('/cvs/{cv}/analyze', [CVAnalysisController::class, 'analyze']);
     Route::get('/cvs/{cv}/analysis', [CVAnalysisController::class, 'show']);
-
     Route::post('/assessments', [AssessmentController::class, 'store']);
     Route::post('/assessments/{session}/skills/{skill}/next-question', [AssessmentController::class, 'nextQuestion']);
     Route::post('/assessments/{session}/attempts/{attempt}/answer', [AssessmentAnswerController::class, 'submit']);
     Route::get('/assessments/{session}/attempts/{attempt}/result', [AssessmentAnswerController::class, 'result']);
     Route::post('/assessments/{session}/complete', [AssessmentController::class, 'complete']);
-
     Route::get('/assessments/{session}/summary', [AssessmentController::class, 'summary']);
     Route::get('/assessments/{session}/skill-gaps', [RecommendationController::class, 'skillGaps']);
     Route::get('/assessments/{session}/learning-path', [LearningController::class, 'path']);
-
     Route::post('/assessments/{session}/ai-learning-plan', [AILearningPlanController::class, 'generate']);
     Route::get('/assessments/{session}/ai-learning-plan/latest', [AILearningPlanController::class, 'latest']);
 });
@@ -86,8 +89,12 @@ Route::get('/opportunities/{id}/top-candidates', [MatchingController::class, 'to
 require __DIR__.'/MetricsResultAI/MetricsRoute.php';
 
 require __DIR__.'/Supervisor/SupervisorRoute.php';
-
+require __DIR__.'/Mentor/MentorRoutes.php';
+require __DIR__.'/Complaint/ComplaintRoutes.php';
+require __DIR__.'/Student/ProjectAssignmentTaskRoutes.php';
+require __DIR__.'/Student/EvaluationAppealDiscoveryRoutes.php';
 require __DIR__.'/Notification/NotificationsRoutes.php';
+require __DIR__.'/Chatbot/ChatbotRoutes.php';
 
 Route::get('/dev/login-as-test', function () {
     $user = User::firstOrCreate(
@@ -96,9 +103,10 @@ Route::get('/dev/login-as-test', function () {
     );
     $token = $user->createToken('dev-token')->plainTextToken;
 
+    $user->assignRole('student');
+
     return response()->json(['token' => $token]);
 });
-
 Route::get('/dev1/login-as-test', function () {
     $user = User::firstOrCreate(
         ['email' => 'dev1@test.com'],
@@ -109,6 +117,15 @@ Route::get('/dev1/login-as-test', function () {
     return response()->json(['token' => $token]);
 });
 
+Route::get('test', function () {
+    return response()->json(['status' => 'ok']);
+});
+
+/*
+$admin = User::firstOrCreate(['email' => 'admin@test.com'],['name' => 'admin User', 'password' => bcrypt('123456')]);
+$token = $admin->createToken('dev-token')->plainTextToken;
+$admin->assignRole('admin');
+*/
 Route::get('/dev/test-gemini', function (AIClientInterface $ai) {
     return $ai->generateJson(
         'Return valid JSON only.',
@@ -118,7 +135,6 @@ Route::get('/dev/test-gemini', function (AIClientInterface $ai) {
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
 // Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -131,25 +147,40 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
 });
-
 // Admin
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/users', [AdminController::class, 'listUsers']);
+    Route::post('/supervisors', [AdminSupervisorController::class, 'store']);
+    Route::get('/dashboard', AdminDashboardController::class);
+    Route::get('/opportunities', [AdminOpportunityController::class, 'index']);
+    Route::get('/complaints', [AdminComplaintController::class, 'index']);
+    Route::patch('/complaints/{complaint}', [AdminComplaintController::class, 'update'])
+        ->whereNumber('complaint');
+    Route::post('/users/{user}/block', [AdminController::class, 'blockUser'])
+        ->whereNumber('user');
+    Route::post('/users/{user}/unblock', [AdminController::class, 'unblockUser'])
+        ->whereNumber('user');
     Route::get('/CompanyUnverified', [AdminController::class, 'getUnverifiedCompanies']);
-    Route::post('/companiesVerify/{companyId}', [AdminController::class, 'verifyCompany']);
-    Route::post('/companiesReject/{companyId}', [AdminController::class, 'rejectCompany']);
-    Route::get('/companyDetails/{companyId}', [AdminController::class, 'getCompanyDetails']);
+    Route::post('/companiesVerify/{companyId}', [AdminController::class, 'verifyCompany'])
+        ->whereNumber('companyId');
+    Route::post('/companiesReject/{companyId}', [AdminController::class, 'rejectCompany'])
+        ->whereNumber('companyId');
+    Route::get('/companyDetails/{companyId}', [AdminController::class, 'getCompanyDetails'])
+        ->whereNumber('companyId');
     // Route::post('/users/{id}/assign-role', [AdminController::class, 'assignRole']);
     Route::patch(
         '/users/{user}/roles',
         AdminUserRoleController::class
+    );
+    Route::get(
+        '/market-analysis/dashboard',
+        MarketAnalysisDashboardController::class
     );
 });
 
 // ============
 // == Company
 // ============
-
 // Profile
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company')->group(function () {
     Route::get('profile', [UserController::class, 'getProfileCompany']);
@@ -171,12 +202,10 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::patch('/{taskId}/close', 'close')->whereNumber('taskId');
     Route::patch('{taskId}/cancel', 'cancel')->whereNumber('taskId');
 });
-
 // Get Skill for task
 Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
     Route::get('/skills', [SkillController::class, 'index']);
 });
-
 // Company Tasks Applications
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->controller(CompanyTaskApplicationController::class)->group(function () {
     Route::get('/{taskId}/applications', 'applications');
@@ -185,29 +214,24 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks')->co
     Route::post('/applications/reject/{applicationId}', 'reject');
 
 });
-
 //  Tasks Assignment
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskAssignmentController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/{assignmentId}', 'show')->whereNumber('assignmentId');
 });
-
 // Company Task Assignments Progress
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->group(function () {
     Route::get('/{assignmentId}/progress', [CompanyTaskProgressController::class, 'index'])->whereNumber('assignmentId');
 });
-
 // company task submission
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/task-assignments')->controller(CompanyTaskSubmissionController::class)->group(function () {
     Route::get('/{assignmentId}/submission', 'show')->whereNumber('assignmentId');
 });
-
 // Company Review
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/tasks/review')->controller(CompanyTaskReviewController::class)->group(function () {
     Route::post('/{assignmentId}', 'store')->whereNumber('assignmentId');
     Route::get('/{assignmentId}', 'show')->whereNumber('assignmentId');
 });
-
 //
 // Conversation
 // ============
@@ -230,7 +254,6 @@ Route::middleware('auth:sanctum')->prefix('conversations/messages')->controller(
 Route::middleware('auth:sanctum')->prefix('conversations')->controller(ConversationParticipantController::class)->group(function () {
     Route::patch('/{conversationId}/read', 'markAsRead');
 });
-
 //
 // Company Opportunities
 // =======================
@@ -239,24 +262,20 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
     Route::post('/', 'store');
     Route::get('/{opportunityId}', 'show')->whereNumber('opportunityId');
     Route::put('/{opportunityId}', 'update')->whereNumber('opportunityId');
-
     Route::patch('/{opportunityId}/publish', 'publish')->whereNumber('opportunityId');
     Route::patch('/{opportunityId}/close', 'close')->whereNumber('opportunityId');
     Route::patch('/{opportunityId}/cancel', 'cancel')->whereNumber('opportunityId');
 
     Route::delete('/{opportunityId}', 'destroy')->whereNumber('opportunityId');
 });
-
 // Candidates & Interviews
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportunities/{opportunityId}')->whereNumber('opportunityId')->group(function () {
-
     Route::controller(CompanyOpportunityCandidateController::class)->prefix('candidates')->group(function () {
         Route::get('/', 'index');
         Route::get('/{applicationId}', 'show')->whereNumber('applicationId');
         Route::patch('/{applicationId}/accept', 'accept')->whereNumber('applicationId');
         Route::patch('/{applicationId}/reject', 'reject')->whereNumber('applicationId');
     });
-
     Route::controller(OpportunityInterviewController::class)->prefix('interviews')->group(function () {
         Route::post('/{applicationId}', 'schedule')->whereNumber('applicationId');
         Route::post('/{interviewId}/reschedule', 'reschedule')->whereNumber('interviewId');
@@ -264,13 +283,11 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/opportuniti
         Route::patch('/{interviewId}/complete', 'complete')->whereNumber('interviewId');
     });
 });
-
 // Company Students Search & Details
 Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/students')->controller(CompanyStudentController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/{studentId}', 'show')->whereNumber('studentId');
 });
-
 // ============
 // == Student
 // ============
@@ -278,7 +295,6 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student')->group(fu
     Route::get('profile', [UserController::class, 'getProfileStudent']);
     Route::post('profile/edit', [UserController::class, 'editProfileStudent']);
 });
-
 // Get Tasks for student
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskApplicationController::class)->group(function () {
     Route::get('/applied', 'applied');
@@ -286,7 +302,6 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->co
     Route::get('/rejected', [StudentTaskApplicationController::class, 'rejected']);
     Route::get('/allMyTask', [StudentTaskApplicationController::class, 'all']);
 });
-
 // Student Tasks
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskController::class)->group(function () {
     Route::get('/explore', 'explore');
@@ -294,7 +309,6 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->co
     Route::get('/{taskId}', 'show');
     Route::post('/{taskId}/apply', 'apply');
 });
-
 // Student Project Template Applications
 Route::middleware(['auth:sanctum'])->prefix('student/project-templates')->controller(StudentProjectTemplateController::class)->group(function () {
     Route::get('/applications/all', 'all');
@@ -303,7 +317,6 @@ Route::middleware(['auth:sanctum'])->prefix('student/project-templates')->contro
     Route::get('/applications/rejected', 'rejected');
     Route::post('/{projectTemplate}/apply', 'apply');
 });
-
 // Student Portfolio Projects
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-projects')->controller(PortfolioProjectController::class)->group(function () {
     Route::get('/', 'index');
@@ -312,17 +325,14 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-p
     Route::put('/{portfolioProjectId}', 'update');
     Route::delete('/{portfolioProjectId}', 'destroy');
 });
-
 // student Tsasks Assignment Progress
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/task-assignments')->group(function () {
     Route::get('/{assignmentId}/progress', [StudentTaskProgressController::class, 'index'])->whereNumber('assignmentId');
     Route::post('/{assignmentId}/progress', [StudentTaskProgressController::class, 'store'])->whereNumber('assignmentId');
-
     // Student task submission
     Route::post('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'store'])->whereNumber('assignmentId');
     Route::get('/{assignmentId}/submission', [StudentTaskSubmissionController::class, 'show'])->whereNumber('assignmentId');
 });
-
 //
 // Student Opportunities
 // =======================
@@ -339,7 +349,6 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/application
     Route::get('/{applicationId}', 'show')->whereNumber('applicationId');
     Route::patch('/{applicationId}/withdraw', 'withdraw')->whereNumber('applicationId');
 });
-
 // ==============
 // Community Techincal Posts
 // ==============
@@ -360,7 +369,6 @@ Route::middleware(['auth:sanctum'])->prefix('community')->group(function () {
     Route::post('/posts/{post}/like', [PostLikeController::class, 'toggle']);
     Route::post('/comments/{comment}/like', [CommentLikeController::class, 'toggle']);
 });
-
 // ==============
 // Me / Points
 // ==============
@@ -368,7 +376,6 @@ Route::middleware('auth:sanctum')->prefix('me')->group(function () {
     Route::get('/points', [MyPointController::class, 'summary']);
     Route::get('/points/history', [MyPointController::class, 'history']);
 });
-
 Route::middleware([
     'auth:sanctum',
     'role:student',
@@ -388,7 +395,6 @@ Route::middleware([
             'store'
         );
     });
-
 Route::middleware('auth:sanctum')
     ->prefix('market-analysis')
     ->controller(MarketInsightsController::class)
@@ -402,3 +408,17 @@ Route::middleware('auth:sanctum')
             ->whereNumber('skillId');
         Route::get('/career-paths', 'careerPaths');
     });
+
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:student',
+    ])
+        ->get(
+            'student/project-assignments/{projectAssignment}/evaluation',
+            [
+                ProjectEvaluationAppealController::class,
+                'showByAssignment',
+            ]
+        )
+        ->whereNumber('projectAssignment');

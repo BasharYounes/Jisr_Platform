@@ -19,6 +19,18 @@ class User extends Authenticatable
     protected $guard_name = 'web';
 
     /**
+     * The model's default values for attributes.
+     *
+     * Keep this aligned with the users table default so newly-created
+     * Eloquent instances are considered active before a database refresh.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_active' => true,
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -38,7 +50,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'is_active' => 'boolean',
     ];
 
     /**
@@ -51,6 +62,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 

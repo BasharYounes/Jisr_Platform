@@ -4,7 +4,7 @@ namespace App\Domains\Student\Actions;
 
 use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
 use App\Domains\Supervisor\Enums\ProjectAssignmentTaskStatus;
-use App\Events\ProjectAssignmentStatusChanged;
+// use App\Events\ProjectAssignmentStatusChanged;
 use App\Models\ProjectAssignmentTask;
 use DomainException;
 
@@ -42,12 +42,12 @@ class StartAssignmentTaskAction
                 'progress_percentage' => 10,
             ]);
 
-            event(new ProjectAssignmentStatusChanged(
-                tasks: $task->refresh(),
-                oldStatus: $oldStatus,
-                newStatus: ProjectAssignmentStatus::IN_PROGRESS->value,
-                changedBy: auth()->id()
-            ));
+            // event(new ProjectAssignmentStatusChanged(
+            //     tasks: $task->refresh(),
+            //     oldStatus: $oldStatus,
+            //     newStatus: ProjectAssignmentStatus::IN_PROGRESS->value,
+            //     changedBy: auth()->id()
+            // ));
         }
 
         return $task->refresh()->load([
