@@ -2,6 +2,7 @@
 
 namespace App\Services\CompanyTasks;
 
+use App\Events\CompanyTaskApplicationAccepted;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskAssignmentRepositoryInterface;
 use App\Interfaces\CompanyTaskRepositoryInterface;
@@ -49,11 +50,13 @@ class CompanyTaskApplicationService
     public function acceptApplication(
         int $companyId,
         int $applicationId,
+        User $actor,
         array $data = []
     ) {
         $assignment = DB::transaction(function () use (
             $companyId,
             $applicationId,
+            $actor,
             $data
         ) {
             $application = $this->applicationRepository->findCompanyApplicationOrFail(
@@ -84,23 +87,16 @@ class CompanyTaskApplicationService
 
             $this->taskAssignmentConversationService->createForAssignment($assignment);
 
-            $student = User::query()->findOrFail($application->student_user_id);
-            $taskTitle = $application->task?->title ?? 'مهمة شركة';
-
-            SendFirebaseNotificationJob::dispatch(
-                $student,
-                'تم قبول طلبك',
-                "تم قبول طلبك على المهمة: {$taskTitle}",
-                [
-                    'type' => 'company_task_application_accepted',
-                    'decision' => 'accepted',
-                    'application_id' => (string) $application->id,
-                    'company_task_id' => (string) $application->company_task_id,
-                ],
+            CompanyTaskApplicationAccepted::dispatch(
+                application: $application,
+                assignment: $assignment,
+                actor: $actor,
             );
 
             return $assignment;
         });
+
+        return $assignment;
     }
 
     private function ensureTaskCanAcceptStudents(

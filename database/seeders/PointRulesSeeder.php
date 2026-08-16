@@ -35,13 +35,13 @@ class PointRulesSeeder extends Seeder
             [
                 'action_type' => 'community_post_liked_received',
                 'points' => 1,
-                'max_per_day' => 20,
+                'max_per_day' => 30,
                 'description' => 'Student receives a like on a community post.',
             ],
             [
                 'action_type' => 'community_comment_liked_received',
                 'points' => 1,
-                'max_per_day' => 20,
+                'max_per_day' => 30,
                 'description' => 'Student receives a like on a community comment.',
             ],
         ];

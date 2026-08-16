@@ -57,6 +57,7 @@ class CompanyTaskApplicationController extends Controller
         $assignment = $this->companyTaskApplicationService->acceptApplication(
             companyId: $companyId,
             applicationId: $applicationId,
+            actor: $request->user(),
             data: $request->validated()
         );
 

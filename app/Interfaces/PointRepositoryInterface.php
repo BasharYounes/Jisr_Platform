@@ -30,5 +30,11 @@ interface PointRepositoryInterface
         ?string $description = null
     ): PointTransaction;
 
+    public function userReachedDailyLimitByRuleCodes(
+        int $userId,
+        array $ruleCodes,
+        int $maxPerDay
+    ): bool;
+
     public function getUserTotalPoints(int $userId): int;
 }
