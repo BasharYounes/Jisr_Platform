@@ -5,20 +5,12 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdminComplaintResource extends JsonResource
+class ComplaintResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
-            'complainant' => $this->whenLoaded(
-                'complainant',
-                fn (): array => [
-                    'id' => $this->complainant?->id,
-                    'name' => $this->complainant?->name,
-                    'email' => $this->complainant?->email,
-                ]
-            ),
             'target_type' => $this->targetType(),
             'reported_user' => $this->reported_user_id !== null
                 ? $this->whenLoaded(
@@ -49,10 +41,7 @@ class AdminComplaintResource extends JsonResource
             ],
             'reason' => $this->reason,
             'status' => $this->status,
-            'resolution_notes' => $this->resolution_notes,
-            'resolved_at' => $this->resolved_at,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

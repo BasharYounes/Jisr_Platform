@@ -9,6 +9,7 @@ use App\Http\Resources\AdminComplaintResource;
 use App\Models\Complaint;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class AdminComplaintController extends Controller
 {
@@ -25,6 +26,9 @@ class AdminComplaintController extends Controller
                 'id',
                 'complainant_user_id',
                 'reported_user_id',
+                'reported_mentor_profile_id',
+                'context_type',
+                'context_id',
                 'reason',
                 'status',
                 'resolved_at',
@@ -35,10 +39,28 @@ class AdminComplaintController extends Controller
             ->with([
                 'complainant:id,name,email',
                 'reportedUser:id,name,email',
+                'reportedMentorProfile:id,user_id,full_name,email,specialization,professional_title',
             ])
             ->when(
                 isset($filters['status']),
                 fn ($query) => $query->where('status', $filters['status'])
+            )
+            ->when(
+                isset($filters['context_type']),
+                fn ($query) => $query->where(
+                    'context_type',
+                    $filters['context_type']
+                )
+            )
+            ->when(
+                ($filters['target_type'] ?? null) === 'user',
+                fn ($query) => $query->whereNotNull('reported_user_id')
+            )
+            ->when(
+                ($filters['target_type'] ?? null) === 'mentor',
+                fn ($query) => $query->whereNotNull(
+                    'reported_mentor_profile_id'
+                )
             )
             ->orderByDesc('id')
             ->paginate($perPage, ['*'], 'page', $page);
@@ -63,6 +85,14 @@ class AdminComplaintController extends Controller
         AdminComplaintUpdateRequest $request,
         Complaint $complaint
     ): JsonResponse {
+        if ($complaint->isClosed()) {
+            throw ValidationException::withMessages([
+                'status' => [
+                    'لا يمكن تعديل شكوى تم حلها أو رفضها مسبقاً. | A resolved or rejected complaint cannot be changed.',
+                ],
+            ]);
+        }
+
         $data = $request->validated();
         $status = $data['status'];
 
@@ -72,19 +102,26 @@ class AdminComplaintController extends Controller
             $complaint->resolution_notes = $data['resolution_notes'];
         }
 
-        $complaint->resolved_at = in_array(
+        $isClosing = in_array(
             $status,
             ['resolved', 'rejected'],
             true
-        )
+        );
+
+        $complaint->resolved_at = $isClosing
             ? now()
             : null;
+
+        if ($isClosing) {
+            $complaint->deduplication_key = null;
+        }
 
         $complaint->save();
 
         $complaint->load([
             'complainant:id,name,email',
             'reportedUser:id,name,email',
+            'reportedMentorProfile:id,user_id,full_name,email,specialization,professional_title',
         ]);
 
         return $this->success(
