@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class PointService
 {
+    private const LIKE_ACTION_TYPES = [
+        'community_post_liked_received',
+        'community_comment_liked_received',
+    ];
+
+    private const LIKE_DAILY_LIMIT = 30;
+
     public function __construct(
         private readonly PointRepositoryInterface $pointRepository
     ) {}
@@ -38,6 +45,18 @@ class PointService
             );
 
             if ($alreadyExists) {
+                return null;
+            }
+        }
+
+        if (in_array($actionType, self::LIKE_ACTION_TYPES, true)) {
+            $reachedLikeLimit = $this->pointRepository->userReachedDailyLimitByRuleCodes(
+                userId: $user->id,
+                ruleCodes: self::LIKE_ACTION_TYPES,
+                maxPerDay: self::LIKE_DAILY_LIMIT
+            );
+
+            if ($reachedLikeLimit) {
                 return null;
             }
         }

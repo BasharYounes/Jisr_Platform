@@ -17,4 +17,7 @@ final class NotificationTypes
     public const PROJECT_APPROVED = 'project_approved';
 
     public const PROJECT_MESSAGE_RECEIVED = 'project_message_received';
+
+    // Company Tasks
+    public const COMPANY_TASK_APPLICATION_ACCEPTED = 'company_task_application_accepted';
 }

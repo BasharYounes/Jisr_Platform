@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\CompanyTaskRepositoryInterface;
 use App\Models\CompanyTask;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class CompanyTaskRepository implements CompanyTaskRepositoryInterface
@@ -84,13 +85,46 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
         return $task->fresh(['company', 'skills']);
     }
 
-    public function getExploreTasks(?string $title = null): Collection
+    private function openForApplicationsQuery(): Builder
     {
         return CompanyTask::query()
-            ->with(['company', 'skills'])
-            ->where('status', 'published')
+            ->withCount([
+                'applications as applicants_count',
+                'assignments as accepted_students_count' => function (Builder $query): void {
+                    $query->where('status', '!=', 'cancelled');
+                },
+            ])
+            ->whereIn('status', [
+                'published',
+                'in_progress',
+            ])
             ->where('deadline', '>=', now())
-            ->when($title, function ($query) use ($title) {
+            ->where(function (Builder $query): void {
+                $query->whereNull('max_applicants')
+                      ->orWhere(
+                          \App\Models\CompanyTaskApplication::selectRaw('count(*)')
+                              ->whereColumn('company_task_id', 'company_tasks.id'),
+                          '<',
+                          \Illuminate\Support\Facades\DB::raw('company_tasks.max_applicants')
+                      );
+            })
+            ->where(function (Builder $query): void {
+                $query->whereNull('max_accepted_students')
+                      ->orWhere(
+                          \App\Models\CompanyTaskAssignment::selectRaw('count(*)')
+                              ->whereColumn('company_task_id', 'company_tasks.id')
+                              ->where('status', '!=', 'cancelled'),
+                          '<',
+                          \Illuminate\Support\Facades\DB::raw('company_tasks.max_accepted_students')
+                      );
+            });
+    }
+
+    public function getExploreTasks(?string $title = null): Collection
+    {
+        return $this->openForApplicationsQuery()
+            ->with(['company', 'skills'])
+            ->when($title, function ($query) use ($title): void {
                 $query->where('title', 'like', '%'.$title.'%');
             })
             ->latest('published_at')
@@ -99,21 +133,17 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
 
     public function getAvailableTasksWithSkills(): Collection
     {
-        return CompanyTask::query()
+        return $this->openForApplicationsQuery()
             ->with(['company', 'skills'])
-            ->where('status', 'published')
-            ->where('deadline', '>=', now())
             ->latest('published_at')
             ->get();
     }
 
     public function findAvailableTaskOrFail(int $taskId): CompanyTask
     {
-        return CompanyTask::query()
+        return $this->openForApplicationsQuery()
             ->with(['company', 'skills'])
-            ->where('id', $taskId)
-            ->where('status', 'published')
-            ->where('deadline', '>=', now())
+            ->whereKey($taskId)
             ->firstOrFail();
     }
 

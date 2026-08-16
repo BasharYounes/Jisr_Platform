@@ -41,6 +41,22 @@ class PointRepository implements PointRepositoryInterface
         return $todayCount >= $maxPerDay;
     }
 
+    public function userReachedDailyLimitByRuleCodes(
+        int $userId,
+        array $ruleCodes,
+        int $maxPerDay
+    ): bool {
+        $todayCount = PointTransaction::query()
+            ->where('user_id', $userId)
+            ->whereDate('created_at', today())
+            ->whereHas('actionType.rule', function ($query) use ($ruleCodes) {
+                $query->whereIn('action_type', $ruleCodes);
+            })
+            ->count();
+
+        return $todayCount >= $maxPerDay;
+    }
+
     public function transactionExists(
         int $userId,
         int $pointActionTypeId,
