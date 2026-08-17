@@ -14,6 +14,10 @@ use App\Listeners\SendResetOtpListener;
 use App\Listeners\SendWelcomeNotification;
 use App\Events\CompanyTaskHighMatchApplicationReceived;
 use App\Listeners\SendCompanyTaskHighMatchApplicationNotification;
+use App\Events\CompanyRejected;
+use App\Events\CompanyTaskApplicationAccepted;
+use App\Listeners\SendCompanyRejectedEmail;
+use App\Listeners\SendCompanyTaskApplicationAcceptedNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -43,6 +47,14 @@ class EventServiceProvider extends ServiceProvider
 
         CompanyTaskHighMatchApplicationReceived::class => [
             SendCompanyTaskHighMatchApplicationNotification::class,
+        ],
+
+        CompanyRejected::class => [
+            SendCompanyRejectedEmail::class,
+        ],
+
+        CompanyTaskApplicationAccepted::class => [
+            SendCompanyTaskApplicationAcceptedNotification::class,
         ],
     ];
 
