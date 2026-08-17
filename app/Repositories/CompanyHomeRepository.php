@@ -25,49 +25,80 @@ class CompanyHomeRepository implements CompanyHomeRepositoryInterface
         ];
     }
 
-    public function countActiveTasks(int $companyId): int
+    public function getActiveOpportunitiesStats(int $companyId): array
     {
-        return CompanyTask::query()
+        $tasks = CompanyTask::query()
             ->where('company_id', $companyId)
             ->whereIn('status', ['published', 'in_progress'])
             ->where('deadline', '>=', now())
-            ->count();
+            ->pluck('id');
+
+        return [
+            'count' => $tasks->count(),
+            'ids' => $tasks->toArray(),
+        ];
     }
 
-    public function countNewApplicants(int $companyId): int
+    public function getNewApplicantsStats(int $companyId): array
     {
-        return CompanyTaskApplication::query()
+        $applicants = CompanyTaskApplication::query()
             ->where('status', 'pending')
             ->whereHas('task', function ($query) use ($companyId) {
                 $query->where('company_id', $companyId);
             })
-            ->count();
+            ->get(['id as application_id', 'student_user_id', 'company_task_id as task_id']);
+
+        return [
+            'count' => $applicants->count(),
+            'items' => $applicants->toArray(),
+        ];
     }
 
-    public function countPendingReviews(int $companyId): int
+    public function getPendingReviewsStats(int $companyId): array
     {
-        return CompanyTaskSubmission::query()
+        $reviews = CompanyTaskSubmission::query()
             ->where('status', 'submitted')
             ->whereHas('assignment.task', function ($query) use ($companyId) {
                 $query->where('company_id', $companyId);
             })
-            ->count();
+            ->with(['assignment' => function($q) {
+                $q->select('id', 'company_task_id', 'student_user_id');
+            }])
+            ->get(['id', 'company_task_assignment_id']);
+
+        $items = $reviews->map(function ($review) {
+            return [
+                'submission_id' => $review->id,
+                'assignment_id' => $review->company_task_assignment_id,
+                'task_id' => $review->assignment?->company_task_id,
+                'student_user_id' => $review->assignment?->student_user_id,
+            ];
+        });
+
+        return [
+            'count' => $items->count(),
+            'items' => $items->toArray(),
+        ];
     }
 
-    public function countActiveAssignments(int $companyId): int
+    public function getActiveAssignmentsStats(int $companyId): array
     {
         $activeStatuses = [
             'not_started',
             'working',
-            'submitted',
         ];
 
-        return CompanyTaskAssignment::query()
+        $assignments = CompanyTaskAssignment::query()
             ->whereIn('status', $activeStatuses)
             ->whereHas('task', function ($query) use ($companyId) {
                 $query->where('company_id', $companyId);
             })
-            ->count();
+            ->get(['id as assignment_id', 'company_task_id as task_id', 'student_user_id']);
+
+        return [
+            'count' => $assignments->count(),
+            'items' => $assignments->toArray(),
+        ];
     }
 
     public function getRequiredActions(int $companyId): Collection

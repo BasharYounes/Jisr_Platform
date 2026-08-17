@@ -13,10 +13,25 @@ class CompanyHomeResource extends JsonResource
             'company' => $this->resource['company'],
 
             'stats' => [
-                'active_opportunities_count' => $this->resource['stats']['active_opportunities_count'],
-                'new_applicants_count' => $this->resource['stats']['new_applicants_count'],
-                'pending_reviews_count' => $this->resource['stats']['pending_reviews_count'],
-                'active_assignments_count' => $this->resource['stats']['active_assignments_count'],
+                'active_opportunities' => [
+                    'count' => $this->resource['stats']['active_opportunities']['count'],
+                    'ids' => $this->resource['stats']['active_opportunities']['ids'],
+                ],
+
+                'new_applicants' => [
+                    'count' => $this->resource['stats']['new_applicants']['count'],
+                    'items' => $this->resource['stats']['new_applicants']['items'],
+                ],
+
+                'active_assignments' => [
+                    'count' => $this->resource['stats']['active_assignments']['count'],
+                    'items' => $this->resource['stats']['active_assignments']['items'],
+                ],
+
+                'pending_reviews' => [
+                    'count' => $this->resource['stats']['pending_reviews']['count'],
+                    'items' => $this->resource['stats']['pending_reviews']['items'],
+                ],
             ],
 
             'required_actions' => $this->resource['required_actions'],

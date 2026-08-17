@@ -8,13 +8,13 @@ interface CompanyHomeRepositoryInterface
 {
     public function getCompanySummary(int $companyId): array;
 
-    public function countActiveTasks(int $companyId): int;
+    public function getActiveOpportunitiesStats(int $companyId): array;
 
-    public function countNewApplicants(int $companyId): int;
+    public function getNewApplicantsStats(int $companyId): array;
 
-    public function countPendingReviews(int $companyId): int;
+    public function getPendingReviewsStats(int $companyId): array;
 
-    public function countActiveAssignments(int $companyId): int;
+    public function getActiveAssignmentsStats(int $companyId): array;
 
     public function getRequiredActions(int $companyId): Collection;
 
