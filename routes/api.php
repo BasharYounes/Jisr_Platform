@@ -46,6 +46,7 @@ use App\Http\Controllers\Student\StudentTaskProgressController;
 use App\Http\Controllers\Student\StudentTaskSubmissionController;
 use App\Http\Controllers\StudentOpportunity\StudentApplicationController;
 use App\Http\Controllers\StudentOpportunity\StudentOpportunityController;
+use App\Http\Controllers\StudentOpportunity\StudentOpportunityInterviewController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use App\Services\AI\AIClientInterface;
@@ -350,6 +351,14 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/application
     Route::get('/{applicationId}', 'show')->whereNumber('applicationId');
     Route::patch('/{applicationId}/withdraw', 'withdraw')->whereNumber('applicationId');
 });
+
+// Student Interviews
+Route::middleware(['auth:sanctum', 'role:student'])
+    ->prefix('student/interviews')
+    ->controller(StudentOpportunityInterviewController::class)
+    ->group(function () {
+        Route::get('/', 'index');
+    });
 // ==============
 // Community Techincal Posts
 // ==============

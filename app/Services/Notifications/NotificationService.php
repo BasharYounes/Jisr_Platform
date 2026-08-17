@@ -25,6 +25,11 @@ class NotificationService
         ];
     }
 
+    public function getUnreadCount(User $user): int
+    {
+        return $this->notificationRepository->unreadCountForUser($user);
+    }
+
     public function markAsRead(User $user, Notification $notification): Notification
     {
         abort_unless($notification->user_id === $user->id, 403);

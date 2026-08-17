@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\OpportunityInterviewRepositoryInterface;
 use App\Models\OpportunityInterview;
+use Illuminate\Support\Collection;
 
 class OpportunityInterviewRepository implements OpportunityInterviewRepositoryInterface
 {
@@ -66,5 +67,58 @@ class OpportunityInterviewRepository implements OpportunityInterviewRepositoryIn
             'company',
             'student',
         ]);
+    }
+
+    public function getStudentInterviews(
+        int $studentUserId,
+        array $filters = []
+    ): Collection {
+        $now = now();
+
+        $filter = $filters['filter'] ?? null;
+        $status = $filters['status'] ?? null;
+
+        $query = OpportunityInterview::query()
+            ->with([
+                'application',
+                'opportunity',
+                'company',
+            ])
+            ->where('student_user_id', $studentUserId);
+
+        if ($filter === 'upcoming') {
+            $query
+                ->whereIn('status', OpportunityInterview::SCHEDULED_STATUSES)
+                ->where('scheduled_at', '>', $now);
+        }
+
+        if ($filter === 'history') {
+            $query->where(function ($query) use ($now): void {
+                $query
+                    ->whereIn('status', [
+                        OpportunityInterview::STATUS_COMPLETED,
+                        OpportunityInterview::STATUS_CANCELLED,
+                    ])
+                    ->orWhere(function ($query) use ($now): void {
+                        $query
+                            ->whereIn('status', OpportunityInterview::SCHEDULED_STATUSES)
+                            ->where('scheduled_at', '<=', $now);
+                    });
+            });
+        }
+
+        if ($status !== null) {
+            $query->where('status', $status);
+        }
+
+        if ($filter === 'upcoming') {
+            return $query
+                ->orderBy('scheduled_at')
+                ->get();
+        }
+
+        return $query
+            ->orderByDesc('scheduled_at')
+            ->get();
     }
 }
