@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 class ChatbotKnowledgeSeeder extends Seeder
 {
     /**
-     * Seed only the ten approved Jisr platform-help knowledge entries.
+     * Seed only the eleven approved Jisr platform-help knowledge entries.
      */
     public function run(): void
     {
@@ -149,6 +149,20 @@ class ChatbotKnowledgeSeeder extends Seeder
                 'keywords' => [
                     'ar' => ['نتيجة الاختبار', 'نتيجة التقييم', 'اين اجد النتيجة', 'وين النتيجة', 'وين بلاقي النتيجة', 'كيف اشوف النتيجة'],
                     'en' => ['assessment result', 'evaluation result', 'where is the result', 'where can I see my result', 'find assessment result'],
+                ],
+                'action' => null,
+                'is_active' => true,
+            ],
+            [
+                'key' => 'platform_creators',
+                'category' => 'platform_help',
+                'question_ar' => 'من أنشأ منصة جسر؟',
+                'question_en' => 'Who created Jisr Platform?',
+                'answer_ar' => 'تم تطوير منصة جسر بجهود فريق مكوّن من خمسة مهندسين: بشار، كرم، إحسان، براءة، وبتول. توزعت مسؤوليات التطوير بين أعضاء الفريق بشكل متكامل؛ حيث تولّى بشار وبتول تطوير الواجهة الخلفية (Back-End) وبناء منطق النظام وواجهات الـ API، بينما تولّى كرم وبراءة تطوير تطبيق الهاتف (Mobile Application)، وتولّى إحسان تطوير واجهة الويب (Web Front-End). وقد تعاون أعضاء الفريق على دمج هذه المكونات ضمن منصة واحدة متكاملة تهدف إلى تجسير الفجوة بين الطلاب وسوق العمل.',
+                'answer_en' => 'Jisr Platform was developed by a team of five engineers: Bashar, Karam, Ihsan, Baraa, and Batoul. Development responsibilities were distributed across the team: Bashar and Batoul handled the Back-End, including system logic and APIs; Karam and Baraa developed the Mobile Application; and Ihsan developed the Web Front-End. The team collaborated to integrate these components into one platform designed to bridge the gap between students and the labor market.',
+                'keywords' => [
+                    'ar' => ['من أنشأ منصة جسر', 'من انشأ منصة جسر', 'مين انشأ منصة جسر', 'مين عمل منصة جسر', 'من طور منصة جسر', 'مين طور جسر', 'مين عمل المشروع', 'من أنشأ المشروع', 'فريق منصة جسر', 'فريق جسر', 'مطورو منصة جسر', 'مين المبرمجين', 'من هم مطورو المنصة'],
+                    'en' => ['who created Jisr Platform', 'who built Jisr', 'who developed Jisr', 'Jisr team', 'Jisr developers', 'who created the platform'],
                 ],
                 'action' => null,
                 'is_active' => true,
