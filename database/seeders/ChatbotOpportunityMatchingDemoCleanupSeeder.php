@@ -11,6 +11,7 @@ use RuntimeException;
 class ChatbotOpportunityMatchingDemoCleanupSeeder extends Seeder
 {
     private const COMPANY_WEBSITE = 'https://chatbot-demo.local';
+
     private const TITLE_PREFIX = '[Chatbot Demo] ';
 
     public function run(): void
@@ -32,7 +33,7 @@ class ChatbotOpportunityMatchingDemoCleanupSeeder extends Seeder
 
             Opportunity::query()
                 ->where('company_id', $company->id)
-                ->where('title', 'like', self::TITLE_PREFIX . '%')
+                ->where('title', 'like', self::TITLE_PREFIX.'%')
                 ->delete();
 
             $hasOtherOpportunities = Opportunity::query()

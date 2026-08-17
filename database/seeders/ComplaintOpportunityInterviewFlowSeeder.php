@@ -281,14 +281,12 @@ class ComplaintOpportunityInterviewFlowSeeder extends Seeder
                 ->get(['user_id', 'role']);
 
             $hasCompanyParticipant = $participants->contains(
-                fn ($participant): bool =>
-                    (int) $participant->user_id === (int) $companyUser->id
+                fn ($participant): bool => (int) $participant->user_id === (int) $companyUser->id
                     && $participant->role === 'company'
             );
 
             $hasStudentParticipant = $participants->contains(
-                fn ($participant): bool =>
-                    (int) $participant->user_id === (int) $student->id
+                fn ($participant): bool => (int) $participant->user_id === (int) $student->id
                     && $participant->role === 'student'
             );
 
@@ -364,7 +362,7 @@ class ComplaintOpportunityInterviewFlowSeeder extends Seeder
             ->pluck('id');
 
         if ($interviewIds->isNotEmpty()) {
-            $interviewMorphType = (new OpportunityInterview())
+            $interviewMorphType = (new OpportunityInterview)
                 ->getMorphClass();
 
             $conversationIds = DB::table('conversations')

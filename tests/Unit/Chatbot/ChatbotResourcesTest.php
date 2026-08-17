@@ -15,7 +15,7 @@ class ChatbotResourcesTest extends TestCase
     public function test_conversation_resource_exposes_only_the_public_contract(): void
     {
         $now = CarbonImmutable::parse('2026-08-06 12:00:00');
-        $conversation = new ChatbotConversation();
+        $conversation = new ChatbotConversation;
         $conversation->forceFill([
             'id' => 9,
             'student_id' => 2,
@@ -47,7 +47,7 @@ class ChatbotResourcesTest extends TestCase
 
     public function test_message_resource_hides_internal_delivery_fields(): void
     {
-        $message = new ChatbotMessage();
+        $message = new ChatbotMessage;
         $message->forceFill([
             'id' => 4,
             'conversation_id' => 3,

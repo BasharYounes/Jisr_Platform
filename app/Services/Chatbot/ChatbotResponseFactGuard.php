@@ -68,7 +68,6 @@ class ChatbotResponseFactGuard
         );
     }
 
-
     private function containsToken(string $content, string $token): bool
     {
         if (preg_match('/^\d+(?:\.\d+)?%$/', $token) === 1) {
@@ -86,7 +85,6 @@ class ChatbotResponseFactGuard
 
         return mb_stripos($content, $token) !== false;
     }
-
 
     private function containsNumber(string $content, string $expected): bool
     {

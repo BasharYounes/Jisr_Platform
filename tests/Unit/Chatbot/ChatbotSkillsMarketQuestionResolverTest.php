@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class ChatbotSkillsMarketQuestionResolverTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
+
     #[DataProvider('questionsProvider')]
     public function test_it_resolves_approved_skills_market_questions(
         string $question,
@@ -51,7 +52,6 @@ class ChatbotSkillsMarketQuestionResolverTest extends TestCase
             $resolver->resolve('أعطني نظرة عامة عن وضعي'),
         );
     }
-
 
     public function test_clear_local_question_does_not_call_ai(): void
     {

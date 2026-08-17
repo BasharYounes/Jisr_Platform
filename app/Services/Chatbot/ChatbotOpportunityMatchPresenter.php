@@ -69,12 +69,12 @@ class ChatbotOpportunityMatchPresenter
 
             if ($language === 'en') {
                 $lines[] = "{$number}) {$title} — match {$score}%"
-                    . ($meta !== '' ? " ({$meta})" : '')
-                    . ". {$details}";
+                    .($meta !== '' ? " ({$meta})" : '')
+                    .". {$details}";
             } else {
                 $lines[] = "{$number}) {$title} — نسبة المطابقة {$score}%"
-                    . ($meta !== '' ? " ({$meta})" : '')
-                    . ". {$details}";
+                    .($meta !== '' ? " ({$meta})" : '')
+                    .". {$details}";
             }
 
             $actions[] = [
@@ -95,7 +95,7 @@ class ChatbotOpportunityMatchPresenter
             : 'تم الترتيب اعتمادًا على مستويات مهاراتك، والمستويات المطلوبة، وأوزان المهارات، وعدم وجود مهارة إلزامية ناقصة.';
 
         return [
-            'content' => $intro . "\n" . implode("\n", $lines) . "\n" . $footer,
+            'content' => $intro."\n".implode("\n", $lines)."\n".$footer,
             'actions' => $actions,
         ];
     }
@@ -110,20 +110,20 @@ class ChatbotOpportunityMatchPresenter
 
         if ($fullMatches->isNotEmpty()) {
             $parts[] = $language === 'en'
-                ? 'You fully match: ' . $fullMatches->implode(', ')
-                : 'تمتلك بالمستوى المطلوب: ' . $fullMatches->implode('، ');
+                ? 'You fully match: '.$fullMatches->implode(', ')
+                : 'تمتلك بالمستوى المطلوب: '.$fullMatches->implode('، ');
         }
 
         if ($partialMatches->isNotEmpty()) {
             $parts[] = $language === 'en'
-                ? 'You have these skills below the required level: ' . $partialMatches->implode(', ')
-                : 'تمتلك بمستوى أقل من المطلوب: ' . $partialMatches->implode('، ');
+                ? 'You have these skills below the required level: '.$partialMatches->implode(', ')
+                : 'تمتلك بمستوى أقل من المطلوب: '.$partialMatches->implode('، ');
         }
 
         if ($missingSkills->isNotEmpty()) {
             $parts[] = $language === 'en'
-                ? 'Skills to develop: ' . $missingSkills->implode(', ')
-                : 'مهارات تحتاج إلى تطويرها: ' . $missingSkills->implode('، ');
+                ? 'Skills to develop: '.$missingSkills->implode(', ')
+                : 'مهارات تحتاج إلى تطويرها: '.$missingSkills->implode('، ');
         }
 
         if ($parts === []) {
@@ -132,7 +132,7 @@ class ChatbotOpportunityMatchPresenter
                 : 'لديك مطابقة محسوبة ومقبولة مع متطلبات هذه الفرصة.';
         }
 
-        return implode('. ', $parts) . '.';
+        return implode('. ', $parts).'.';
     }
 
     private function typeLabel(?string $type, string $language): ?string

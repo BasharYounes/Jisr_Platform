@@ -14,7 +14,9 @@ class ChatbotConversation extends Model
     use HasFactory, SoftDeletes;
 
     public const MODE_PLATFORM_HELP = 'platform_help';
+
     public const MODE_SKILLS_MARKET_ANALYSIS = 'skills_market_analysis';
+
     public const MODE_OPPORTUNITY_MATCHING = 'opportunity_matching';
 
     protected $fillable = [

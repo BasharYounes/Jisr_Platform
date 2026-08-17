@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Supervisor;
 
-use App\Domains\Supervisor\Actions\GetProjectAssignmentEvaluationSummaryAction;
 use App\Domains\Supervisor\Actions\GetProjectAssignmentEvaluationsAction;
+use App\Domains\Supervisor\Actions\GetProjectAssignmentEvaluationSummaryAction;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Supervisor\ProjectAssignmentEvaluationResource;
 use App\Models\ProjectAssignment;

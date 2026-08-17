@@ -42,8 +42,7 @@ final class MarketJobCareerPathClassifierService
             ->whereIn('Name', array_keys($pathDefinitions))
             ->pluck('CareerPathID', 'Name')
             ->map(
-                fn ($careerPathId): int =>
-                    (int) $careerPathId
+                fn ($careerPathId): int => (int) $careerPathId
             )
             ->all();
 
@@ -155,8 +154,7 @@ final class MarketJobCareerPathClassifierService
 
         $roundedScores = collect($scores)
             ->map(
-                fn (float $score): float =>
-                    round($score, 3)
+                fn (float $score): float => round($score, 3)
             )
             ->all();
 
@@ -180,11 +178,9 @@ final class MarketJobCareerPathClassifierService
                     : null,
             ],
 
-            'out_of_scope_title_signals' =>
-                $outOfScopeSignals,
+            'out_of_scope_title_signals' => $outOfScopeSignals,
 
-            'ambiguous_title_signals' =>
-                $ambiguousTitleSignals,
+            'ambiguous_title_signals' => $ambiguousTitleSignals,
 
             'thresholds' => [
                 'minimum_score' => $minimumScore,
@@ -230,8 +226,7 @@ final class MarketJobCareerPathClassifierService
 
             'career_path_id' => $selectedCareerPathId,
 
-            'career_path_name' =>
-                $status === 'classified'
+            'career_path_name' => $status === 'classified'
                     ? $topPathName
                     : null,
 
@@ -244,8 +239,8 @@ final class MarketJobCareerPathClassifierService
     }
 
     /**
-     * @param array<string, array<string, float|int>> $pathDefinitions
-     * @param array<string, float> $scores
+     * @param  array<string, array<string, float|int>>  $pathDefinitions
+     * @param  array<string, float>  $scores
      * @return array<int, array<string, mixed>>
      */
     private function scoreTitleSignals(
@@ -284,8 +279,7 @@ final class MarketJobCareerPathClassifierService
                 $evidence[] = [
                     'career_path' => $pathName,
                     'signal' => $signal,
-                    'normalized_signal' =>
-                        $normalizedSignal,
+                    'normalized_signal' => $normalizedSignal,
                     'points' => $points,
                 ];
 
@@ -302,8 +296,8 @@ final class MarketJobCareerPathClassifierService
     }
 
     /**
-     * @param array<string, int> $pathIds
-     * @param array<string, float> $scores
+     * @param  array<string, int>  $pathIds
+     * @param  array<string, float>  $scores
      * @return array<int, array<string, mixed>>
      */
     private function scoreExtractedSkills(
@@ -375,8 +369,7 @@ final class MarketJobCareerPathClassifierService
 
             $evidence[] = [
                 'skill_id' => (int) $relation->skill_id,
-                'skill_name' =>
-                    (string) $relation->skill_name,
+                'skill_name' => (string) $relation->skill_name,
                 'career_path' => $pathName,
                 'weight' => $weight,
                 'is_core' => $isCore,
@@ -388,7 +381,7 @@ final class MarketJobCareerPathClassifierService
     }
 
     /**
-     * @param array<int, string> $signals
+     * @param  array<int, string>  $signals
      * @return array<int, string>
      */
     private function findMatchingTitleSignals(
@@ -507,8 +500,8 @@ final class MarketJobCareerPathClassifierService
         );
 
         $pattern =
-            '/(?<![\p{L}\p{N}])' .
-            $escapedPhrase .
+            '/(?<![\p{L}\p{N}])'.
+            $escapedPhrase.
             '(?![\p{L}\p{N}])/u';
 
         return preg_match(

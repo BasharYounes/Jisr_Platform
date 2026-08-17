@@ -84,8 +84,8 @@ class ExportMarketClassifierEvaluationSample extends Command
 
         File::ensureDirectoryExists($directory);
 
-        $filePath = $directory .
-            DIRECTORY_SEPARATOR .
+        $filePath = $directory.
+            DIRECTORY_SEPARATOR.
             'classifier_evaluation_sample.csv';
 
         $handle = fopen($filePath, 'w');

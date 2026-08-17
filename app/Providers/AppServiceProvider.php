@@ -16,6 +16,7 @@ use App\Interfaces\CompanyTaskReviewRepositoryInterface;
 use App\Interfaces\CompanyTaskSubmissionRepositoryInterface;
 use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
+use App\Interfaces\JobSourceAdapterInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Interfaces\NotificationRepositoryInterface;
 use App\Interfaces\OpportunityApplicationRepositoryInterface;
@@ -72,15 +73,13 @@ use App\Repositories\UserRepository;
 use App\Services\AI\AIClientInterface;
 use App\Services\AI\GeminiClient;
 use App\Services\AI\MockAIClient;
+use App\Services\MarketAnalysis\Adapters\ArbeitnowJobSourceAdapter;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\ServiceProvider;
 // use App\Models\ProjectEvaluationAppeal;
 // use App\Policies\ProjectEvaluationAppealPolicy;
-use App\Interfaces\JobSourceAdapterInterface;
-use App\Services\MarketAnalysis\Adapters\ArbeitnowJobSourceAdapter;
-
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

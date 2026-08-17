@@ -34,7 +34,6 @@ return [
         'market_skill_limit' => (int) env('CHATBOT_MARKET_SKILL_LIMIT', 10),
     ],
 
-
     'response_formatter' => [
         'enabled' => filter_var(
             env('CHATBOT_RESPONSE_FORMATTER_ENABLED', false),

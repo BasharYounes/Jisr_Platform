@@ -54,11 +54,10 @@ class StudentMentorDiscoveryService
 
         if ($targetSkillIds->isNotEmpty()) {
             $query->withCount([
-                'skills as matching_skill_count' => fn ($builder) =>
-                    $builder->whereIn(
-                        'skills.id',
-                        $targetSkillIds->all()
-                    ),
+                'skills as matching_skill_count' => fn ($builder) => $builder->whereIn(
+                    'skills.id',
+                    $targetSkillIds->all()
+                ),
             ]);
         } else {
             $query->selectRaw('0 AS matching_skill_count');
@@ -91,12 +90,11 @@ class StudentMentorDiscoveryService
 
         $paginator->setCollection(
             $paginator->getCollection()->map(
-                fn (MentorProfile $mentor) =>
-                    $this->enrichMentor(
-                        $mentor,
-                        $targetSpecialization,
-                        $targetSkillIds
-                    )
+                fn (MentorProfile $mentor) => $this->enrichMentor(
+                    $mentor,
+                    $targetSpecialization,
+                    $targetSkillIds
+                )
             )
         );
 

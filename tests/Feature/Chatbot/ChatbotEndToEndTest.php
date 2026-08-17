@@ -23,8 +23,8 @@ use Tests\TestCase;
 
 class ChatbotEndToEndTest extends TestCase
 {
-    use RefreshDatabase;
     use MockeryPHPUnitIntegration;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {

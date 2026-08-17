@@ -155,34 +155,32 @@ final class GeminiMarketJobCareerPathClassifierService
             $responseEvidence
         )
             ->filter(
-                fn (mixed $item): bool =>
-                    is_string($item) &&
+                fn (mixed $item): bool => is_string($item) &&
                     trim($item) !== ''
             )
             ->map(
-                fn (string $item): string =>
-                    Str::limit(
-                        trim($item),
-                        300,
-                        '...'
-                    )
+                fn (string $item): string => Str::limit(
+                    trim($item),
+                    300,
+                    '...'
+                )
             )
             ->take(3)
             ->values()
             ->all();
 
-            if ($policyOverride !== null) {
-                $reason =
-                    'The job title explicitly identifies a Full Stack role that combines multiple supported career paths.';
+        if ($policyOverride !== null) {
+            $reason =
+                'The job title explicitly identifies a Full Stack role that combines multiple supported career paths.';
 
-                $responseEvidence = [
-                    'Job title: ' . Str::limit(
-                        trim((string) $jobPosting->title),
-                        250,
-                        '...'
-                    ),
-                ];
-            }
+            $responseEvidence = [
+                'Job title: '.Str::limit(
+                    trim((string) $jobPosting->title),
+                    250,
+                    '...'
+                ),
+            ];
+        }
 
         /*
          * classification_score يبقى صفراً لأن Gemini
@@ -193,11 +191,9 @@ final class GeminiMarketJobCareerPathClassifierService
         $classificationEvidence = [
             'provider' => 'gemini',
 
-            'raw_detected_path' =>
-                $rawDetectedPath,
+            'raw_detected_path' => $rawDetectedPath,
 
-            'resolved_career_path' =>
-                $resolvedCareerPathName,
+            'resolved_career_path' => $resolvedCareerPathName,
 
             'reason' => $reason,
 
@@ -209,8 +205,7 @@ final class GeminiMarketJobCareerPathClassifierService
              */
             'resolved_status' => $status,
 
-            'supported_paths' =>
-                self::SUPPORTED_PATHS,
+            'supported_paths' => self::SUPPORTED_PATHS,
 
             'numeric_confidence_used' => false,
 
@@ -220,25 +215,20 @@ final class GeminiMarketJobCareerPathClassifierService
         DB::table('market_job_postings')
             ->where('id', $jobPosting->id)
             ->update([
-                'career_path_id' =>
-                    $selectedCareerPathId,
+                'career_path_id' => $selectedCareerPathId,
 
-                'classification_status' =>
-                    $status,
+                'classification_status' => $status,
 
-                'classification_method' =>
-                    self::METHOD,
+                'classification_method' => self::METHOD,
 
-                'classification_score' =>
-                    $classificationScore,
+                'classification_score' => $classificationScore,
 
-                'classification_evidence' =>
-                    json_encode(
-                        $classificationEvidence,
-                        JSON_THROW_ON_ERROR |
-                        JSON_UNESCAPED_UNICODE |
-                        JSON_UNESCAPED_SLASHES
-                    ),
+                'classification_evidence' => json_encode(
+                    $classificationEvidence,
+                    JSON_THROW_ON_ERROR |
+                    JSON_UNESCAPED_UNICODE |
+                    JSON_UNESCAPED_SLASHES
+                ),
 
                 'classified_at' => now(),
                 'updated_at' => now(),
@@ -249,11 +239,9 @@ final class GeminiMarketJobCareerPathClassifierService
         return [
             'status' => $status,
 
-            'career_path_id' =>
-                $selectedCareerPathId,
+            'career_path_id' => $selectedCareerPathId,
 
-            'career_path_name' =>
-                $status === 'classified'
+            'career_path_name' => $status === 'classified'
                     ? $resolvedCareerPathName
                     : null,
 
@@ -261,8 +249,7 @@ final class GeminiMarketJobCareerPathClassifierService
 
             'method' => self::METHOD,
 
-            'evidence' =>
-                $classificationEvidence,
+            'evidence' => $classificationEvidence,
         ];
     }
 
@@ -282,79 +269,52 @@ final class GeminiMarketJobCareerPathClassifierService
 
         $supportedAliases = [
             'backend' => 'Backend Developer',
-            'backend developer' =>
-                'Backend Developer',
-            'backend engineer' =>
-                'Backend Developer',
-            'server side developer' =>
-                'Backend Developer',
+            'backend developer' => 'Backend Developer',
+            'backend engineer' => 'Backend Developer',
+            'server side developer' => 'Backend Developer',
 
             'frontend' => 'Frontend Developer',
-            'frontend developer' =>
-                'Frontend Developer',
-            'frontend engineer' =>
-                'Frontend Developer',
-            'front end developer' =>
-                'Frontend Developer',
+            'frontend developer' => 'Frontend Developer',
+            'frontend engineer' => 'Frontend Developer',
+            'front end developer' => 'Frontend Developer',
 
             'mobile' => 'Mobile Developer',
-            'mobile developer' =>
-                'Mobile Developer',
-            'mobile engineer' =>
-                'Mobile Developer',
-            'android developer' =>
-                'Mobile Developer',
-            'ios developer' =>
-                'Mobile Developer',
-            'flutter developer' =>
-                'Mobile Developer',
-            'react native developer' =>
-                'Mobile Developer',
+            'mobile developer' => 'Mobile Developer',
+            'mobile engineer' => 'Mobile Developer',
+            'android developer' => 'Mobile Developer',
+            'ios developer' => 'Mobile Developer',
+            'flutter developer' => 'Mobile Developer',
+            'react native developer' => 'Mobile Developer',
 
-            'devops' =>
-                'DevOps Engineer',
+            'devops' => 'DevOps Engineer',
 
-            'devops engineer' =>
-                'DevOps Engineer',
+            'devops engineer' => 'DevOps Engineer',
 
-            'site reliability engineer' =>
-                'DevOps Engineer',
+            'site reliability engineer' => 'DevOps Engineer',
 
-            'sre' =>
-                'DevOps Engineer',
+            'sre' => 'DevOps Engineer',
 
-            'sre engineer' =>
-                'DevOps Engineer',
+            'sre engineer' => 'DevOps Engineer',
 
-            'cloud engineer' =>
-                'DevOps Engineer',
+            'cloud engineer' => 'DevOps Engineer',
 
-            'infrastructure engineer' =>
-                'DevOps Engineer',
+            'infrastructure engineer' => 'DevOps Engineer',
 
-            'platform engineer' =>
-                'DevOps Engineer',
+            'platform engineer' => 'DevOps Engineer',
 
-            'system administrator' =>
-                'DevOps Engineer',
+            'system administrator' => 'DevOps Engineer',
 
-            'systems administrator' =>
-                'DevOps Engineer',
+            'systems administrator' => 'DevOps Engineer',
 
-            'it administrator' =>
-                'DevOps Engineer',
+            'it administrator' => 'DevOps Engineer',
 
-            'it system administrator' =>
-                'DevOps Engineer',
+            'it system administrator' => 'DevOps Engineer',
 
-            'it systems administrator' =>
-                'DevOps Engineer',
+            'it systems administrator' => 'DevOps Engineer',
 
-            'system and network administrator' =>
-                'DevOps Engineer',
+            'system and network administrator' => 'DevOps Engineer',
 
-            'network and systems administrator' =>
-                'DevOps Engineer',
+            'network and systems administrator' => 'DevOps Engineer',
         ];
 
         if (
@@ -612,8 +572,8 @@ PROMPT;
         );
 
         return preg_match(
-            '/(?<![\p{L}\p{N}])' .
-            $escapedPhrase .
+            '/(?<![\p{L}\p{N}])'.
+            $escapedPhrase.
             '(?![\p{L}\p{N}])/u',
             $normalizedText
         ) === 1;

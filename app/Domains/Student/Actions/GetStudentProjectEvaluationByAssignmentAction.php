@@ -28,13 +28,12 @@ class GetStudentProjectEvaluationByAssignmentAction
                 'items.criteria',
                 'items.evidences',
 
-                'appeals' => fn ($query) =>
-                    $query
-                        ->where(
-                            'student_id',
-                            $student->id
-                        )
-                        ->latest('id'),
+                'appeals' => fn ($query) => $query
+                    ->where(
+                        'student_id',
+                        $student->id
+                    )
+                    ->latest('id'),
             ])
             ->first();
     }

@@ -120,22 +120,22 @@ class MarketSkillExtractionServiceTest extends TestCase
         $technicalSkills = [
             [
                 'name' => 'C++ Regression Test',
-                'normalized_name' => 'cpp_regression_' . uniqid(),
+                'normalized_name' => 'cpp_regression_'.uniqid(),
                 'alias' => 'C++ Regression Skill',
             ],
             [
                 'name' => 'C# Regression Test',
-                'normalized_name' => 'csharp_regression_' . uniqid(),
+                'normalized_name' => 'csharp_regression_'.uniqid(),
                 'alias' => 'C# Regression Skill',
             ],
             [
                 'name' => '.NET Regression Test',
-                'normalized_name' => 'dotnet_regression_' . uniqid(),
+                'normalized_name' => 'dotnet_regression_'.uniqid(),
                 'alias' => '.NET Regression Skill',
             ],
             [
                 'name' => 'ASP.NET Regression Test',
-                'normalized_name' => 'aspnet_regression_' . uniqid(),
+                'normalized_name' => 'aspnet_regression_'.uniqid(),
                 'alias' => 'ASP.NET Regression Skill',
             ],
         ];
@@ -146,8 +146,7 @@ class MarketSkillExtractionServiceTest extends TestCase
             $skillId = DB::table('skills')->insertGetId([
                 'name' => $technicalSkill['name'],
                 'category' => 'Technical Skill',
-                'normalized_name' =>
-                    $technicalSkill['normalized_name'],
+                'normalized_name' => $technicalSkill['normalized_name'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -163,17 +162,16 @@ class MarketSkillExtractionServiceTest extends TestCase
             $skillIds[] = $skillId;
         }
 
-        $externalId = 'technical-symbols-' . uniqid();
+        $externalId = 'technical-symbols-'.uniqid();
 
         $posting = MarketJobPosting::create([
             'source_type' => 'test',
             'source_name' => 'phpunit',
             'external_id' => $externalId,
             'title' => 'Backend Software Engineer',
-            'description' =>
-                'Required technologies: C++ Regression Skill, '
-                . 'C# Regression Skill, .NET Regression Skill, '
-                . 'and ASP.NET Regression Skill.',
+            'description' => 'Required technologies: C++ Regression Skill, '
+                .'C# Regression Skill, .NET Regression Skill, '
+                .'and ASP.NET Regression Skill.',
             'company_name' => 'Test Company',
             'location' => 'Remote',
             'language' => 'en',

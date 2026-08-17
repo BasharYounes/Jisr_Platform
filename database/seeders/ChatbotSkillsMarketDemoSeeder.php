@@ -28,7 +28,7 @@ class ChatbotSkillsMarketDemoSeeder extends Seeder
 
         if ($student === null) {
             throw new RuntimeException(
-                "Chatbot demo student with id {$studentId} was not found. " .
+                "Chatbot demo student with id {$studentId} was not found. ".
                 'Set CHATBOT_DEMO_STUDENT_ID to an existing student user id.'
             );
         }
@@ -105,7 +105,7 @@ class ChatbotSkillsMarketDemoSeeder extends Seeder
             $session = $this->findDemoSession(
                 studentId: $studentId,
                 careerPathId: (int) $careerPath->CareerPathID,
-            ) ?? new AssessmentSession();
+            ) ?? new AssessmentSession;
 
             $session->fill([
                 'UserID' => $studentId,
@@ -181,7 +181,7 @@ class ChatbotSkillsMarketDemoSeeder extends Seeder
         $this->command?->line("Career path: {$careerPath->Name} (#{$careerPath->CareerPathID})");
         $this->command?->line("Active classified market postings for this path: {$activeMarketPostings}");
         $this->command?->warn(
-            'These records are local demo data. Remove them later with: ' .
+            'These records are local demo data. Remove them later with: '.
             'php artisan db:seed --class=ChatbotSkillsMarketDemoCleanupSeeder'
         );
     }

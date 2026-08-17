@@ -14,6 +14,7 @@ use RuntimeException;
 class ChatbotOpportunityMatchingDemoSeeder extends Seeder
 {
     private const COMPANY_WEBSITE = 'https://chatbot-demo.local';
+
     private const TITLE_PREFIX = '[Chatbot Demo] ';
 
     public function run(): void
@@ -42,7 +43,7 @@ class ChatbotOpportunityMatchingDemoSeeder extends Seeder
 
         if ($missing->isNotEmpty()) {
             throw new RuntimeException(
-                'Missing required demo skills: ' . $missing->implode(', ')
+                'Missing required demo skills: '.$missing->implode(', ')
             );
         }
 
@@ -57,7 +58,7 @@ class ChatbotOpportunityMatchingDemoSeeder extends Seeder
 
             $this->upsertOpportunity(
                 companyId: (int) $company->id,
-                title: self::TITLE_PREFIX . 'Flask API Internship',
+                title: self::TITLE_PREFIX.'Flask API Internship',
                 description: 'Build REST APIs with Python, Flask and SQL.',
                 type: 'internship',
                 location: 'Remote',
@@ -71,7 +72,7 @@ class ChatbotOpportunityMatchingDemoSeeder extends Seeder
 
             $this->upsertOpportunity(
                 companyId: (int) $company->id,
-                title: self::TITLE_PREFIX . 'Python Backend Trainee',
+                title: self::TITLE_PREFIX.'Python Backend Trainee',
                 description: 'Backend trainee opportunity using Python, REST APIs and SQL.',
                 type: 'internship',
                 location: 'Hybrid',
@@ -87,7 +88,7 @@ class ChatbotOpportunityMatchingDemoSeeder extends Seeder
             // and the demo student does not own it.
             $this->upsertOpportunity(
                 companyId: (int) $company->id,
-                title: self::TITLE_PREFIX . 'Laravel Backend Internship',
+                title: self::TITLE_PREFIX.'Laravel Backend Internship',
                 description: 'Laravel backend internship with REST API and Git requirements.',
                 type: 'internship',
                 location: 'On-site',
@@ -102,7 +103,7 @@ class ChatbotOpportunityMatchingDemoSeeder extends Seeder
         $this->command?->info('Opportunity matching demo data created successfully.');
         $this->command?->line("Student ID used for matching: {$studentId}");
         $this->command?->warn(
-            'Remove only these demo opportunities later with: ' .
+            'Remove only these demo opportunities later with: '.
             'php artisan db:seed --class=ChatbotOpportunityMatchingDemoCleanupSeeder'
         );
     }

@@ -4,8 +4,11 @@ namespace App\Repositories;
 
 use App\Interfaces\CompanyTaskRepositoryInterface;
 use App\Models\CompanyTask;
+use App\Models\CompanyTaskApplication;
+use App\Models\CompanyTaskAssignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CompanyTaskRepository implements CompanyTaskRepositoryInterface
 {
@@ -101,22 +104,22 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
             ->where('deadline', '>=', now())
             ->where(function (Builder $query): void {
                 $query->whereNull('max_applicants')
-                      ->orWhere(
-                          \App\Models\CompanyTaskApplication::selectRaw('count(*)')
-                              ->whereColumn('company_task_id', 'company_tasks.id'),
-                          '<',
-                          \Illuminate\Support\Facades\DB::raw('company_tasks.max_applicants')
-                      );
+                    ->orWhere(
+                        CompanyTaskApplication::selectRaw('count(*)')
+                            ->whereColumn('company_task_id', 'company_tasks.id'),
+                        '<',
+                        DB::raw('company_tasks.max_applicants')
+                    );
             })
             ->where(function (Builder $query): void {
                 $query->whereNull('max_accepted_students')
-                      ->orWhere(
-                          \App\Models\CompanyTaskAssignment::selectRaw('count(*)')
-                              ->whereColumn('company_task_id', 'company_tasks.id')
-                              ->where('status', '!=', 'cancelled'),
-                          '<',
-                          \Illuminate\Support\Facades\DB::raw('company_tasks.max_accepted_students')
-                      );
+                    ->orWhere(
+                        CompanyTaskAssignment::selectRaw('count(*)')
+                            ->whereColumn('company_task_id', 'company_tasks.id')
+                            ->where('status', '!=', 'cancelled'),
+                        '<',
+                        DB::raw('company_tasks.max_accepted_students')
+                    );
             });
     }
 

@@ -42,11 +42,10 @@ class ListStudentEvaluationAppealsAction
 
             $query->whereHas(
                 'evaluation',
-                fn ($evaluationQuery) =>
-                    $evaluationQuery->where(
-                        'project_assignment_id',
-                        $assignmentId
-                    )
+                fn ($evaluationQuery) => $evaluationQuery->where(
+                    'project_assignment_id',
+                    $assignmentId
+                )
             );
         }
 

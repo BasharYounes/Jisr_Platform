@@ -14,8 +14,8 @@ use Tests\TestCase;
 
 class ChatbotKnowledgeFallbackClassifierTest extends TestCase
 {
-    use RefreshDatabase;
     use MockeryPHPUnitIntegration;
+    use RefreshDatabase;
 
     public function test_it_accepts_only_an_active_known_key_returned_by_the_ai_client(): void
     {

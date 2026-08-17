@@ -210,7 +210,7 @@ class ChatbotConversationService
             ->first();
 
         if ($conversation === null) {
-            throw (new ModelNotFoundException())->setModel(
+            throw (new ModelNotFoundException)->setModel(
                 ChatbotConversation::class,
                 [$conversationId],
             );

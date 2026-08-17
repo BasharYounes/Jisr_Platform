@@ -1,9 +1,11 @@
 <?php
-use App\Http\Controllers\Admin\AdminDashboardController;
+
 use App\Http\Controllers\Admin\AdminComplaintController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminOpportunityController;
 use App\Http\Controllers\Admin\AdminSupervisorController;
 use App\Http\Controllers\Admin\AdminUserRoleController;
+use App\Http\Controllers\Admin\MarketAnalysisDashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\AssessmentAnswerController;
@@ -49,11 +51,10 @@ use App\Models\User;
 use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\Admin\AdminUserRoleController;
 // use App\Http\Controllers\Student\ProjectEvaluationAppealController;
 // use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
-use App\Http\Controllers\Admin\MarketAnalysisDashboardController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -409,16 +410,15 @@ Route::middleware('auth:sanctum')
         Route::get('/career-paths', 'careerPaths');
     });
 
-
-    Route::middleware([
-        'auth:sanctum',
-        'role:student',
-    ])
-        ->get(
-            'student/project-assignments/{projectAssignment}/evaluation',
-            [
-                ProjectEvaluationAppealController::class,
-                'showByAssignment',
-            ]
-        )
-        ->whereNumber('projectAssignment');
+Route::middleware([
+    'auth:sanctum',
+    'role:student',
+])
+    ->get(
+        'student/project-assignments/{projectAssignment}/evaluation',
+        [
+            ProjectEvaluationAppealController::class,
+            'showByAssignment',
+        ]
+    )
+    ->whereNumber('projectAssignment');

@@ -51,11 +51,10 @@ class ListSupervisorsBySpecializationAction
                 'roles',
             ])
             ->withCount([
-                'supervisedAssignments as active_projects_count' =>
-                    fn ($query) => $query->whereIn(
-                        'status',
-                        $activeStatuses
-                    ),
+                'supervisedAssignments as active_projects_count' => fn ($query) => $query->whereIn(
+                    'status',
+                    $activeStatuses
+                ),
             ])
             ->orderBy('name')
             ->get();

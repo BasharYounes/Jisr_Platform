@@ -22,15 +22,18 @@ use Spatie\Permission\PermissionRegistrar;
 class FrontendEvaluationAppealDemoSeeder extends Seeder
 {
     private const SUPERVISOR_EMAIL = 'frontend.evaluation.supervisor@test.com';
+
     private const STUDENT_EMAIL = 'leleen830@gmail.com';
+
     private const PASSWORD = '12345678';
 
     private const PROJECT_TITLE = '[FRONTEND DEMO] Evaluation & Appeal Project';
 
     private const SUPERVISOR_TOKEN_NAME = 'frontend-evaluation-demo-supervisor';
+
     private const STUDENT_TOKEN_NAME = 'frontend-evaluation-demo-student';
 
-public function run(): void
+    public function run(): void
     {
         Role::firstOrCreate([
             'name' => 'supervisor',
@@ -326,7 +329,7 @@ public function run(): void
             ->first();
 
         if ($user === null) {
-            $user = new User();
+            $user = new User;
         }
 
         /*

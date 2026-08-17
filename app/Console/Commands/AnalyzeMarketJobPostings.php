@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\MarketJobPosting;
+use App\Services\MarketAnalysis\GeminiMarketJobCareerPathClassifierService;
 use App\Services\MarketAnalysis\MarketJobCareerPathClassifierService;
 use App\Services\MarketAnalysis\MarketSkillExtractionService;
 use Illuminate\Console\Command;
 use Throwable;
-use App\Services\MarketAnalysis\GeminiMarketJobCareerPathClassifierService;
 
 final class AnalyzeMarketJobPostings extends Command
 {

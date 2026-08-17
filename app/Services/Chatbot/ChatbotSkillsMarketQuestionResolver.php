@@ -7,13 +7,21 @@ use App\Models\ChatbotConversation;
 class ChatbotSkillsMarketQuestionResolver
 {
     public const INTENT_SUMMARY = 'summary';
+
     public const INTENT_REGISTERED_SKILLS = 'registered_skills';
+
     public const INTENT_CURRENT_LEVEL = 'current_level';
+
     public const INTENT_CAREER_PATH = 'career_path';
+
     public const INTENT_MISSING_SKILLS = 'missing_skills';
+
     public const INTENT_MARKET_DEMAND = 'market_demand';
+
     public const INTENT_COMPARISON = 'comparison';
+
     public const INTENT_NEXT_STEP = 'next_step';
+
     public const INTENT_OUT_OF_SCOPE = 'out_of_scope';
 
     public function __construct(
@@ -171,24 +179,15 @@ class ChatbotSkillsMarketQuestionResolver
     public static function intentDescriptions(): array
     {
         return [
-            self::INTENT_REGISTERED_SKILLS =>
-                'Show the skills currently registered for the authenticated student.',
-            self::INTENT_CURRENT_LEVEL =>
-                'Show the current recorded proficiency level of the student skills.',
-            self::INTENT_CAREER_PATH =>
-                'Show the career path linked to the latest student assessment.',
-            self::INTENT_MISSING_SKILLS =>
-                'Show the student skill gaps or the main weaknesses compared with the selected path.',
-            self::INTENT_MARKET_DEMAND =>
-                'Show the most demanded skills in the labor market for the student career path.',
-            self::INTENT_COMPARISON =>
-                'Compare the student registered skills and gaps with labor-market demand.',
-            self::INTENT_NEXT_STEP =>
-                'Recommend which skill the student should learn first and explain the existing backend reason.',
-            self::INTENT_SUMMARY =>
-                'Provide a general summary of the student skills, path, gaps, and market demand.',
-            self::INTENT_OUT_OF_SCOPE =>
-                'The question is unrelated to student skills, career path, skill gaps, learning priority, or labor-market analysis.',
+            self::INTENT_REGISTERED_SKILLS => 'Show the skills currently registered for the authenticated student.',
+            self::INTENT_CURRENT_LEVEL => 'Show the current recorded proficiency level of the student skills.',
+            self::INTENT_CAREER_PATH => 'Show the career path linked to the latest student assessment.',
+            self::INTENT_MISSING_SKILLS => 'Show the student skill gaps or the main weaknesses compared with the selected path.',
+            self::INTENT_MARKET_DEMAND => 'Show the most demanded skills in the labor market for the student career path.',
+            self::INTENT_COMPARISON => 'Compare the student registered skills and gaps with labor-market demand.',
+            self::INTENT_NEXT_STEP => 'Recommend which skill the student should learn first and explain the existing backend reason.',
+            self::INTENT_SUMMARY => 'Provide a general summary of the student skills, path, gaps, and market demand.',
+            self::INTENT_OUT_OF_SCOPE => 'The question is unrelated to student skills, career path, skill gaps, learning priority, or labor-market analysis.',
         ];
     }
 

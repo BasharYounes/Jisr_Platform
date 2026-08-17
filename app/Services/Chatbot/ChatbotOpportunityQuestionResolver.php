@@ -7,6 +7,7 @@ use App\Models\ChatbotConversation;
 class ChatbotOpportunityQuestionResolver
 {
     public const INTENT_FIND_AND_EXPLAIN = 'find_and_explain_opportunities';
+
     public const INTENT_OUT_OF_SCOPE = 'out_of_scope';
 
     public function __construct(
@@ -70,10 +71,8 @@ class ChatbotOpportunityQuestionResolver
     public static function intentDescriptions(): array
     {
         return [
-            self::INTENT_FIND_AND_EXPLAIN =>
-                'Find currently published opportunities suitable for the student and explain why they match the student skills.',
-            self::INTENT_OUT_OF_SCOPE =>
-                'The question is not asking to find or explain suitable opportunities.',
+            self::INTENT_FIND_AND_EXPLAIN => 'Find currently published opportunities suitable for the student and explain why they match the student skills.',
+            self::INTENT_OUT_OF_SCOPE => 'The question is not asking to find or explain suitable opportunities.',
         ];
     }
 

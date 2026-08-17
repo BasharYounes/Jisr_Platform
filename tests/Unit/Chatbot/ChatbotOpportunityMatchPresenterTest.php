@@ -20,7 +20,7 @@ class ChatbotOpportunityMatchPresenterTest extends TestCase
             missing: ['Git'],
         );
 
-        $result = (new ChatbotOpportunityMatchPresenter())->present(
+        $result = (new ChatbotOpportunityMatchPresenter)->present(
             new Collection([$opportunity]),
             'ar',
         );
@@ -43,7 +43,7 @@ class ChatbotOpportunityMatchPresenterTest extends TestCase
             full: ['PHP', 'Laravel'],
         );
 
-        $result = (new ChatbotOpportunityMatchPresenter())->present(
+        $result = (new ChatbotOpportunityMatchPresenter)->present(
             collect([$opportunity]),
             'en',
         );
@@ -59,7 +59,7 @@ class ChatbotOpportunityMatchPresenterTest extends TestCase
         $first = $this->opportunity(id: 1, title: 'First Match', score: 95);
         $second = $this->opportunity(id: 2, title: 'Second Match', score: 75);
 
-        $result = (new ChatbotOpportunityMatchPresenter())->present(
+        $result = (new ChatbotOpportunityMatchPresenter)->present(
             collect([$first, $second]),
             'en',
         );
@@ -73,7 +73,7 @@ class ChatbotOpportunityMatchPresenterTest extends TestCase
 
     public function test_it_returns_a_clear_empty_state_without_actions(): void
     {
-        $result = (new ChatbotOpportunityMatchPresenter())->present(
+        $result = (new ChatbotOpportunityMatchPresenter)->present(
             collect(),
             'en',
         );
