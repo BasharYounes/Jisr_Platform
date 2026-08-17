@@ -48,7 +48,7 @@ final class SendCompanyTaskHighMatchApplicationNotification
                 body: "{$student->name} تقدم على مهمة {$task->title} "
                     ."بنسبة توافق {$matchScore}%.",
                 actor: $student,
-                related: null,
+                related: $application,
                 data: [
                     'priority' => 'low',
                     'application_id' => $application->id,

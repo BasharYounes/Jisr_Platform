@@ -33,6 +33,7 @@ use App\Interfaces\UserRepositoryInterface;
 use App\Listeners\CreatePortfolioProjectWhenAssignmentCompleted;
 use App\Listeners\NotifyStudentProjectStatusChanged;
 use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
+use App\Models\CompanyTaskApplication;
 use App\Models\CompanyTaskAssignment;
 use App\Models\OpportunityInterview;
 use App\Models\ProjectAssignment;
@@ -257,6 +258,7 @@ class AppServiceProvider extends ServiceProvider
             'user' => User::class,
             'project_assignment' => ProjectAssignment::class,
             'company_task_assignment' => CompanyTaskAssignment::class,
+            'company_task_application' => CompanyTaskApplication::class,
             'opportunity_interview' => OpportunityInterview::class,
         ]);
 
