@@ -32,7 +32,7 @@ class ImportMarketJobsFromApi extends Command
         $failed = 0;
 
         $this->info('Starting external market jobs import...');
-        $this->line('Source: ' . $adapter->sourceName());
+        $this->line('Source: '.$adapter->sourceName());
         $this->line("Pages: {$pages}");
         $this->line("Limit: {$limit}");
 
@@ -55,7 +55,7 @@ class ImportMarketJobsFromApi extends Command
             } catch (Throwable $exception) {
                 $this->error(
                     "Failed to fetch page {$page}: "
-                    . $exception->getMessage()
+                    .$exception->getMessage()
                 );
 
                 return self::FAILURE;

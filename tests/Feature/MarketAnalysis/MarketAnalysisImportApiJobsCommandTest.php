@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\MarketAnalysis;
 
+use App\Services\AI\AIClientInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
-use App\Services\AI\AIClientInterface;
 
 class MarketAnalysisImportApiJobsCommandTest extends TestCase
 {
@@ -30,8 +30,7 @@ class MarketAnalysisImportApiJobsCommandTest extends TestCase
             DB::table('career_paths')->updateOrInsert(
                 ['Name' => $pathName],
                 [
-                    'Description' =>
-                        'Temporary market import classifier test path.',
+                    'Description' => 'Temporary market import classifier test path.',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]
@@ -74,11 +73,9 @@ class MarketAnalysisImportApiJobsCommandTest extends TestCase
                     string $taskType = 'default'
                 ): array {
                     return [
-                        'detected_path' =>
-                            'Backend Developer',
+                        'detected_path' => 'Backend Developer',
 
-                        'reason' =>
-                            'The primary responsibility is backend API development.',
+                        'reason' => 'The primary responsibility is backend API development.',
 
                         'evidence' => [
                             'Develops PHP Laravel services',
@@ -159,8 +156,7 @@ class MarketAnalysisImportApiJobsCommandTest extends TestCase
             DB::table('career_paths')->updateOrInsert(
                 ['Name' => $pathName],
                 [
-                    'Description' =>
-                        'Temporary fallback classifier test path.',
+                    'Description' => 'Temporary fallback classifier test path.',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]
@@ -172,38 +168,32 @@ class MarketAnalysisImportApiJobsCommandTest extends TestCase
             ->value('CareerPathID');
 
         Http::fake([
-            'https://arbeitnow.test/api/job-board-api*' =>
-                Http::response([
-                    'data' => [
-                        [
-                            'slug' =>
-                                'fallback-backend-test-123',
+            'https://arbeitnow.test/api/job-board-api*' => Http::response([
+                'data' => [
+                    [
+                        'slug' => 'fallback-backend-test-123',
 
-                            'company_name' =>
-                                'Fallback Test Company',
+                        'company_name' => 'Fallback Test Company',
 
-                            'title' =>
-                                'Backend Engineer',
+                        'title' => 'Backend Engineer',
 
-                            'description' =>
-                                '<p>PHP Laravel REST API</p>',
+                        'description' => '<p>PHP Laravel REST API</p>',
 
-                            'url' =>
-                                'https://arbeitnow.test/jobs/fallback-backend-test-123',
+                        'url' => 'https://arbeitnow.test/jobs/fallback-backend-test-123',
 
-                            'location' => 'Berlin',
-                            'created_at' => 1710000000,
-                        ],
+                        'location' => 'Berlin',
+                        'created_at' => 1710000000,
                     ],
+                ],
 
-                    'links' => [
-                        'next' => null,
-                    ],
+                'links' => [
+                    'next' => null,
+                ],
 
-                    'meta' => [
-                        'current_page' => 1,
-                    ],
-                ], 200),
+                'meta' => [
+                    'current_page' => 1,
+                ],
+            ], 200),
         ]);
 
         $this->artisan('market:import-api-jobs', [
@@ -216,23 +206,19 @@ class MarketAnalysisImportApiJobsCommandTest extends TestCase
             [
                 'source_name' => 'arbeitnow',
 
-                'external_id' =>
-                    'fallback-backend-test-123',
+                'external_id' => 'fallback-backend-test-123',
 
                 'title' => 'Backend Engineer',
 
-                'career_path_id' =>
-                    $backendPathId,
+                'career_path_id' => $backendPathId,
 
-                'classification_status' =>
-                    'classified',
+                'classification_status' => 'classified',
 
                 /*
                 * يثبت أن Gemini فشل وأن المصنف القديم
                 * هو الذي حفظ النتيجة.
                 */
-                'classification_method' =>
-                    'weighted_rules_v1',
+                'classification_method' => 'weighted_rules_v1',
             ]
         );
     }

@@ -57,8 +57,7 @@ class MyProjectEvaluationListResource extends JsonResource
                 ],
             ],
 
-            'latest_revision_request' =>
-                $latestRevisionRequest
+            'latest_revision_request' => $latestRevisionRequest
                     ? [
                         'id' => $latestRevisionRequest->id,
                         'source' => $this->enumValue(
@@ -86,15 +85,13 @@ class MyProjectEvaluationListResource extends JsonResource
                     : null,
 
             'actions' => [
-                'can_edit' =>
-                    $needsRevision
+                'can_edit' => $needsRevision
                     && Gate::allows(
                         'update',
                         $this->resource
                     ),
 
-                'can_resubmit' =>
-                    $needsRevision
+                'can_resubmit' => $needsRevision
                     && Gate::allows(
                         'resubmit',
                         $this->resource

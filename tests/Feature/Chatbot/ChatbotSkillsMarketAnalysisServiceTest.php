@@ -5,10 +5,10 @@ namespace Tests\Feature\Chatbot;
 use App\Models\ChatbotConversation;
 use App\Models\ChatbotMessage;
 use App\Models\User;
+use App\Services\Chatbot\ChatbotResponseFormatter;
 use App\Services\Chatbot\ChatbotSkillsMarketAnalysisService;
 use App\Services\Chatbot\ChatbotSkillsMarketDataService;
 use App\Services\Chatbot\ChatbotSkillsMarketQuestionResolver;
-use App\Services\Chatbot\ChatbotResponseFormatter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -17,8 +17,8 @@ use Tests\TestCase;
 
 class ChatbotSkillsMarketAnalysisServiceTest extends TestCase
 {
-    use RefreshDatabase;
     use MockeryPHPUnitIntegration;
+    use RefreshDatabase;
 
     public function test_it_formats_registered_skills_from_backend_facts_and_completes_both_messages(): void
     {
@@ -135,8 +135,6 @@ class ChatbotSkillsMarketAnalysisServiceTest extends TestCase
             $userMessage->fresh()->error_code,
         );
     }
-
-
 
     public function test_out_of_scope_question_does_not_read_student_data_or_call_formatter(): void
     {

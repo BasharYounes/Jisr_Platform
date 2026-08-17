@@ -20,7 +20,7 @@ class MarketSkillExtractionService
      */
     public function extractForJobPosting(MarketJobPosting $jobPosting): Collection
     {
-        $rawText = trim($jobPosting->title . "\n" . $jobPosting->description);
+        $rawText = trim($jobPosting->title."\n".$jobPosting->description);
         $normalizedText = $this->textNormalizer->normalize($rawText);
 
         $aliases = $this->loadPreparedSkillAliases();

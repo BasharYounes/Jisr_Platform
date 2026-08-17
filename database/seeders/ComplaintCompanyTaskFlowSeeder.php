@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Jobs\SendFirebaseNotificationJob;
 use App\Models\Company;
 use App\Models\CompanyTask;
+use App\Models\CompanyTaskApplication;
 use App\Models\CompanyTaskAssignment;
 use App\Models\Conversation;
 use App\Models\Skill;
@@ -255,14 +256,12 @@ class ComplaintCompanyTaskFlowSeeder extends Seeder
                 ->get(['user_id', 'role']);
 
             $hasCompanyParticipant = $participants->contains(
-                fn ($participant): bool =>
-                    (int) $participant->user_id === (int) $companyUser->id
+                fn ($participant): bool => (int) $participant->user_id === (int) $companyUser->id
                     && $participant->role === 'company'
             );
 
             $hasStudentParticipant = $participants->contains(
-                fn ($participant): bool =>
-                    (int) $participant->user_id === (int) $student->id
+                fn ($participant): bool => (int) $participant->user_id === (int) $student->id
                     && $participant->role === 'student'
             );
 
@@ -302,7 +301,7 @@ class ComplaintCompanyTaskFlowSeeder extends Seeder
             ->first();
 
         if (! $user) {
-            $user = new User();
+            $user = new User;
         }
 
         $attributes = [
@@ -340,7 +339,7 @@ class ComplaintCompanyTaskFlowSeeder extends Seeder
             return;
         }
 
-        $assignmentMorphType = (new CompanyTaskAssignment())->getMorphClass();
+        $assignmentMorphType = (new CompanyTaskAssignment)->getMorphClass();
 
         foreach ($tasks as $task) {
             $assignmentIds = CompanyTaskAssignment::withTrashed()
@@ -416,7 +415,7 @@ class ComplaintCompanyTaskFlowSeeder extends Seeder
         /** @var CompanyTask $task */
         $task = $result['task'];
 
-        /** @var \App\Models\CompanyTaskApplication $application */
+        /** @var CompanyTaskApplication $application */
         $application = $result['application'];
 
         /** @var CompanyTaskAssignment $assignment */

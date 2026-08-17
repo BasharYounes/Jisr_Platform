@@ -13,8 +13,6 @@ class OpportunityRecommendationService
 {
     private const RECOMMENDED_MIN_SCORE = 50.0;
 
-    private const EXPLORE_MIN_SCORE = 35.0;
-
     public function __construct(
         private readonly OpportunityRepositoryInterface $opportunityRepository,
         private readonly OpportunityApplicationRepositoryInterface $applicationRepository,
@@ -37,15 +35,6 @@ class OpportunityRecommendationService
     public function getExploreForStudent(int $studentUserId): Collection
     {
         return $this->getOpportunitiesWithMatch($studentUserId)
-            ->filter(function (Opportunity $opportunity): bool {
-                $match = $opportunity->match_data;
-
-                return $match['score'] >= self::EXPLORE_MIN_SCORE
-                    && (
-                        $match['score'] < self::RECOMMENDED_MIN_SCORE
-                        || $match['is_eligible_for_recommendation'] === false
-                    );
-            })
             ->sortByDesc(fn (Opportunity $opportunity): float => $opportunity->match_data['score'])
             ->values();
     }

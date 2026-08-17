@@ -138,5 +138,4 @@ class AdminController extends Controller
                 ->resolve(request())
         );
     }
-
 }

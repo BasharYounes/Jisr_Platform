@@ -7,6 +7,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OpportunityInterview extends Model
 {
+    public const STATUS_SCHEDULED = 'scheduled';
+
+    public const STATUS_RESCHEDULED = 'rescheduled';
+
+    public const STATUS_CANCELLED = 'cancelled';
+
+    public const STATUS_COMPLETED = 'completed';
+
+    public const STATUSES = [
+        self::STATUS_SCHEDULED,
+        self::STATUS_RESCHEDULED,
+        self::STATUS_CANCELLED,
+        self::STATUS_COMPLETED,
+    ];
+
+    public const SCHEDULED_STATUSES = [
+        self::STATUS_SCHEDULED,
+        self::STATUS_RESCHEDULED,
+    ];
+
     protected $table = 'opportunity_interviews';
 
     protected $guarded = [];

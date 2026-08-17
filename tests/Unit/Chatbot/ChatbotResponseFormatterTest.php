@@ -58,7 +58,6 @@ class ChatbotResponseFormatterTest extends TestCase
         );
     }
 
-
     public function test_it_accepts_a_decimal_fact_followed_by_sentence_punctuation(): void
     {
         $ai = Mockery::mock(AIClientInterface::class);
@@ -229,7 +228,7 @@ class ChatbotResponseFormatterTest extends TestCase
     {
         return new ChatbotResponseFormatter(
             aiClient: $ai,
-            factGuard: new ChatbotResponseFactGuard(),
+            factGuard: new ChatbotResponseFactGuard,
         );
     }
 }

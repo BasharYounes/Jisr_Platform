@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Enums\MentorApplicationStatus;
 use App\Exceptions\AIProviderException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminMentorApplicationIndexRequest;

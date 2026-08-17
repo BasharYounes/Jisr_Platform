@@ -29,7 +29,7 @@ class ChatbotKnowledgeMatcherTest extends TestCase
             'keywords' => ['ar' => ['رفع وثيقة السيرة التجريبية'], 'en' => []],
         ]);
 
-        $matched = (new ChatbotKnowledgeMatcher())->match(
+        $matched = (new ChatbotKnowledgeMatcher)->match(
             'اين ارفع وثيقة السيرة التجريبية؟',
             'ar',
         );
@@ -44,7 +44,7 @@ class ChatbotKnowledgeMatcherTest extends TestCase
             'question_en' => 'Where is the unique experimental dashboard?',
         ]);
 
-        $matched = (new ChatbotKnowledgeMatcher())->match(
+        $matched = (new ChatbotKnowledgeMatcher)->match(
             'Where is the unique experimental dashboard?',
             'en',
         );
@@ -60,7 +60,7 @@ class ChatbotKnowledgeMatcherTest extends TestCase
             'is_active' => false,
         ]);
 
-        self::assertNull((new ChatbotKnowledgeMatcher())->match(
+        self::assertNull((new ChatbotKnowledgeMatcher)->match(
             'zxqv inactive intent 48291',
             'en',
         ));
@@ -73,7 +73,7 @@ class ChatbotKnowledgeMatcherTest extends TestCase
             'keywords' => ['ar' => [], 'en' => ['quasar']],
         ]);
 
-        self::assertNull((new ChatbotKnowledgeMatcher())->match(
+        self::assertNull((new ChatbotKnowledgeMatcher)->match(
             'quasar unrelated external request today',
             'en',
         ));
@@ -86,7 +86,7 @@ class ChatbotKnowledgeMatcherTest extends TestCase
         $this->entry(['question_en' => $phrase]);
         $this->entry(['question_en' => $phrase]);
 
-        self::assertNull((new ChatbotKnowledgeMatcher())->match($phrase, 'en'));
+        self::assertNull((new ChatbotKnowledgeMatcher)->match($phrase, 'en'));
     }
 
     private function entry(array $overrides = []): ChatbotKnowledgeEntry

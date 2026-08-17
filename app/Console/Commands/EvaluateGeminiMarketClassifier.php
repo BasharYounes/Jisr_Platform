@@ -173,23 +173,17 @@ final class EvaluateGeminiMarketClassifier extends Command
             $outputRows[] = array_merge(
                 $row,
                 [
-                    'gemini_predicted_label' =>
-                        $geminiPredictedLabel,
+                    'gemini_predicted_label' => $geminiPredictedLabel,
 
-                    'gemini_method' =>
-                        $geminiMethod,
+                    'gemini_method' => $geminiMethod,
 
-                    'gemini_status' =>
-                        $geminiStatus,
+                    'gemini_status' => $geminiStatus,
 
-                    'gemini_career_path' =>
-                        $geminiCareerPath,
+                    'gemini_career_path' => $geminiCareerPath,
 
-                    'gemini_is_correct' =>
-                        $geminiIsCorrect,
+                    'gemini_is_correct' => $geminiIsCorrect,
 
-                    'gemini_error' =>
-                        $geminiError,
+                    'gemini_error' => $geminiError,
                 ]
             );
 
@@ -214,8 +208,8 @@ final class EvaluateGeminiMarketClassifier extends Command
         }
 
         $outputPath = dirname($inputPath)
-            . DIRECTORY_SEPARATOR
-            . 'classifier_evaluation_gemini_results.csv';
+            .DIRECTORY_SEPARATOR
+            .'classifier_evaluation_gemini_results.csv';
 
         $this->writeCsv(
             $outputPath,
@@ -229,8 +223,7 @@ final class EvaluateGeminiMarketClassifier extends Command
         $directGeminiRows = array_values(
             array_filter(
                 $evaluatedRows,
-                fn (array $row): bool =>
-                    $row['method'] ===
+                fn (array $row): bool => $row['method'] ===
                     GeminiMarketJobCareerPathClassifierService::METHOD
             )
         );
@@ -325,8 +318,7 @@ final class EvaluateGeminiMarketClassifier extends Command
         $perLabelRows = [];
 
         foreach (
-            $overallMetrics['per_label']
-            as $label => $metrics
+            $overallMetrics['per_label'] as $label => $metrics
         ) {
             $perLabelRows[] = [
                 $label,
@@ -384,7 +376,7 @@ final class EvaluateGeminiMarketClassifier extends Command
 
         throw new RuntimeException(
             'Evaluation CSV was not found: '
-            . $configuredPath
+            .$configuredPath
         );
     }
 
@@ -463,7 +455,7 @@ final class EvaluateGeminiMarketClassifier extends Command
     }
 
     /**
-     * @param array<int, array<string, string>> $rows
+     * @param  array<int, array<string, string>>  $rows
      */
     private function writeCsv(
         string $path,
@@ -504,10 +496,9 @@ final class EvaluateGeminiMarketClassifier extends Command
                 fputcsv(
                     $handle,
                     array_map(
-                        fn (string $header): string =>
-                            (string) (
-                                $row[$header] ?? ''
-                            ),
+                        fn (string $header): string => (string) (
+                            $row[$header] ?? ''
+                        ),
                         $headers
                     )
                 );
@@ -541,7 +532,7 @@ final class EvaluateGeminiMarketClassifier extends Command
     }
 
     /**
-     * @param array<int, array{expected: string, predicted: string, method: string}> $rows
+     * @param  array<int, array{expected: string, predicted: string, method: string}>  $rows
      * @return array<string, mixed>
      */
     private function calculateMetrics(
@@ -681,16 +672,13 @@ final class EvaluateGeminiMarketClassifier extends Command
                 ? $correct / $total
                 : 0.0,
 
-            'macro_precision' =>
-                $macroPrecision,
+            'macro_precision' => $macroPrecision,
 
-            'macro_recall' =>
-                $macroRecall,
+            'macro_recall' => $macroRecall,
 
             'macro_f1' => $macroF1,
 
-            'weighted_f1' =>
-                $weightedF1,
+            'weighted_f1' => $weightedF1,
 
             'per_label' => $perLabel,
         ];
@@ -702,6 +690,6 @@ final class EvaluateGeminiMarketClassifier extends Command
         return number_format(
             $value * 100,
             2
-        ) . '%';
+        ).'%';
     }
 }

@@ -519,7 +519,7 @@ class ComplaintSubmissionTest extends TestCase
         ]);
 
         $this->createConversation(
-            (new CompanyTaskAssignment())->getMorphClass(),
+            (new CompanyTaskAssignment)->getMorphClass(),
             $assignmentId,
             $companyUserId,
             $studentId,
@@ -567,7 +567,7 @@ class ComplaintSubmissionTest extends TestCase
         ]);
 
         $this->createConversation(
-            (new OpportunityInterview())->getMorphClass(),
+            (new OpportunityInterview)->getMorphClass(),
             $interviewId,
             $companyUserId,
             $studentId,

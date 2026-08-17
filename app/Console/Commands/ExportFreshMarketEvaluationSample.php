@@ -121,11 +121,11 @@ final class ExportFreshMarketEvaluationSample extends Command
 
             $this->line(
                 'Excluded previous IDs: '
-                . count($excludedIds)
+                .count($excludedIds)
             );
 
             $this->line(
-                'Output: ' . $outputPath
+                'Output: '.$outputPath
             );
 
             return self::SUCCESS;
@@ -166,7 +166,7 @@ final class ExportFreshMarketEvaluationSample extends Command
 
         throw new RuntimeException(
             'File was not found: '
-            . $configuredPath
+            .$configuredPath
         );
     }
 

@@ -11,32 +11,23 @@ final class MarketTextNormalizer
      * before general punctuation is removed.
      */
     private const TECHNICAL_TOKEN_PATTERNS = [
-        '/(?<![\p{L}\p{N}])asp\s*\.?\s*net(?![\p{L}\p{N}])/iu'
-            => ' aspnet ',
+        '/(?<![\p{L}\p{N}])asp\s*\.?\s*net(?![\p{L}\p{N}])/iu' => ' aspnet ',
 
-        '/(?<![\p{L}\p{N}])\.?\s*net(?![\p{L}\p{N}])/iu'
-            => ' dotnet ',
+        '/(?<![\p{L}\p{N}])\.?\s*net(?![\p{L}\p{N}])/iu' => ' dotnet ',
 
-        '/(?<![\p{L}\p{N}])c\s*\+\s*\+(?![\p{L}\p{N}])/iu'
-            => ' cpp ',
+        '/(?<![\p{L}\p{N}])c\s*\+\s*\+(?![\p{L}\p{N}])/iu' => ' cpp ',
 
-        '/(?<![\p{L}\p{N}])c\s*#(?![\p{L}\p{N}])/iu'
-            => ' csharp ',
+        '/(?<![\p{L}\p{N}])c\s*#(?![\p{L}\p{N}])/iu' => ' csharp ',
 
-        '/(?<![\p{L}\p{N}])node\s*\.?\s*js(?![\p{L}\p{N}])/iu'
-            => ' nodejs ',
+        '/(?<![\p{L}\p{N}])node\s*\.?\s*js(?![\p{L}\p{N}])/iu' => ' nodejs ',
 
-        '/(?<![\p{L}\p{N}])next\s*\.?\s*js(?![\p{L}\p{N}])/iu'
-            => ' nextjs ',
+        '/(?<![\p{L}\p{N}])next\s*\.?\s*js(?![\p{L}\p{N}])/iu' => ' nextjs ',
 
-        '/(?<![\p{L}\p{N}])vue\s*\.?\s*js(?![\p{L}\p{N}])/iu'
-            => ' vuejs ',
+        '/(?<![\p{L}\p{N}])vue\s*\.?\s*js(?![\p{L}\p{N}])/iu' => ' vuejs ',
 
-        '/(?<![\p{L}\p{N}])react\s*\.?\s*js(?![\p{L}\p{N}])/iu'
-            => ' reactjs ',
+        '/(?<![\p{L}\p{N}])react\s*\.?\s*js(?![\p{L}\p{N}])/iu' => ' reactjs ',
 
-        '/(?<![\p{L}\p{N}])express\s*\.?\s*js(?![\p{L}\p{N}])/iu'
-            => ' expressjs ',
+        '/(?<![\p{L}\p{N}])express\s*\.?\s*js(?![\p{L}\p{N}])/iu' => ' expressjs ',
     ];
 
     public function normalize(string $text): string
@@ -50,8 +41,7 @@ final class MarketTextNormalizer
         $text = Str::lower($text);
 
         foreach (
-            self::TECHNICAL_TOKEN_PATTERNS
-            as $pattern => $replacement
+            self::TECHNICAL_TOKEN_PATTERNS as $pattern => $replacement
         ) {
             $text = preg_replace(
                 $pattern,

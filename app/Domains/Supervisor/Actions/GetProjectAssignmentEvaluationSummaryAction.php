@@ -22,7 +22,7 @@ final class GetProjectAssignmentEvaluationSummaryAction
             ->values();
 
         $evaluations = $activeStudentIds->isEmpty()
-            ? new Collection()
+            ? new Collection
             : $projectAssignment
                 ->evaluations()
                 ->whereIn('student_id', $activeStudentIds)
@@ -35,8 +35,7 @@ final class GetProjectAssignmentEvaluationSummaryAction
 
         $gradedEvaluations = $evaluations
             ->filter(
-                static fn (ProjectEvaluation $evaluation): bool =>
-                    $evaluation->final_grade !== null
+                static fn (ProjectEvaluation $evaluation): bool => $evaluation->final_grade !== null
             )
             ->values();
 
@@ -114,8 +113,7 @@ final class GetProjectAssignmentEvaluationSummaryAction
     ): int {
         return $evaluations
             ->filter(
-                fn (ProjectEvaluation $evaluation): bool =>
-                    $this->enumValue($evaluation->status) === $status->value
+                fn (ProjectEvaluation $evaluation): bool => $this->enumValue($evaluation->status) === $status->value
             )
             ->count();
     }

@@ -37,17 +37,13 @@ class ProjectEvaluationAppealController extends Controller
                 )->resolve($request),
 
                 'pagination' => [
-                    'current_page' =>
-                        $appeals->currentPage(),
+                    'current_page' => $appeals->currentPage(),
 
-                    'last_page' =>
-                        $appeals->lastPage(),
+                    'last_page' => $appeals->lastPage(),
 
-                    'per_page' =>
-                        $appeals->perPage(),
+                    'per_page' => $appeals->perPage(),
 
-                    'total' =>
-                        $appeals->total(),
+                    'total' => $appeals->total(),
                 ],
             ]
         );
@@ -168,8 +164,7 @@ class ProjectEvaluationAppealController extends Controller
             return ApiResponse::success(
                 'No project evaluation found for this assignment yet',
                 [
-                    'project_assignment_id' =>
-                        $projectAssignment->id,
+                    'project_assignment_id' => $projectAssignment->id,
 
                     'has_evaluation' => false,
 
@@ -187,48 +182,40 @@ class ProjectEvaluationAppealController extends Controller
         return ApiResponse::success(
             'Project evaluation retrieved successfully',
             [
-                'project_assignment_id' =>
-                    $projectAssignment->id,
+                'project_assignment_id' => $projectAssignment->id,
 
                 'has_evaluation' => true,
 
-                'evaluation' =>
-                    (new ProjectEvaluationResource(
-                        $evaluation
-                    ))->resolve($request),
+                'evaluation' => (new ProjectEvaluationResource(
+                    $evaluation
+                ))->resolve($request),
 
                 'appeal_window' => [
-                    'started_at' =>
-                        $evaluation
-                            ->appeal_started_at
-                            ?->toISOString(),
+                'started_at' => $evaluation
+                    ->appeal_started_at
+                    ?->toISOString(),
 
-                    'deadline_at' =>
-                        $evaluation
-                            ->appeal_deadline_at
-                            ?->toISOString(),
+                'deadline_at' => $evaluation
+                    ->appeal_deadline_at
+                    ?->toISOString(),
 
-                    'is_open' =>
-                        $evaluation
-                            ->isAppealWindowOpen(),
+                'is_open' => $evaluation
+                    ->isAppealWindowOpen(),
 
-                    'duration_hours' =>
-                        (int) config(
-                            'evaluations.appeal_window_hours',
-                            48
-                        ),
+                'duration_hours' => (int) config(
+                    'evaluations.appeal_window_hours',
+                    48
+                ),
                 ],
 
-                'can_appeal' =>
-                    Gate::allows(
-                        'createAppeal',
-                        $evaluation
-                    ),
+                'can_appeal' => Gate::allows(
+                    'createAppeal',
+                    $evaluation
+                ),
 
-                'appeals' =>
-                    ProjectEvaluationAppealResource::collection(
-                        $evaluation->appeals
-                    )->resolve($request),
+                'appeals' => ProjectEvaluationAppealResource::collection(
+                    $evaluation->appeals
+                )->resolve($request),
             ]
         );
     }

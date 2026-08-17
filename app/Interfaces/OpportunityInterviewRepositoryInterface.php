@@ -3,6 +3,7 @@
 namespace App\Interfaces;
 
 use App\Models\OpportunityInterview;
+use Illuminate\Support\Collection;
 
 interface OpportunityInterviewRepositoryInterface
 {
@@ -20,4 +21,9 @@ interface OpportunityInterviewRepositoryInterface
         OpportunityInterview $interview,
         array $data
     ): OpportunityInterview;
+
+    public function getStudentInterviews(
+        int $studentUserId,
+        array $filters = []
+    ): Collection;
 }

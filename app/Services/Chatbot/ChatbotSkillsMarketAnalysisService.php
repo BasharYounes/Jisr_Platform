@@ -75,20 +75,13 @@ class ChatbotSkillsMarketAnalysisService
     private function buildAnswer(string $intent, array $data, string $language): string
     {
         return match ($intent) {
-            ChatbotSkillsMarketQuestionResolver::INTENT_REGISTERED_SKILLS =>
-                $this->registeredSkillsAnswer($data, $language),
-            ChatbotSkillsMarketQuestionResolver::INTENT_CURRENT_LEVEL =>
-                $this->currentLevelAnswer($data, $language),
-            ChatbotSkillsMarketQuestionResolver::INTENT_CAREER_PATH =>
-                $this->careerPathAnswer($data, $language),
-            ChatbotSkillsMarketQuestionResolver::INTENT_MISSING_SKILLS =>
-                $this->missingSkillsAnswer($data, $language),
-            ChatbotSkillsMarketQuestionResolver::INTENT_MARKET_DEMAND =>
-                $this->marketDemandAnswer($data, $language),
-            ChatbotSkillsMarketQuestionResolver::INTENT_COMPARISON =>
-                $this->comparisonAnswer($data, $language),
-            ChatbotSkillsMarketQuestionResolver::INTENT_NEXT_STEP =>
-                $this->nextStepAnswer($data, $language),
+            ChatbotSkillsMarketQuestionResolver::INTENT_REGISTERED_SKILLS => $this->registeredSkillsAnswer($data, $language),
+            ChatbotSkillsMarketQuestionResolver::INTENT_CURRENT_LEVEL => $this->currentLevelAnswer($data, $language),
+            ChatbotSkillsMarketQuestionResolver::INTENT_CAREER_PATH => $this->careerPathAnswer($data, $language),
+            ChatbotSkillsMarketQuestionResolver::INTENT_MISSING_SKILLS => $this->missingSkillsAnswer($data, $language),
+            ChatbotSkillsMarketQuestionResolver::INTENT_MARKET_DEMAND => $this->marketDemandAnswer($data, $language),
+            ChatbotSkillsMarketQuestionResolver::INTENT_COMPARISON => $this->comparisonAnswer($data, $language),
+            ChatbotSkillsMarketQuestionResolver::INTENT_NEXT_STEP => $this->nextStepAnswer($data, $language),
             default => $this->summaryAnswer($data, $language),
         };
     }
@@ -139,7 +132,7 @@ class ChatbotSkillsMarketAnalysisService
     {
         $pathName = $data['assessment']['career_path_name'] ?? null;
 
-        if (!$pathName) {
+        if (! $pathName) {
             return $language === 'en'
                 ? 'No career path is currently linked to your latest assessment session.'
                 : 'لا يوجد مسار مهني مرتبط بأحدث جلسة تقييم لديك حاليًا.';
@@ -152,7 +145,7 @@ class ChatbotSkillsMarketAnalysisService
 
     private function missingSkillsAnswer(array $data, string $language): string
     {
-        if (!($data['assessment']['available'] ?? false)) {
+        if (! ($data['assessment']['available'] ?? false)) {
             return $language === 'en'
                 ? 'Your missing skills cannot be calculated until you have an assessment session linked to a career path.'
                 : 'لا يمكن حساب المهارات الناقصة قبل وجود جلسة تقييم مرتبطة بمسار مهني.';
@@ -191,7 +184,7 @@ class ChatbotSkillsMarketAnalysisService
     {
         $pathName = $data['assessment']['career_path_name'] ?? null;
 
-        if (!$pathName) {
+        if (! $pathName) {
             return $language === 'en'
                 ? 'A career path is required before market-demand skills can be shown for you.'
                 : 'يجب أن يكون لديك مسار مهني محدد حتى نعرض المهارات المطلوبة له في سوق العمل.';
@@ -224,7 +217,7 @@ class ChatbotSkillsMarketAnalysisService
         $owned = collect($data['registered_skills'] ?? []);
         $gaps = collect($data['skill_gaps'] ?? [])->take(5);
 
-        if (!$pathName) {
+        if (! $pathName) {
             return $language === 'en'
                 ? 'Your skills cannot be compared with the market until a career path is linked to your assessment.'
                 : 'لا يمكن مقارنة مهاراتك بسوق العمل قبل ربط تقييمك بمسار مهني.';
@@ -309,7 +302,6 @@ class ChatbotSkillsMarketAnalysisService
         return "ملخص المهارات والسوق: المسار المهني: {$pathText}؛ عدد المهارات المسجلة: {$skillsCount}؛ أعلى الفجوات: {$gapText}؛ أكثر مهارات السوق طلبًا: {$marketText}.";
     }
 
-
     /**
      * @return array{
      *     facts: array<string, mixed>,
@@ -324,18 +316,12 @@ class ChatbotSkillsMarketAnalysisService
     {
         return match ($intent) {
             ChatbotSkillsMarketQuestionResolver::INTENT_REGISTERED_SKILLS,
-            ChatbotSkillsMarketQuestionResolver::INTENT_CURRENT_LEVEL =>
-                $this->skillsFormattingContext($intent, $data),
-            ChatbotSkillsMarketQuestionResolver::INTENT_CAREER_PATH =>
-                $this->careerPathFormattingContext($intent, $data),
-            ChatbotSkillsMarketQuestionResolver::INTENT_MISSING_SKILLS =>
-                $this->gapsFormattingContext($intent, $data),
-            ChatbotSkillsMarketQuestionResolver::INTENT_MARKET_DEMAND =>
-                $this->marketFormattingContext($intent, $data),
-            ChatbotSkillsMarketQuestionResolver::INTENT_COMPARISON =>
-                $this->comparisonFormattingContext($intent, $data),
-            ChatbotSkillsMarketQuestionResolver::INTENT_NEXT_STEP =>
-                $this->learningFormattingContext($intent, $data),
+            ChatbotSkillsMarketQuestionResolver::INTENT_CURRENT_LEVEL => $this->skillsFormattingContext($intent, $data),
+            ChatbotSkillsMarketQuestionResolver::INTENT_CAREER_PATH => $this->careerPathFormattingContext($intent, $data),
+            ChatbotSkillsMarketQuestionResolver::INTENT_MISSING_SKILLS => $this->gapsFormattingContext($intent, $data),
+            ChatbotSkillsMarketQuestionResolver::INTENT_MARKET_DEMAND => $this->marketFormattingContext($intent, $data),
+            ChatbotSkillsMarketQuestionResolver::INTENT_COMPARISON => $this->comparisonFormattingContext($intent, $data),
+            ChatbotSkillsMarketQuestionResolver::INTENT_NEXT_STEP => $this->learningFormattingContext($intent, $data),
             default => $this->summaryFormattingContext($data),
         };
     }

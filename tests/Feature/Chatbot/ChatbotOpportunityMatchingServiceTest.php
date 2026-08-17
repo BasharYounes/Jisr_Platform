@@ -8,9 +8,9 @@ use App\Models\Opportunity;
 use App\Models\Skill;
 use App\Models\User;
 use App\Models\UserSkill;
+use App\Services\Chatbot\ChatbotOpportunityMatchingService;
 use App\Services\Chatbot\ChatbotOpportunityMatchPresenter;
 use App\Services\Chatbot\ChatbotOpportunityQuestionResolver;
-use App\Services\Chatbot\ChatbotOpportunityMatchingService;
 use App\Services\Chatbot\ChatbotResponseFormatter;
 use App\Services\Opportunities\OpportunityRecommendationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,8 +22,8 @@ use Tests\TestCase;
 
 class ChatbotOpportunityMatchingServiceTest extends TestCase
 {
-    use RefreshDatabase;
     use MockeryPHPUnitIntegration;
+    use RefreshDatabase;
 
     public function test_it_returns_a_safe_message_without_calling_matching_when_student_has_no_skills(): void
     {
@@ -125,8 +125,6 @@ class ChatbotOpportunityMatchingServiceTest extends TestCase
         self::assertSame(ChatbotMessage::STATUS_FAILED, $userMessage->fresh()->status);
         self::assertSame('OPPORTUNITY_MATCHING_FAILED', $userMessage->fresh()->error_code);
     }
-
-
 
     public function test_out_of_scope_question_does_not_run_matching(): void
     {

@@ -37,27 +37,21 @@ class StudentEvaluationAppealListResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'project_evaluation_id' =>
-                $this->project_evaluation_id,
+            'project_evaluation_id' => $this->project_evaluation_id,
 
             'reason' => $this->reason,
 
             'status' => $appealStatus,
 
-            'is_pending' =>
-                $appealStatus === 'pending',
+            'is_pending' => $appealStatus === 'pending',
 
-            'review_notes' =>
-                $this->review_notes,
+            'review_notes' => $this->review_notes,
 
-            'reviewed_at' =>
-                $this->reviewed_at?->toISOString(),
+            'reviewed_at' => $this->reviewed_at?->toISOString(),
 
-            'revision_request_id' =>
-                $this->revision_request_id,
+            'revision_request_id' => $this->revision_request_id,
 
-            'created_at' =>
-                $this->created_at?->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
 
             'reviewed_by' => $this->whenLoaded(
                 'reviewedBy',
@@ -84,29 +78,23 @@ class StudentEvaluationAppealListResource extends JsonResource
 
                         'status' => $evaluationStatus,
 
-                        'total_score' =>
-                            $this->evaluation->total_score,
+                        'total_score' => $this->evaluation->total_score,
 
-                        'final_grade' =>
-                            $this->evaluation->final_grade,
+                        'final_grade' => $this->evaluation->final_grade,
 
-                        'general_comment' =>
-                            $this->evaluation->general_comment,
+                        'general_comment' => $this->evaluation->general_comment,
 
-                        'evaluated_at' =>
-                            $this->evaluation
-                                ->evaluated_at
-                                ?->toISOString(),
+                        'evaluated_at' => $this->evaluation
+                            ->evaluated_at
+                            ?->toISOString(),
 
-                        'appeal_started_at' =>
-                            $this->evaluation
-                                ->appeal_started_at
-                                ?->toISOString(),
+                        'appeal_started_at' => $this->evaluation
+                            ->appeal_started_at
+                            ?->toISOString(),
 
-                        'appeal_deadline_at' =>
-                            $this->evaluation
-                                ->appeal_deadline_at
-                                ?->toISOString(),
+                        'appeal_deadline_at' => $this->evaluation
+                            ->appeal_deadline_at
+                            ?->toISOString(),
 
                         'assignment' => [
                             'id' => $this->evaluation
@@ -114,10 +102,9 @@ class StudentEvaluationAppealListResource extends JsonResource
 
                             'status' => $assignmentStatus,
 
-                            'progress_percentage' =>
-                                $this->evaluation
-                                    ->assignment
-                                    ?->progress_percentage,
+                            'progress_percentage' => $this->evaluation
+                                ->assignment
+                                ?->progress_percentage,
 
                             'project_template' => [
                                 'id' => $this->evaluation

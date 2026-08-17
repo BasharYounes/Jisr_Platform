@@ -30,10 +30,9 @@ class SupervisorDiscoveryController extends Controller
         return ApiResponse::success(
             'Project evaluations retrieved successfully',
             [
-                'evaluations' =>
-                    LeadProjectEvaluationListResource::collection(
-                        $paginator->getCollection()
-                    )->resolve($request),
+                'evaluations' => LeadProjectEvaluationListResource::collection(
+                    $paginator->getCollection()
+                )->resolve($request),
 
                 'pagination' => $this->pagination($paginator),
             ]
@@ -52,10 +51,9 @@ class SupervisorDiscoveryController extends Controller
         return ApiResponse::success(
             'My project evaluations retrieved successfully',
             [
-                'evaluations' =>
-                    MyProjectEvaluationListResource::collection(
-                        $paginator->getCollection()
-                    )->resolve($request),
+                'evaluations' => MyProjectEvaluationListResource::collection(
+                    $paginator->getCollection()
+                )->resolve($request),
 
                 'pagination' => $this->pagination($paginator),
             ]
@@ -74,10 +72,9 @@ class SupervisorDiscoveryController extends Controller
         return ApiResponse::success(
             'Lead project assignments retrieved successfully',
             [
-                'assignments' =>
-                    LeadProjectAssignmentListResource::collection(
-                        $paginator->getCollection()
-                    )->resolve($request),
+                'assignments' => LeadProjectAssignmentListResource::collection(
+                    $paginator->getCollection()
+                )->resolve($request),
 
                 'pagination' => $this->pagination($paginator),
             ]

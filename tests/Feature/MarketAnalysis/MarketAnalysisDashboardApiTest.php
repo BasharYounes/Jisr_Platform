@@ -118,11 +118,9 @@ class MarketAnalysisDashboardApiTest extends TestCase
         DB::table('market_job_postings')
             ->where('id', $unclassifiedPosting->id)
             ->update([
-                'classification_status' =>
-                    'insufficient_evidence',
+                'classification_status' => 'insufficient_evidence',
 
-                'classification_method' =>
-                    'weighted_rules_v1',
+                'classification_method' => 'weighted_rules_v1',
 
                 'classification_score' => 0.0,
                 'classified_at' => now(),
@@ -137,8 +135,7 @@ class MarketAnalysisDashboardApiTest extends TestCase
             ->assertOk()
             ->assertJson([
                 'success' => true,
-                'message' =>
-                    'Market analysis dashboard retrieved successfully',
+                'message' => 'Market analysis dashboard retrieved successfully',
 
                 'data' => [
                     'job_postings' => [

@@ -25,8 +25,7 @@ class MarketJobCareerPathClassifierServiceTest extends TestCase
             DB::table('career_paths')->updateOrInsert(
                 ['Name' => $pathName],
                 [
-                    'Description' =>
-                        'Temporary classifier test path.',
+                    'Description' => 'Temporary classifier test path.',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]
@@ -151,15 +150,14 @@ class MarketJobCareerPathClassifierServiceTest extends TestCase
     private function createPosting(
         string $title
     ): MarketJobPosting {
-        $externalId = 'classifier-test-' . uniqid();
+        $externalId = 'classifier-test-'.uniqid();
 
         return MarketJobPosting::create([
             'source_type' => 'test',
             'source_name' => 'phpunit',
             'external_id' => $externalId,
             'title' => $title,
-            'description' =>
-                'Temporary job posting for classifier tests.',
+            'description' => 'Temporary job posting for classifier tests.',
             'company_name' => 'Test Company',
             'location' => 'Remote',
             'language' => 'en',
@@ -185,8 +183,8 @@ class MarketJobCareerPathClassifierServiceTest extends TestCase
             strtolower(
                 str_replace(' ', '_', $skillName)
             )
-            . '_'
-            . uniqid();
+            .'_'
+            .uniqid();
 
         $skillId = DB::table('skills')->insertGetId([
             'name' => $skillName,
@@ -333,12 +331,12 @@ class MarketJobCareerPathClassifierServiceTest extends TestCase
             $this->assertSame(
                 'out_of_scope',
                 $result['status'],
-                'Unexpected classification for title: ' . $title
+                'Unexpected classification for title: '.$title
             );
 
             $this->assertNull(
                 $result['career_path_id'],
-                'Unexpected path for title: ' . $title
+                'Unexpected path for title: '.$title
             );
         }
     }
@@ -392,13 +390,13 @@ class MarketJobCareerPathClassifierServiceTest extends TestCase
             $this->assertSame(
                 'classified',
                 $result['status'],
-                'Unexpected status for: ' . $title
+                'Unexpected status for: '.$title
             );
 
             $this->assertSame(
                 'DevOps Engineer',
                 $result['career_path_name'],
-                'Unexpected path for: ' . $title
+                'Unexpected path for: '.$title
             );
         }
     }

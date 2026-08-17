@@ -95,8 +95,7 @@ final class MarketDataQualityService
             ->get()
             ->map(fn (object $source): array => [
                 'source_name' => $source->source_name ?? 'unknown',
-                'job_postings_count' =>
-                    (int) $source->job_postings_count,
+                'job_postings_count' => (int) $source->job_postings_count,
             ])
             ->values()
             ->all();
@@ -107,11 +106,10 @@ final class MarketDataQualityService
                 'classified' => $classifiedJobPostings,
                 'unclassified' => $unclassifiedJobPostings,
 
-                'classified_percentage' =>
-                    $this->percentage(
-                        $classifiedJobPostings,
-                        $totalJobPostings
-                    ),
+                'classified_percentage' => $this->percentage(
+                    $classifiedJobPostings,
+                    $totalJobPostings
+                ),
             ],
 
             'classification' => [
@@ -126,24 +124,20 @@ final class MarketDataQualityService
                 /*
                 * عدد الإعلانات التي خرجت من حالة pending.
                 */
-                'analyzed_job_postings' =>
-                    $analyzedJobPostings,
+                'analyzed_job_postings' => $analyzedJobPostings,
 
-                'analysis_coverage_percentage' =>
-                    $this->percentage(
-                        $analyzedJobPostings,
-                        $totalJobPostings
-                    ),
+                'analysis_coverage_percentage' => $this->percentage(
+                    $analyzedJobPostings,
+                    $totalJobPostings
+                ),
 
                 'statuses' => $classificationStatuses,
             ],
 
             'skill_extraction' => [
-                'job_postings_with_skills' =>
-                    $jobPostingsWithSkills,
+                'job_postings_with_skills' => $jobPostingsWithSkills,
 
-                'job_postings_without_skills' =>
-                    $jobPostingsWithoutSkills,
+                'job_postings_without_skills' => $jobPostingsWithoutSkills,
 
                 'coverage_percentage' => $this->percentage(
                     $jobPostingsWithSkills,

@@ -1,9 +1,11 @@
 <?php
-use App\Http\Controllers\Admin\AdminDashboardController;
+
 use App\Http\Controllers\Admin\AdminComplaintController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminOpportunityController;
 use App\Http\Controllers\Admin\AdminSupervisorController;
 use App\Http\Controllers\Admin\AdminUserRoleController;
+use App\Http\Controllers\Admin\MarketAnalysisDashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\AI\AILearningPlanController;
 use App\Http\Controllers\Api\AssessmentAnswerController;
@@ -44,16 +46,16 @@ use App\Http\Controllers\Student\StudentTaskProgressController;
 use App\Http\Controllers\Student\StudentTaskSubmissionController;
 use App\Http\Controllers\StudentOpportunity\StudentApplicationController;
 use App\Http\Controllers\StudentOpportunity\StudentOpportunityController;
+use App\Http\Controllers\StudentOpportunity\StudentOpportunityInterviewController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use App\Services\AI\AIClientInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\Admin\AdminUserRoleController;
 // use App\Http\Controllers\Student\ProjectEvaluationAppealController;
 // use App\Http\Controllers\MarketAnalysis\MarketInsightsController;
-use App\Http\Controllers\Admin\MarketAnalysisDashboardController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -349,6 +351,14 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/application
     Route::get('/{applicationId}', 'show')->whereNumber('applicationId');
     Route::patch('/{applicationId}/withdraw', 'withdraw')->whereNumber('applicationId');
 });
+
+// Student Interviews
+Route::middleware(['auth:sanctum', 'role:student'])
+    ->prefix('student/interviews')
+    ->controller(StudentOpportunityInterviewController::class)
+    ->group(function () {
+        Route::get('/', 'index');
+    });
 // ==============
 // Community Techincal Posts
 // ==============
@@ -409,16 +419,15 @@ Route::middleware('auth:sanctum')
         Route::get('/career-paths', 'careerPaths');
     });
 
-
-    Route::middleware([
-        'auth:sanctum',
-        'role:student',
-    ])
-        ->get(
-            'student/project-assignments/{projectAssignment}/evaluation',
-            [
-                ProjectEvaluationAppealController::class,
-                'showByAssignment',
-            ]
-        )
-        ->whereNumber('projectAssignment');
+Route::middleware([
+    'auth:sanctum',
+    'role:student',
+])
+    ->get(
+        'student/project-assignments/{projectAssignment}/evaluation',
+        [
+            ProjectEvaluationAppealController::class,
+            'showByAssignment',
+        ]
+    )
+    ->whereNumber('projectAssignment');

@@ -17,10 +17,17 @@ class NotificationService
 
     public function getUserNotifications(User $user, int $perPage = 20): array
     {
+        $this->notificationRepository->markAllAsRead($user);
+
         return [
             'notifications' => $this->notificationRepository->paginateForUser($user, $perPage),
             'unread_count' => $this->notificationRepository->unreadCountForUser($user),
         ];
+    }
+
+    public function getUnreadCount(User $user): int
+    {
+        return $this->notificationRepository->unreadCountForUser($user);
     }
 
     public function markAsRead(User $user, Notification $notification): Notification

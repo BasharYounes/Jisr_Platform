@@ -15,7 +15,7 @@ final class GetProjectAssignmentEvaluationsAction
             ->pluck('student_id');
 
         if ($activeStudentIds->isEmpty()) {
-            return new Collection();
+            return new Collection;
         }
 
         return $projectAssignment

@@ -7,7 +7,6 @@ use App\Models\UserSkill;
 use App\Services\MarketAnalysis\MarketInsightsService;
 use App\Services\Recommendations\LearningPathService;
 use App\Services\Recommendations\SkillGapService;
-use Illuminate\Support\Collection;
 use Throwable;
 
 class ChatbotSkillsMarketDataService

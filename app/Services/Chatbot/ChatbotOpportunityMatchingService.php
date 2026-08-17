@@ -4,8 +4,10 @@ namespace App\Services\Chatbot;
 
 use App\Models\ChatbotConversation;
 use App\Models\ChatbotMessage;
+use App\Models\Opportunity;
 use App\Models\UserSkill;
 use App\Services\Opportunities\OpportunityRecommendationService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -87,9 +89,8 @@ class ChatbotOpportunityMatchingService
         }
     }
 
-
     /**
-     * @param  \Illuminate\Support\Collection<int, \App\Models\Opportunity>  $opportunities
+     * @param  Collection<int, Opportunity>  $opportunities
      * @return array{
      *     facts: array<string, mixed>,
      *     guard: array{
@@ -100,7 +101,7 @@ class ChatbotOpportunityMatchingService
      * }
      */
     private function formattingContext(
-        \Illuminate\Support\Collection $opportunities,
+        Collection $opportunities,
     ): array {
         if ($opportunities->isEmpty()) {
             return [

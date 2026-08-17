@@ -65,7 +65,7 @@ class MarketJobPostingImportService
 
                 'language' => $data['language']
                     ?? $this->detectLanguage(
-                        $title . ' ' . $description
+                        $title.' '.$description
                     ),
 
                 'published_at' => $this->parseDate(

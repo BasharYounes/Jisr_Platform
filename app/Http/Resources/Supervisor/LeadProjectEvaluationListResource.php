@@ -26,8 +26,7 @@ class LeadProjectEvaluationListResource extends JsonResource
             'evaluated_at' => $this->evaluated_at?->toISOString(),
             'appeal_deadline_at' => $this->appeal_deadline_at?->toISOString(),
 
-            'has_pending_revision_request' =>
-                $pendingRevisionRequest !== null,
+            'has_pending_revision_request' => $pendingRevisionRequest !== null,
 
             'student' => [
                 'id' => $this->student?->id,

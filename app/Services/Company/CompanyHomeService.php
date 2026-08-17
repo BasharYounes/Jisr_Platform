@@ -16,10 +16,10 @@ class CompanyHomeService
             'company' => $this->companyHomeRepository->getCompanySummary($companyId),
 
             'stats' => [
-                'active_opportunities_count' => $this->companyHomeRepository->countActiveTasks($companyId),
-                'new_applicants_count' => $this->companyHomeRepository->countNewApplicants($companyId),
-                'pending_reviews_count' => $this->companyHomeRepository->countPendingReviews($companyId),
-                'active_assignments_count' => $this->companyHomeRepository->countActiveAssignments($companyId),
+                'active_opportunities' => $this->companyHomeRepository->getActiveOpportunitiesStats($companyId),
+                'new_applicants' => $this->companyHomeRepository->getNewApplicantsStats($companyId),
+                'active_assignments' => $this->companyHomeRepository->getActiveAssignmentsStats($companyId),
+                'pending_reviews' => $this->companyHomeRepository->getPendingReviewsStats($companyId),
             ],
 
             'required_actions' => $this->companyHomeRepository->getRequiredActions($companyId),

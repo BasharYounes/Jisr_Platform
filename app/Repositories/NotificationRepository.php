@@ -12,6 +12,9 @@ class NotificationRepository implements NotificationRepositoryInterface
     public function paginateForUser(User $user, int $perPage = 20): LengthAwarePaginator
     {
         return Notification::query()
+            ->with([
+                'actor:id,name',
+            ])
             ->where('user_id', $user->id)
             ->latest()
             ->paginate($perPage);
