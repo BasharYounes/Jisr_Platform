@@ -61,7 +61,7 @@ class CompanyHomeRepository implements CompanyHomeRepositoryInterface
             ->whereHas('assignment.task', function ($query) use ($companyId) {
                 $query->where('company_id', $companyId);
             })
-            ->with(['assignment' => function($q) {
+            ->with(['assignment' => function ($q) {
                 $q->select('id', 'company_task_id', 'student_user_id');
             }])
             ->get(['id', 'company_task_assignment_id']);

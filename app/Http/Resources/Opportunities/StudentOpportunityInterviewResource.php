@@ -14,36 +14,36 @@ class StudentOpportunityInterviewResource extends JsonResource
 
         return [
             'id' => $this->id,
-            
+
             'application' => [
                 'id' => $this->application?->id,
                 'status' => $this->application?->status,
             ],
-            
+
             'opportunity' => [
                 'id' => $this->opportunity?->id,
                 'title' => $this->opportunity?->title,
                 'type' => $this->opportunity?->type,
                 'status' => $this->opportunity?->status,
             ],
-            
+
             'company' => [
                 'id' => $this->company?->id,
                 'name' => $this->company?->name,
                 'industry' => $this->company?->industry,
             ],
-            
+
             'scheduled_at' => $this->scheduled_at,
             'meeting_type' => $this->meeting_type,
             'meeting_link' => $this->meeting_link,
             'location' => $this->location,
             'status' => $this->status,
             'has_passed' => $hasPassed,
-            
+
             'display_status' => $this->resolveDisplayStatus(
                 $hasPassed
             ),
-            
+
             'notes' => $this->notes,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
