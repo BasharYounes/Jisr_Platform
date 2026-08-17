@@ -20,4 +20,6 @@ final class NotificationTypes
 
     // Company Tasks
     public const COMPANY_TASK_APPLICATION_ACCEPTED = 'company_task_application_accepted';
+
+    public const COMPANY_TASK_HIGH_MATCH_APPLICATION = 'company_task_high_match_application';
 }

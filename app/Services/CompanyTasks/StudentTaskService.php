@@ -10,9 +10,12 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Events\CompanyTaskHighMatchApplicationReceived;
 
 class StudentTaskService
 {
+    private const HIGH_MATCH_NOTIFICATION_THRESHOLD = 70.0;
+
     public function __construct(
         private readonly CompanyTaskRepositoryInterface $companyTaskRepository,
         private readonly TaskRecommendationService $taskRecommendationService,
@@ -62,7 +65,7 @@ class StudentTaskService
                     studentUserId: $studentUserId
                 );
 
-            return $this->companyTaskApplicationRepository->create([
+            $application = $this->companyTaskApplicationRepository->create([
                 'company_task_id' => $task->id,
                 'student_user_id' => $studentUserId,
                 'message' => $data['message'] ?? null,
@@ -72,6 +75,15 @@ class StudentTaskService
                 'match_reasons' => $rankingSnapshot['match_reasons'],
                 'applied_at' => now(),
             ]);
+
+            if (
+                (float) $application->match_score
+                > self::HIGH_MATCH_NOTIFICATION_THRESHOLD
+            ) {
+                CompanyTaskHighMatchApplicationReceived::dispatch($application);
+            }
+
+            return $application;
         });
     }
 }

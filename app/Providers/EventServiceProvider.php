@@ -12,6 +12,8 @@ use App\Listeners\SendCompanyVerificationEmail;
 use App\Listeners\SendLoginOtpListener;
 use App\Listeners\SendResetOtpListener;
 use App\Listeners\SendWelcomeNotification;
+use App\Events\CompanyTaskHighMatchApplicationReceived;
+use App\Listeners\SendCompanyTaskHighMatchApplicationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -37,6 +39,10 @@ class EventServiceProvider extends ServiceProvider
 
         CompanyVerified::class => [
             SendCompanyVerificationEmail::class,
+        ],
+
+        CompanyTaskHighMatchApplicationReceived::class => [
+            SendCompanyTaskHighMatchApplicationNotification::class,
         ],
     ];
 
