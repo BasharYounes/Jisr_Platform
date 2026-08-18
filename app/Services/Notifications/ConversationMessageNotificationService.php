@@ -21,15 +21,15 @@ class ConversationMessageNotificationService
             return;
         }
 
-        $conversation->loadMissing('participants.user', 'conversationable');
+        $conversation->loadMissing('participants:id,name,email,profile_picture_url', 'conversationable');
 
-        $participantIds = $conversation->participants->pluck('user_id')->map(fn ($id) => (int) $id)->toArray();
+        $participantIds = $conversation->participants->pluck('id')->map(fn ($id) => (int) $id)->toArray();
         $participantIdsString = json_encode($participantIds);
 
         $context = $this->resolveConversationContext($conversation->conversationable);
 
         foreach ($conversation->participants as $participant) {
-            $recipient = $participant->user;
+            $recipient = $participant;
 
             if (! $recipient || $recipient->id === $message->sender_id) {
                 continue;
