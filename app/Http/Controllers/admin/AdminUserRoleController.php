@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Domains\Admin\Actions\ManageUserRoleAction;
 use App\Domains\Admin\Enums\ManagedUserRole;
