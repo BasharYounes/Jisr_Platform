@@ -2,6 +2,7 @@
 
 namespace App\Services\Opportunities;
 
+use App\Events\CompanyOpportunityHighMatchApplicationReceived;
 use App\Interfaces\OpportunityApplicationRepositoryInterface;
 use App\Interfaces\OpportunityRepositoryInterface;
 use App\Models\Application;
@@ -12,6 +13,8 @@ use Illuminate\Validation\ValidationException;
 
 class StudentOpportunityApplicationService
 {
+    private const HIGH_MATCH_NOTIFICATION_THRESHOLD = 70.0;
+
     public function __construct(
         private readonly OpportunityRepositoryInterface $opportunityRepository,
         private readonly OpportunityApplicationRepositoryInterface $applicationRepository,
@@ -53,7 +56,12 @@ class StudentOpportunityApplicationService
                 'applied_at' => now(),
             ]);
 
-            // TODO: Dispatch notification to company when a new opportunity application is submitted.
+            if (
+                (float) $application->match_score
+                > self::HIGH_MATCH_NOTIFICATION_THRESHOLD
+            ) {
+                CompanyOpportunityHighMatchApplicationReceived::dispatch($application);
+            }
 
             return $application;
         });

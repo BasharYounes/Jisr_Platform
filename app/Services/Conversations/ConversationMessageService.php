@@ -2,6 +2,7 @@
 
 namespace App\Services\Conversations;
 
+use App\Events\ConversationMessageSent;
 use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
@@ -48,11 +49,15 @@ class ConversationMessageService
             throw new AuthorizationException('This conversation is closed.');
         }
 
-        return $this->messageRepository->createTextMessage(
+        $message = $this->messageRepository->createTextMessage(
             conversationId: $conversationId,
             senderId: $senderId,
             content: $data['content'],
         );
+
+        ConversationMessageSent::dispatch($message);
+
+        return $message;
     }
 
     public function updateMessage(

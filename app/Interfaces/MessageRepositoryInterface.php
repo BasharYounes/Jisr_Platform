@@ -27,4 +27,9 @@ interface MessageRepositoryInterface
         int $readerId,
         CarbonInterface $readAt
     ): int;
+
+    public function countUnreadForParticipant(
+        int $conversationId,
+        int $userId
+    ): int;
 }
