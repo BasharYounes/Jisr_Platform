@@ -13,7 +13,6 @@ class NotifySupervisorProjectReadyForEvaluation
             'user_id' => $event->assignment->supervisor_id,
             'actor_id' => null,
             'type' => 'project_ready_for_final_evaluation',
-            'is_read' => false,
             'created_at' => now(),
         ]);
     }

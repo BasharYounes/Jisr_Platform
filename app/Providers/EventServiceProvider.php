@@ -16,8 +16,10 @@ use App\Events\CompanyTaskHighMatchApplicationReceived;
 use App\Listeners\SendCompanyTaskHighMatchApplicationNotification;
 use App\Events\CompanyRejected;
 use App\Events\CompanyTaskApplicationAccepted;
+use App\Events\CompanyTaskSubmissionSubmitted;
 use App\Listeners\SendCompanyRejectedEmail;
 use App\Listeners\SendCompanyTaskApplicationAcceptedNotification;
+use App\Listeners\SendCompanyTaskSubmissionNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -55,6 +57,10 @@ class EventServiceProvider extends ServiceProvider
 
         CompanyTaskApplicationAccepted::class => [
             SendCompanyTaskApplicationAcceptedNotification::class,
+        ],
+
+        CompanyTaskSubmissionSubmitted::class => [
+            SendCompanyTaskSubmissionNotification::class,
         ],
     ];
 

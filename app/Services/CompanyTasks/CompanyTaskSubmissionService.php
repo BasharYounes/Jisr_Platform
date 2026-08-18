@@ -2,6 +2,7 @@
 
 namespace App\Services\CompanyTasks;
 
+use App\Events\CompanyTaskSubmissionSubmitted;
 use App\Interfaces\CompanyTaskSubmissionRepositoryInterface;
 use App\Models\CompanyTaskAssignment;
 use App\Models\CompanyTaskSubmission;
@@ -29,9 +30,7 @@ class CompanyTaskSubmissionService
             );
 
         $this->ensureNoExistingSubmission($assignmentId);
-
         $this->ensureAssignmentCanBeSubmitted($assignment);
-
         $this->ensureDeadlineHasNotPassed($assignment);
 
         $storedZipPath = null;
@@ -66,11 +65,6 @@ class CompanyTaskSubmissionService
 
                 return $submission;
             });
-
-            return $submission->load([
-                'assignment.task:id,company_id,title,deadline,submission_type',
-                'student:id,name,email,profile_picture_url',
-            ]);
         } catch (Throwable $exception) {
             if ($storedZipPath !== null) {
                 Storage::disk('public')->delete($storedZipPath);
@@ -78,6 +72,15 @@ class CompanyTaskSubmissionService
 
             throw $exception;
         }
+
+        CompanyTaskSubmissionSubmitted::dispatch(
+            submission: $submission,
+        );
+
+        return $submission->load([
+            'assignment.task:id,company_id,title,deadline,submission_type',
+            'student:id,name,email,profile_picture_url',
+        ]);
     }
 
     public function getStudentSubmission(

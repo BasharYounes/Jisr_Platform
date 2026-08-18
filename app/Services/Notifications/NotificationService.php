@@ -66,7 +66,7 @@ class NotificationService
                 'type' => $type,
                 'title' => $title,
                 'body' => $body,
-                'notifiable_type' => $related ? $related::class : null,
+                'notifiable_type' => $related?->getMorphClass(),
                 'notifiable_id' => $related?->getKey(),
                 'data' => $data,
             ]);
