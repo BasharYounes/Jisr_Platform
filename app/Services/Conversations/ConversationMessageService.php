@@ -55,7 +55,9 @@ class ConversationMessageService
             content: $data['content'],
         );
 
-        ConversationMessageSent::dispatch($message);
+        ConversationMessageSent::dispatch(
+            message: $message,
+        );
 
         return $message;
     }

@@ -27,4 +27,6 @@ final class NotificationTypes
 
     // Company Opportunities
     public const COMPANY_OPPORTUNITY_HIGH_MATCH_APPLICATION = 'company_opportunity_high_match_application';
+
+    public const CONVERSATION_MESSAGE_RECEIVED = 'conversation_message_received';
 }

@@ -2,111 +2,62 @@
 
 namespace App\Services\Notifications;
 
-use App\Interfaces\MessageRepositoryInterface;
 use App\Jobs\SendFirebaseNotificationJob;
-use App\Models\CompanyTaskAssignment;
 use App\Models\Message;
-use App\Models\OpportunityInterview;
+use App\Support\NotificationTypes;
 
-class ConversationMessageNotificationService
+final class ConversationMessageNotificationService
 {
     public function __construct(
-        private readonly MessageRepositoryInterface $messageRepository,
+        private readonly NotificationService $notificationService,
     ) {}
 
     public function send(Message $message): void
     {
+        $message->loadMissing([
+            'sender:id,name',
+            'conversation.participants:id,name',
+        ]);
+
+        $sender = $message->sender;
         $conversation = $message->conversation;
-        if (! $conversation) {
+
+        if ($sender === null || $conversation === null) {
             return;
         }
 
-        $conversation->loadMissing('participants:id,name,email,profile_picture_url', 'conversationable');
+        $recipients = $conversation->participants
+            ->where('id', '!=', $sender->id);
 
-        $participantIds = $conversation->participants->pluck('id')->map(fn ($id) => (int) $id)->toArray();
-        $participantIdsString = json_encode($participantIds);
+        foreach ($recipients as $recipient) {
+            $data = [
+                'conversation_id' => $conversation->id,
+                'message_id' => $message->id,
+                'sender_user_id' => $sender->id,
+                'screen' => 'conversation',
+            ];
 
-        $context = $this->resolveConversationContext($conversation->conversationable);
-
-        foreach ($conversation->participants as $participant) {
-            $recipient = $participant;
-
-            if (! $recipient || $recipient->id === $message->sender_id) {
-                continue;
-            }
-
-            if (! $recipient->is_active) {
-                continue;
-            }
-
-            $unreadCount = $this->messageRepository->countUnreadForParticipant(
-                $conversation->id,
-                $recipient->id
+            // In-App + Realtime
+            $this->notificationService->send(
+                recipient: $recipient,
+                type: NotificationTypes::CONVERSATION_MESSAGE_RECEIVED,
+                title: 'رسالة جديدة',
+                body: "{$sender->name}: {$message->content}",
+                actor: $sender,
+                related: $message,
+                data: $data,
             );
 
-            $body = $this->buildBody(
-                $unreadCount,
-                $context['label'],
-                $context['title']
-            );
-
+            // Push
             SendFirebaseNotificationJob::dispatch(
                 recipient: $recipient,
-                title: 'رسائل جديدة',
-                body: $body,
+                title: 'رسالة جديدة',
+                body: "{$sender->name}: {$message->content}",
                 data: [
-                    'type' => 'conversation_message',
-                    'priority' => 'high',
-                    'conversation_id' => (int) $conversation->id,
-                    'conversation_type' => $context['type'],
-                    'conversationable_id' => (int) $conversation->conversationable_id,
-                    'sender_id' => (int) $message->sender_id,
-                    'recipient_id' => (int) $recipient->id,
-                    'participant_ids' => $participantIdsString,
-                    'unread_count' => $unreadCount,
+                    'type' => NotificationTypes::CONVERSATION_MESSAGE_RECEIVED,
+                    ...$data,
                 ],
             );
         }
-    }
-
-    private function resolveConversationContext($conversationable): array
-    {
-        if ($conversationable instanceof CompanyTaskAssignment) {
-            return [
-                'type' => 'task',
-                'label' => 'محادثة المهمة',
-                'title' => $conversationable->task?->title,
-            ];
-        }
-
-        if ($conversationable instanceof OpportunityInterview) {
-            return [
-                'type' => 'opportunity',
-                'label' => 'محادثة فرصة العمل',
-                'title' => $conversationable->opportunity?->title,
-            ];
-        }
-
-        return [
-            'type' => 'conversation',
-            'label' => 'المحادثة',
-            'title' => null,
-        ];
-    }
-
-    private function buildBody(
-        int $unreadCount,
-        string $label,
-        ?string $title
-    ): string {
-        $messagesText = $unreadCount === 1
-            ? 'رسالة جديدة'
-            : "{$unreadCount} رسائل جديدة";
-
-        $conversationName = $title
-            ? "{$label} \"{$title}\""
-            : $label;
-
-        return "لديك {$messagesText} في {$conversationName}.";
     }
 }
