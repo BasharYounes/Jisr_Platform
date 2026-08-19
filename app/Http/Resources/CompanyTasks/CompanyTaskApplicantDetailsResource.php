@@ -11,6 +11,8 @@ class CompanyTaskApplicantDetailsResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $primaryCv = $this->student?->cvs?->first();
+
         return [
             'application' => [
                 'id' => $this->id,
@@ -67,6 +69,18 @@ class CompanyTaskApplicantDetailsResource extends JsonResource
                     $this->student?->portfolioProjects ?? collect()
                 ),
             ],
+
+            'cv' => $primaryCv ? [
+                'id' => $primaryCv->CvID,
+
+                'file_url' => $primaryCv->FileUrl
+                    ? asset('storage/' . $primaryCv->FileUrl)
+                    : null,
+
+                'is_primary' => (bool) $primaryCv->IsPrimary,
+
+                'uploaded_at' => $primaryCv->UploadedAt,
+            ] : null,
 
             'matching' => [
                 'score' => $this->match_score !== null
