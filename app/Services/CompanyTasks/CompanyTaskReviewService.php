@@ -6,6 +6,8 @@ use App\Interfaces\CompanyTaskReviewRepositoryInterface;
 use App\Models\CompanyTaskAssignment;
 use App\Models\CompanyTaskReview;
 use App\Models\CompanyTaskSubmission;
+use App\Events\CompanyTaskReviewCompleted;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -19,7 +21,8 @@ class CompanyTaskReviewService
     public function createReview(
         int $assignmentId,
         int $companyId,
-        array $data
+        User $actor,
+        array $data,
     ): CompanyTaskReview {
         $assignment = $this->reviewRepository
             ->findCompanyAssignmentOrFail(
@@ -79,6 +82,17 @@ class CompanyTaskReviewService
         if ($review->final_decision === 'approved') {
             $this->taskPortfolioProjectService
                 ->createFromApprovedReview($review);
+        }
+
+        if (in_array(
+            $review->final_decision,
+            ['approved', 'rejected'],
+            true
+        )) {
+            CompanyTaskReviewCompleted::dispatch(
+                review: $review,
+                actor: $actor,
+            );
         }
 
         return $review->load([

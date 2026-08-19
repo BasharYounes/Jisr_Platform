@@ -36,6 +36,7 @@ use App\Listeners\NotifySupervisorProjectReadyForEvaluation;
 use App\Models\Application;
 use App\Models\CompanyTaskApplication;
 use App\Models\CompanyTaskAssignment;
+use App\Models\CompanyTaskReview;
 use App\Models\Message;
 use App\Models\OpportunityInterview;
 use App\Models\ProjectAssignment;
@@ -264,6 +265,7 @@ class AppServiceProvider extends ServiceProvider
             'opportunity_application' => Application::class,
             'opportunity_interview' => OpportunityInterview::class,
             'message' => Message::class,
+            'company_task_review' => CompanyTaskReview::class,
         ]);
 
     }

@@ -24,6 +24,7 @@ final class NotificationTypes
     public const COMPANY_TASK_HIGH_MATCH_APPLICATION = 'company_task_high_match_application';
 
     public const COMPANY_TASK_SUBMISSION_RECEIVED = 'company_task_submission_received';
+    public const COMPANY_TASK_REVIEW_COMPLETED = 'company_task_review_completed';
 
     // Company Opportunities
     public const COMPANY_OPPORTUNITY_HIGH_MATCH_APPLICATION = 'company_opportunity_high_match_application';
