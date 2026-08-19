@@ -15,7 +15,7 @@ class DemoStudentSkillsSeeder extends Seeder
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->where('roles.name', 'student')
             ->select('users.id')
-            // ->skip(3)
+            //->skip(1)
             ->first();
 
         if (! $student) {

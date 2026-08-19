@@ -25,6 +25,7 @@ class CompanyTaskReviewController extends Controller
         $review = $this->reviewService->createReview(
             assignmentId: $assignmentId,
             companyId: $this->getAuthenticatedCompanyId($request),
+            actor: $request->user(),
             data: $request->validated()
         );
 

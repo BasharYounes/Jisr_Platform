@@ -105,4 +105,34 @@ class MessageRepository implements MessageRepositoryInterface
                 'read_at' => $readAt,
             ]);
     }
+
+    public function countUnreadForParticipant(
+        int $conversationId,
+        int $userId
+    ): int {
+        return Message::query()
+            ->where('conversation_id', $conversationId)
+            ->whereNotNull('sender_id')
+            ->where('sender_id', '!=', $userId)
+            ->whereExists(function ($query) use ($userId) {
+                $query
+                    ->selectRaw('1')
+                    ->from('conversation_participants as cp')
+                    ->whereColumn(
+                        'cp.conversation_id',
+                        'messages.conversation_id'
+                    )
+                    ->where('cp.user_id', $userId)
+                    ->where(function ($readQuery) {
+                        $readQuery
+                            ->whereNull('cp.last_read_at')
+                            ->orWhereColumn(
+                                'messages.created_at',
+                                '>',
+                                'cp.last_read_at'
+                            );
+                    });
+            })
+            ->count();
+    }
 }

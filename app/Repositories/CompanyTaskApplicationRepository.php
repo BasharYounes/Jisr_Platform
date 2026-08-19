@@ -97,6 +97,13 @@ class CompanyTaskApplicationRepository implements CompanyTaskApplicationReposito
                 'student.studentProfile.user',
                 'student.skills',
                 'student.portfolioProjects',
+
+                'student.cvs' => function ($query) {
+                    $query
+                        ->where('IsPrimary', true)
+                        ->latest('UploadedAt');
+                },
+
                 'task.skills',
             ])
             ->where('id', $applicationId)

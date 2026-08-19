@@ -9,14 +9,16 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class NotificationRepository implements NotificationRepositoryInterface
 {
-    public function paginateForUser(User $user, int $perPage = 20): LengthAwarePaginator
-    {
+    public function paginateForUser(
+        User $user,
+        int $perPage = 20
+    ): LengthAwarePaginator {
         return Notification::query()
             ->with([
                 'actor:id,name',
             ])
             ->where('user_id', $user->id)
-            ->latest()
+            ->latest('updated_at')
             ->paginate($perPage);
     }
 
@@ -28,8 +30,9 @@ class NotificationRepository implements NotificationRepositoryInterface
             ->count();
     }
 
-    public function markAsRead(Notification $notification): Notification
-    {
+    public function markAsRead(
+        Notification $notification
+    ): Notification {
         $notification->markAsRead();
 
         return $notification->refresh();
@@ -40,6 +43,52 @@ class NotificationRepository implements NotificationRepositoryInterface
         return Notification::query()
             ->where('user_id', $user->id)
             ->whereNull('read_at')
-            ->update(['read_at' => now()]);
+            ->update([
+                'read_at' => now(),
+            ]);
+    }
+
+    public function create(array $data): Notification
+    {
+        return Notification::query()->create($data);
+    }
+
+    public function update(
+        Notification $notification,
+        array $data
+    ): Notification {
+        $notification->fill($data);
+        $notification->save();
+
+        return $notification->refresh();
+    }
+
+    public function findUnreadConversationMessageNotification(
+        int $userId,
+        int $conversationId,
+        string $type
+    ): ?Notification {
+        return Notification::query()
+            ->where('user_id', $userId)
+            ->where('type', $type)
+            ->whereNull('read_at')
+            ->where('data->conversation_id', $conversationId)
+            ->latest('updated_at')
+            ->first();
+    }
+
+    public function markConversationMessageNotificationAsRead(
+        int $userId,
+        int $conversationId,
+        string $type
+    ): int {
+        return Notification::query()
+            ->where('user_id', $userId)
+            ->where('type', $type)
+            ->whereNull('read_at')
+            ->where('data->conversation_id', $conversationId)
+            ->update([
+                'read_at' => now(),
+            ]);
     }
 }

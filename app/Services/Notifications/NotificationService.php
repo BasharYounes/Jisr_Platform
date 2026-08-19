@@ -15,13 +15,16 @@ class NotificationService
         private readonly NotificationRepositoryInterface $notificationRepository
     ) {}
 
-    public function getUserNotifications(User $user, int $perPage = 20): array
-    {
-        $this->notificationRepository->markAllAsRead($user);
-
+    public function getUserNotifications(
+        User $user,
+        int $perPage = 20
+    ): array {
         return [
-            'notifications' => $this->notificationRepository->paginateForUser($user, $perPage),
-            'unread_count' => $this->notificationRepository->unreadCountForUser($user),
+            'notifications' => $this->notificationRepository
+                ->paginateForUser($user, $perPage),
+
+            'unread_count' => $this->notificationRepository
+                ->unreadCountForUser($user),
         ];
     }
 
@@ -66,7 +69,7 @@ class NotificationService
                 'type' => $type,
                 'title' => $title,
                 'body' => $body,
-                'notifiable_type' => $related ? $related::class : null,
+                'notifiable_type' => $related?->getMorphClass(),
                 'notifiable_id' => $related?->getKey(),
                 'data' => $data,
             ]);

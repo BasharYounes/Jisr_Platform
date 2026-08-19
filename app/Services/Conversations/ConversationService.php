@@ -6,6 +6,7 @@ use App\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Interfaces\ConversationRepositoryInterface;
 use App\Interfaces\MessageRepositoryInterface;
 use App\Models\Conversation;
+use App\Services\Notifications\ConversationMessageNotificationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +16,7 @@ class ConversationService
         private readonly ConversationRepositoryInterface $conversationRepository,
         private readonly MessageRepositoryInterface $messageRepository,
         private readonly ConversationParticipantRepositoryInterface $participantRepository,
+        private readonly ConversationMessageNotificationService $conversationMessageNotificationService,
     ) {}
 
     public function getUserConversations(int $userId, int $perPage = 15)
@@ -46,9 +48,6 @@ class ConversationService
 
         $messages = $this->messageRepository
             ->getConversationMessages($conversationId, $perPage);
-
-        $this->participantRepository
-            ->markAsRead($conversationId, $userId);
 
         return [
             'conversation' => $conversation,
@@ -95,6 +94,12 @@ class ConversationService
                 readerId: $userId,
                 readAt: $readAt,
             );
+
+            $this->conversationMessageNotificationService
+                ->markAsRead(
+                    conversationId: $conversationId,
+                    userId: $userId,
+                );
         });
     }
 
