@@ -18,3 +18,14 @@ Schedule::command('market:import-api-jobs', [
     ->appendOutputTo(
         storage_path('logs/market-analysis-scheduler.log')
     );
+
+Schedule::command('backup:clean --disable-notifications')
+    ->dailyAt('01:30')
+    ->withoutOverlapping(120);
+
+Schedule::command('backup:run --only-db --disable-notifications')
+    ->dailyAt('02:00')
+    ->withoutOverlapping(120)
+    ->onSuccess(function () {
+        Artisan::call('app:backup-to-drive');
+    });
