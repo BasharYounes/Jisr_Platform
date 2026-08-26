@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Opportunities;
 
+use App\Http\Resources\CompanyStudents\CompanyStudentSkillResource;
+use App\Http\Resources\PortfolioProjectResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,6 +22,25 @@ class CompanyCandidateResource extends JsonResource
                 'university' => $this->user?->studentProfile?->University ?? null,
                 'major' => $this->user?->studentProfile?->Major ?? null,
                 'graduation_year' => $this->user?->studentProfile?->GraduationYear ?? null,
+
+                'skills' => $this->when(
+                    $this->user?->relationLoaded('skills') ?? false,
+                    fn () => CompanyStudentSkillResource::collection(
+                        $this->user->skills
+                    )
+                ),
+
+                'portfolio_projects' => $this->when(
+                    $this->user?->relationLoaded('portfolioProjects') ?? false,
+                    fn () => PortfolioProjectResource::collection(
+                        $this->user->portfolioProjects
+                    )
+                ),
+
+                'supervisor_projects' => $this->when(
+                    $this->user?->relationLoaded('studentProjectAssignments') ?? false,
+                    fn () => $this->supervisorProjects()
+                ),
             ],
 
             'opportunity' => [
@@ -119,5 +140,68 @@ class CompanyCandidateResource extends JsonResource
     private function canReject(): bool
     {
         return $this->status === 'pending';
+    }
+
+    private function supervisorProjects(): array
+    {
+        return $this->user->studentProjectAssignments
+            ->map(function ($assignment) {
+                $evaluation = $this->user->receivedProjectEvaluations
+                    ->where('project_assignment_id', $assignment->id)
+                    ->first();
+
+                return [
+                    'assignment_id' => $assignment->id,
+                    'status' => $assignment->status?->value,
+                    'progress_percentage' => $assignment->progress_percentage !== null
+                        ? (int) $assignment->progress_percentage
+                        : null,
+                    'submission_url' => $assignment->submission_url,
+                    'github_link' => $assignment->github_link,
+                    'assigned_at' => $assignment->assigned_at?->toISOString(),
+                    'submitted_at' => $assignment->submitted_at?->toISOString(),
+
+                    'membership' => [
+                        'role' => $assignment->pivot?->role,
+                        'status' => $assignment->pivot?->status,
+                    ],
+
+                    'project' => $assignment->projectTemplate ? [
+                        'id' => $assignment->projectTemplate->id,
+                        'title' => $assignment->projectTemplate->title,
+                        'description' => $assignment->projectTemplate->description,
+                        'expected_outcome' => $assignment->projectTemplate->expected_outcome,
+                        'expected_completion_date' => $assignment->projectTemplate->expected_completion_date,
+                        'level' => $assignment->projectTemplate->level,
+                        'max_students' => $assignment->projectTemplate->max_students,
+                    ] : null,
+
+                    'supervisor' => $assignment->supervisor ? [
+                        'id' => $assignment->supervisor->id,
+                        'name' => $assignment->supervisor->name,
+                        'email' => $assignment->supervisor->email,
+                        'profile_picture_url' => $assignment->supervisor->ProfilePictureUrl ?? null,
+                    ] : null,
+
+                    'evaluation' => $evaluation ? [
+                        'id' => $evaluation->id,
+                        'project_assignment_id' => $evaluation->project_assignment_id,
+                        'student_id' => $evaluation->student_id,
+                        'supervisor_id' => $evaluation->supervisor_id,
+                        'total_score' => $evaluation->total_score !== null
+                            ? (float) $evaluation->total_score
+                            : null,
+                        'final_grade' => $evaluation->final_grade !== null
+                            ? (float) $evaluation->final_grade
+                            : null,
+                        'status' => $evaluation->status,
+                        'general_comment' => $evaluation->general_comment,
+                        'summary_metrics' => $evaluation->summary_metrics,
+                        'evaluated_at' => $evaluation->evaluated_at?->toISOString(),
+                    ] : null,
+                ];
+            })
+            ->values()
+            ->all();
     }
 }

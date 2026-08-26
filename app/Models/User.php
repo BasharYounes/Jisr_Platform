@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -140,6 +141,29 @@ class User extends Authenticatable
     public function assignments()
     {
         return $this->hasMany(ProjectAssignment::class);
+    }
+
+    public function studentProjectAssignments(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ProjectAssignment::class,
+            'project_assignment_members',
+            'student_id',
+            'project_assignment_id'
+        )
+            ->withPivot([
+                'role',
+                'status',
+            ])
+            ->withTimestamps();
+    }
+
+    public function receivedProjectEvaluations(): HasMany
+    {
+        return $this->hasMany(
+            ProjectEvaluation::class,
+            'student_id'
+        );
     }
 
     public function supervisedAssignments()

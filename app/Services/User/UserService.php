@@ -145,6 +145,15 @@ class UserService
 
     public function getStudentProfile(User $user): ?StudentProfile
     {
-        return $this->studentRepository->findByUser($user);
+        $studentProfile = $this->studentRepository->findByUser($user);
+
+        if ($studentProfile?->user) {
+            $studentProfile->user->load([
+                'skills' => fn ($query) => $query
+                    ->orderBy('skills.name'),
+            ]);
+        }
+
+        return $studentProfile;
     }
 }

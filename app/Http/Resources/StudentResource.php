@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\CompanyStudents\CompanyStudentSkillResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,6 +19,14 @@ class StudentResource extends JsonResource
             'id' => $this->id,
 
             'user' => new UserResource($this->whenLoaded('user')),
+
+            'skills' => $this->when(
+                $this->relationLoaded('user')
+                && ($this->user?->relationLoaded('skills') ?? false),
+                fn () => CompanyStudentSkillResource::collection(
+                    $this->user->skills
+                )
+            ),
 
             'university' => $this->university,
             'major' => $this->major,
