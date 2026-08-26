@@ -69,13 +69,10 @@ final class SendCompanyTaskReviewCompletedNotification
             recipient: $student,
             title: $title,
             body: $body,
-            data: array_map(
-                static fn (mixed $value): string => (string) $value,
-                [
-                    'type' => NotificationTypes::COMPANY_TASK_REVIEW_COMPLETED,
-                    ...$data,
-                ]
-            ),
+            data: [
+                'type' => NotificationTypes::COMPANY_TASK_REVIEW_COMPLETED,
+                ...$data,
+            ],
         );
     }
 }
