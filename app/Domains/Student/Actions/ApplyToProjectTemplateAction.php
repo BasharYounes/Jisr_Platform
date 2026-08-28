@@ -5,8 +5,8 @@ namespace App\Domains\Student\Actions;
 use App\Domains\Student\Enums\ProjectTemplateApplicationStatus;
 use App\Models\ProjectTemplate;
 use App\Models\ProjectTemplateApplication;
-use DomainException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ApplyToProjectTemplateAction
 {
@@ -16,8 +16,16 @@ class ApplyToProjectTemplateAction
         array $data
     ): ProjectTemplateApplication {
         return DB::transaction(function () use ($projectTemplate, $studentUserId, $data) {
+            /*
+             * Lock the template row so concurrent applications cannot both pass
+             * the max_students check.
+             *
+             * Also restrict this flow to templates genuinely created through the
+             * supervisor domain.
+             */
             $template = ProjectTemplate::query()
                 ->whereKey($projectTemplate->id)
+                ->where('created_by_type', 'supervisor')
                 ->lockForUpdate()
                 ->firstOrFail();
 
@@ -27,24 +35,28 @@ class ApplyToProjectTemplateAction
                 ->exists();
 
             if ($alreadyApplied) {
-                throw new DomainException(
-                    'لقد قمت بالتقديم على هذا المشروع مسبقاً. | You have already applied to this project.'
-                );
+                throw ValidationException::withMessages([
+                    'project_template' => [
+                        'لقد قمت بالتقديم على هذا المشروع مسبقاً. | You have already applied to this project.',
+                    ],
+                ]);
             }
 
             if (! is_null($template->max_students)) {
                 $activeApplicationsCount = ProjectTemplateApplication::query()
                     ->where('project_template_id', $template->id)
                     ->whereIn('status', [
-                        ProjectTemplateApplicationStatus::PENDING,
-                        ProjectTemplateApplicationStatus::ACCEPTED,
+                        ProjectTemplateApplicationStatus::PENDING->value,
+                        ProjectTemplateApplicationStatus::ACCEPTED->value,
                     ])
                     ->count();
 
                 if ($activeApplicationsCount >= $template->max_students) {
-                    throw new DomainException(
-                        'تم الوصول إلى الحد الأقصى لعدد الطلاب المتقدمين على هذا المشروع. | The maximum number of applicants for this project has been reached.'
-                    );
+                    throw ValidationException::withMessages([
+                        'project_template' => [
+                            'تم الوصول إلى الحد الأقصى لعدد الطلاب المتقدمين على هذا المشروع. | The maximum number of applicants for this project has been reached.',
+                        ],
+                    ]);
                 }
             }
 
@@ -52,7 +64,7 @@ class ApplyToProjectTemplateAction
                 'project_template_id' => $template->id,
                 'student_user_id' => $studentUserId,
                 'message' => $data['message'] ?? null,
-                'status' => ProjectTemplateApplicationStatus::PENDING,
+                'status' => ProjectTemplateApplicationStatus::PENDING->value,
                 'applied_at' => now(),
             ]);
         });

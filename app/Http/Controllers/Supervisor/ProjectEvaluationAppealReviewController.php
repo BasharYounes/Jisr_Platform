@@ -53,13 +53,13 @@ class ProjectEvaluationAppealReviewController extends Controller
                 )->resolve($request),
 
                 'pagination' => [
-                'current_page' => $appeals->currentPage(),
+                    'current_page' => $appeals->currentPage(),
 
-                'last_page' => $appeals->lastPage(),
+                    'last_page' => $appeals->lastPage(),
 
-                'per_page' => $appeals->perPage(),
+                    'per_page' => $appeals->perPage(),
 
-                'total' => $appeals->total(),
+                    'total' => $appeals->total(),
                 ],
             ]
         );

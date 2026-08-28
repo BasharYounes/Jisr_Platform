@@ -16,13 +16,42 @@ class SkillGapService
     {
         $session->load('skillSessions.skill');
 
+        /*
+         * IMPORTANT:
+         * A skill-gap calculation for an assessment session must be based only
+         * on the skills that were actually assessed in that session.
+         *
+         * The career path can contain many additional/alternative skills
+         * (Laravel, Node.js, .NET, Docker, REST API, ...). Treating an
+         * unassessed skill as level 0 creates false gaps and contaminates the
+         * learning path.
+         *
+         * Therefore we intersect:
+         *   career-path skills ∩ session-assessed skills
+         */
+        $assessedSkillIds = $session->skillSessions
+            ->pluck('SkillID')
+            ->filter()
+            ->map(fn ($skillId) => (int) $skillId)
+            ->unique()
+            ->values();
+
+        if ($assessedSkillIds->isEmpty()) {
+            return [];
+        }
+
         $finalResultsBySkillId = collect($session->FinalResultsJson ?? [])
-            ->keyBy('skill_id');
+            ->keyBy(fn ($item) => (int) ($item['skill_id'] ?? 0));
 
         $requiredSkills = CareerPathSkill::query()
             ->with('skill')
             ->where('CareerPathID', $session->CareerPathID)
+            ->whereIn('SkillID', $assessedSkillIds->all())
             ->get();
+
+        if ($requiredSkills->isEmpty()) {
+            return [];
+        }
 
         $marketContexts = $this->marketSkillDemandContextService->getForSkills(
             careerPathId: (int) $session->CareerPathID,
@@ -32,50 +61,93 @@ class SkillGapService
                 ->toArray()
         );
 
-        return $requiredSkills->map(function ($requiredSkill) use ($session, $finalResultsBySkillId, $marketContexts) {
-            $skillSession = $session->skillSessions
-                ->firstWhere('SkillID', $requiredSkill->SkillID);
+        return $requiredSkills
+            ->map(function ($requiredSkill) use (
+                $session,
+                $finalResultsBySkillId,
+                $marketContexts
+            ) {
+                $skillId = (int) $requiredSkill->SkillID;
 
-            $finalResult = $finalResultsBySkillId->get($requiredSkill->SkillID, []);
+                $skillSession = $session->skillSessions
+                    ->first(
+                        fn ($item) => (int) $item->SkillID === $skillId
+                    );
 
-            $actualLevel = $skillSession?->FinalLevel
-                ?? $skillSession?->CurrentEstimatedLevel
-                ?? 0;
+                /*
+                 * Defensive guard:
+                 * The query above already intersects with assessed skills, so
+                 * this should never happen. If relational data is inconsistent,
+                 * skip the row rather than inventing a level of zero.
+                 */
+                if ($skillSession === null) {
+                    return null;
+                }
 
-            $requiredLevel = (float) $requiredSkill->RequiredLevel;
-            $gap = max(0, $requiredLevel - (float) $actualLevel);
+                $finalResult = $finalResultsBySkillId->get($skillId, []);
 
-            $confidenceScore = isset($finalResult['confidence_score'])
-                ? (float) $finalResult['confidence_score']
-                : ($skillSession?->ConfidenceScore !== null ? (float) $skillSession->ConfidenceScore : null);
+                $actualLevel = $skillSession->FinalLevel
+                    ?? $skillSession->CurrentEstimatedLevel;
 
-            $topicCoverageRatio = isset($finalResult['topic_coverage_ratio'])
-                ? (float) $finalResult['topic_coverage_ratio']
-                : null;
+                /*
+                 * Never fabricate a zero proficiency for a session that has no
+                 * usable estimate. A missing estimate is "unknown", not 0.
+                 */
+                if ($actualLevel === null) {
+                    return null;
+                }
 
-            $skillId = (int) $requiredSkill->SkillID;
+                $actualLevel = (float) $actualLevel;
+                $requiredLevel = (float) $requiredSkill->RequiredLevel;
 
-            return [
-                'skill_id' => $skillId,
-                'skill_name' => $requiredSkill->skill?->name,
-                'required_level' => $requiredLevel,
-                'actual_level' => (float) $actualLevel,
-                'gap' => round($gap, 1),
-                'priority' => $this->resolvePriority($gap),
-                'status' => $gap <= 0 ? 'sufficient' : 'needs_improvement',
+                $gap = max(0, $requiredLevel - $actualLevel);
 
-                'market' => $marketContexts[$skillId] ?? null,
+                $confidenceScore = isset($finalResult['confidence_score'])
+                    ? (float) $finalResult['confidence_score']
+                    : (
+                        $skillSession->ConfidenceScore !== null
+                            ? (float) $skillSession->ConfidenceScore
+                            : null
+                    );
 
-                'confidence_score' => $confidenceScore,
-                'topic_coverage_ratio' => $topicCoverageRatio,
-                'tested_topics' => $finalResult['tested_topics'] ?? [],
-                'improvement_topics' => $finalResult['improvement_topics'] ?? [],
-                'assessment_reliability' => $this->resolveAssessmentReliability(
-                    confidenceScore: $confidenceScore,
-                    topicCoverageRatio: $topicCoverageRatio
-                ),
-            ];
-        })->values()->toArray();
+                $topicCoverageRatio = isset(
+                    $finalResult['topic_coverage_ratio']
+                )
+                    ? (float) $finalResult['topic_coverage_ratio']
+                    : null;
+
+                return [
+                    'skill_id' => $skillId,
+                    'skill_name' => $requiredSkill->skill?->name,
+                    'required_level' => $requiredLevel,
+                    'actual_level' => $actualLevel,
+                    'gap' => round($gap, 1),
+                    'priority' => $this->resolvePriority($gap),
+                    'status' => $gap <= 0
+                        ? 'sufficient'
+                        : 'needs_improvement',
+
+                    'market' => $marketContexts[$skillId] ?? null,
+
+                    'confidence_score' => $confidenceScore,
+                    'topic_coverage_ratio' => $topicCoverageRatio,
+                    'tested_topics' => (
+                        $finalResult['tested_topics'] ?? []
+                    ),
+                    'improvement_topics' => (
+                        $finalResult['improvement_topics'] ?? []
+                    ),
+                    'assessment_reliability' => (
+                        $this->resolveAssessmentReliability(
+                            confidenceScore: $confidenceScore,
+                            topicCoverageRatio: $topicCoverageRatio
+                        )
+                    ),
+                ];
+            })
+            ->filter()
+            ->values()
+            ->toArray();
     }
 
     private function resolvePriority(float $gap): string
@@ -103,7 +175,13 @@ class SkillGapService
             return 'غير محددة';
         }
 
-        if ($confidenceScore >= 0.75 && ($topicCoverageRatio === null || $topicCoverageRatio >= 0.60)) {
+        if (
+            $confidenceScore >= 0.75
+            && (
+                $topicCoverageRatio === null
+                || $topicCoverageRatio >= 0.60
+            )
+        ) {
             return 'عالية';
         }
 
