@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Domains\Supervisor\Enums\ProjectAssignmentStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ProjectAssignment extends Model
 {
@@ -34,9 +35,12 @@ class ProjectAssignment extends Model
         return $this->belongsTo(ProjectTemplate::class);
     }
 
-    public function portfolioProject()
+    public function portfolioProjects(): MorphMany
     {
-        return $this->morphOne(PortfolioProject::class, 'portfolioable');
+        return $this->morphMany(
+            PortfolioProject::class,
+            'portfolioable'
+        );
     }
 
     public function revisionRequests()
