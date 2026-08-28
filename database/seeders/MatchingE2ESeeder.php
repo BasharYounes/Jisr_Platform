@@ -431,9 +431,9 @@ class MatchingE2ESeeder extends Seeder
     }
 
     /**
-     * @param array{laravel: Skill, sql: Skill, docker: Skill} $skills
-     * @param array<string, int> $skillLevels
-     * @param array<int, int> $tagIds
+     * @param  array{laravel: Skill, sql: Skill, docker: Skill}  $skills
+     * @param  array<string, int>  $skillLevels
+     * @param  array<int, int>  $tagIds
      */
     private function seedStudentSignals(
         User $user,
@@ -584,7 +584,7 @@ class MatchingE2ESeeder extends Seeder
     }
 
     /**
-     * @param array<string, int> $userIds
+     * @param  array<string, int>  $userIds
      * @return array<string, string>
      */
     private function createPostmanTokens(array $userIds): array
@@ -647,7 +647,7 @@ class MatchingE2ESeeder extends Seeder
     }
 
     /**
-     * @param array<string, string> $tokens
+     * @param  array<string, string>  $tokens
      */
     private function writeGeneratedPostmanEnvironment(int $opportunityId, array $tokens): string
     {

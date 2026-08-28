@@ -74,7 +74,7 @@ class CompanyTaskApplicantDetailsResource extends JsonResource
                 'id' => $primaryCv->CvID,
 
                 'file_url' => $primaryCv->FileUrl
-                    ? asset('storage/' . $primaryCv->FileUrl)
+                    ? asset('storage/'.$primaryCv->FileUrl)
                     : null,
 
                 'is_primary' => (bool) $primaryCv->IsPrimary,

@@ -208,11 +208,11 @@ class ChangeProjectAssignmentSupervisorAction
                     ),
 
                     'supervisor' => [
-                    'id' => $oldSupervisor?->id,
+                        'id' => $oldSupervisor?->id,
 
-                    'name' => $oldSupervisor?->name,
+                        'name' => $oldSupervisor?->name,
 
-                    'email' => $oldSupervisor?->email,
+                        'email' => $oldSupervisor?->email,
                     ],
 
                     /*
@@ -224,11 +224,11 @@ class ChangeProjectAssignmentSupervisorAction
 
                 'new_value' => [
                     'supervisor' => [
-                    'id' => $newSupervisor->id,
+                        'id' => $newSupervisor->id,
 
-                    'name' => $newSupervisor->name,
+                        'name' => $newSupervisor->name,
 
-                    'email' => $newSupervisor->email,
+                        'email' => $newSupervisor->email,
                     ],
 
                     'reason' => trim($reason),
@@ -263,13 +263,13 @@ class ChangeProjectAssignmentSupervisorAction
                         ->progress_percentage,
 
                     'project_template' => [
-                    'id' => $updatedAssignment
-                        ->projectTemplate
-                        ?->id,
+                        'id' => $updatedAssignment
+                            ->projectTemplate
+                            ?->id,
 
-                    'title' => $updatedAssignment
-                        ->projectTemplate
-                        ?->title,
+                        'title' => $updatedAssignment
+                            ->projectTemplate
+                            ?->title,
                     ],
                 ],
 
@@ -301,7 +301,7 @@ class ChangeProjectAssignmentSupervisorAction
                     'cancelled_appeals_count' => $pendingAppealIds->count(),
 
                     'cancelled_revision_requests_count' => $pendingRevisionRequestIds
-                    ->count(),
+                        ->count(),
                 ],
 
                 'reason' => trim($reason),

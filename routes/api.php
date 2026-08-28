@@ -39,6 +39,8 @@ use App\Http\Controllers\Points\MyPointController;
 use App\Http\Controllers\Skill\SkillController;
 use App\Http\Controllers\Student\PortfolioProjectController;
 use App\Http\Controllers\Student\ProjectEvaluationAppealController;
+use App\Http\Controllers\Student\StudentAssessmentController;
+use App\Http\Controllers\Student\StudentCvController;
 use App\Http\Controllers\Student\StudentProjectTemplateController;
 use App\Http\Controllers\Student\StudentTaskApplicationController;
 use App\Http\Controllers\Student\StudentTaskController;
@@ -100,7 +102,7 @@ require __DIR__.'/Chatbot/ChatbotRoutes.php';
 
 Route::get('/dev/login-as-test', function () {
     $user = User::firstOrCreate(
-        ['email' => 'dev@test.com'],
+        ['email' => 'leleen830@gmail.com'],
         ['name' => 'Dev User', 'password' => bcrypt('123456')]
     );
     $token = $user->createToken('dev-token')->plainTextToken;
@@ -296,6 +298,14 @@ Route::middleware(['auth:sanctum', 'role:company'])->prefix('company/students')-
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student')->group(function () {
     Route::get('profile', [UserController::class, 'getProfileStudent']);
     Route::post('profile/edit', [UserController::class, 'editProfileStudent']);
+
+    Route::get('cvs', [StudentCvController::class, 'index']);
+    Route::get('cvs/{cvId}/analysis', [StudentCvController::class, 'showAnalysis'])
+        ->whereNumber('cvId');
+
+    Route::get('assessments', [StudentAssessmentController::class, 'index']);
+    Route::get('assessments/{assessmentSessionId}', [StudentAssessmentController::class, 'show'])
+        ->whereNumber('assessmentSessionId');
 });
 // Get Tasks for student
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->controller(StudentTaskApplicationController::class)->group(function () {
@@ -312,13 +322,30 @@ Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/tasks')->co
     Route::post('/{taskId}/apply', 'apply');
 });
 // Student Project Template Applications
-Route::middleware(['auth:sanctum'])->prefix('student/project-templates')->controller(StudentProjectTemplateController::class)->group(function () {
-    Route::get('/applications/all', 'all');
-    Route::get('/applications/pending', 'pending');
-    Route::get('/applications/accepted', 'accepted');
-    Route::get('/applications/rejected', 'rejected');
-    Route::post('/{projectTemplate}/apply', 'apply');
-});
+Route::middleware([
+    'auth:sanctum',
+    'role:student',
+])
+    ->prefix('student/project-templates')
+    ->controller(StudentProjectTemplateController::class)
+    ->group(function (): void {
+        // Discovery
+        Route::get('/', 'index');
+
+        // Existing application endpoints
+        Route::get('/applications/all', 'all');
+        Route::get('/applications/pending', 'pending');
+        Route::get('/applications/accepted', 'accepted');
+        Route::get('/applications/rejected', 'rejected');
+
+        // Selected project details
+        Route::get('/{projectTemplate}', 'show')
+            ->whereNumber('projectTemplate');
+
+        // Apply
+        Route::post('/{projectTemplate}/apply', 'apply')
+            ->whereNumber('projectTemplate');
+    });
 // Student Portfolio Projects
 Route::middleware(['auth:sanctum', 'role:student'])->prefix('student/portfolio-projects')->controller(PortfolioProjectController::class)->group(function () {
     Route::get('/', 'index');

@@ -70,6 +70,34 @@ class SkillExtractionService
             ════════════════════════════════════════
             STRICT RULES — follow every rule exactly
             ════════════════════════════════════════
+            //
+            RULE 0 — ASSESSMENT SKILL ALLOWLIST — HIGHEST PRIORITY:
+            You may extract and return ONLY these four canonical skills:
+
+            - Python
+            - Flask
+            - SQL
+            - Git
+
+            These are the ONLY skills currently supported by the assessment system.
+
+            The SKILLS CATALOG may contain many other skills, but every skill other than
+            Python, Flask, SQL, and Git is OUT OF SCOPE for this CV analysis and MUST
+            be ignored completely.
+
+            Even if another technical skill is explicitly written in the resume,
+            do NOT return it.
+
+            Never infer or substitute another skill.
+
+            Return only the allowed skills that are actually and explicitly evidenced
+            in the resume.
+
+            The output may therefore contain between 0 and 4 skills maximum.
+
+            If none of Python, Flask, SQL, or Git are explicitly found, return:
+            {"skills": []}
+            //
             RULE 1 — CATALOG ONLY:
               Extract ONLY skills present in the SKILLS CATALOG above.
               If a skill is not in the catalog, ignore it completely.
@@ -89,11 +117,14 @@ class SkillExtractionService
               If "mysql" and "postgresql" both appear, return "SQL" only once.
 
             RULE 5 — CANONICAL NAME ONLY:
-              Always return the canonical name from the catalog, never the alias.
-              Examples:
-              "mysql" → "SQL"
-              "github" → "Git"
-              "reactjs" → "React"
+            Always return the canonical name from the catalog, never the alias.
+            Examples:
+            "python3" → "Python"
+            "flask framework" → "Flask"
+            "mysql" → "SQL"
+            "postgresql" → "SQL"
+            "github" → "Git"
+            "gitlab" → "Git"
 
             RULE 6 — EVIDENCE:
               evidence must be a short exact phrase or a very close paraphrase from the

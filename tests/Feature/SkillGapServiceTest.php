@@ -50,9 +50,18 @@ class SkillGapServiceTest extends TestCase
 
         $this->assertEquals(0.72, $gap['confidence_score']);
         $this->assertEquals(0.60, $gap['topic_coverage_ratio']);
-        $this->assertEquals(['Routing', 'Eloquent'], $gap['tested_topics']);
-        $this->assertEquals(['Validation'], $gap['improvement_topics']);
-        $this->assertEquals('متوسطة', $gap['assessment_reliability']);
+        $this->assertEquals(
+            ['Routing', 'Eloquent'],
+            $gap['tested_topics']
+        );
+        $this->assertEquals(
+            ['Validation'],
+            $gap['improvement_topics']
+        );
+        $this->assertEquals(
+            'متوسطة',
+            $gap['assessment_reliability']
+        );
     }
 
     public function test_it_marks_skill_as_sufficient_when_actual_level_meets_required_level(): void
@@ -71,7 +80,81 @@ class SkillGapServiceTest extends TestCase
         $this->assertEquals(0.0, $gap['gap']);
         $this->assertEquals('none', $gap['priority']);
         $this->assertEquals('sufficient', $gap['status']);
-        $this->assertEquals('عالية', $gap['assessment_reliability']);
+        $this->assertEquals(
+            'عالية',
+            $gap['assessment_reliability']
+        );
+    }
+
+    public function test_it_does_not_create_false_gaps_for_unassessed_career_path_skills(): void
+    {
+        [$session, $assessedSkill, $careerPath] =
+            $this->createAssessmentContext(
+                requiredLevel: 2.0,
+                finalLevel: 1.3,
+                confidenceScore: 0.72,
+                topicCoverageRatio: 0.40
+            );
+
+        $unassessedSkill = Skill::query()->create([
+            'name' => 'REST API',
+            'category' => 'Architecture',
+            'normalized_name' => 'rest_api_'.uniqid(),
+        ]);
+
+        CareerPathSkill::query()->create([
+            'CareerPathID' => $careerPath->CareerPathID,
+            'SkillID' => $unassessedSkill->id,
+            'RequiredLevel' => 3.0,
+            'Weight' => 0.95,
+            'IsCore' => true,
+        ]);
+
+        $gaps = $this->service->calculateForSession($session);
+
+        $this->assertCount(1, $gaps);
+        $this->assertEquals(
+            $assessedSkill->id,
+            $gaps[0]['skill_id']
+        );
+        $this->assertEquals('Laravel', $gaps[0]['skill_name']);
+
+        $this->assertFalse(
+            collect($gaps)->contains(
+                fn ($gap) => (
+                    (int) $gap['skill_id']
+                    === (int) $unassessedSkill->id
+                )
+            )
+        );
+    }
+
+    public function test_it_returns_empty_when_session_has_no_assessed_skills(): void
+    {
+        $user = User::query()->create([
+            'name' => 'Empty Session Student',
+            'email' => 'empty_'.uniqid().'@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $careerPath = CareerPath::query()->create([
+            'Name' => 'Backend Empty '.uniqid(),
+            'Description' => 'Backend development path',
+        ]);
+
+        $session = AssessmentSession::query()->create([
+            'UserID' => $user->id,
+            'CareerPathID' => $careerPath->CareerPathID,
+            'Status' => 'completed',
+            'StartedAt' => now()->subHour(),
+            'CompletedAt' => now(),
+            'FinalResultsJson' => [],
+        ]);
+
+        $this->assertSame(
+            [],
+            $this->service->calculateForSession($session)
+        );
     }
 
     private function createAssessmentContext(
@@ -118,15 +201,24 @@ class SkillGapServiceTest extends TestCase
                     'final_level' => $finalLevel,
                     'confidence_score' => $confidenceScore,
                     'status' => 'completed',
-                    'tested_topics' => ['Routing', 'Eloquent'],
-                    'improvement_topics' => ['Validation'],
-                    'topic_coverage_ratio' => $topicCoverageRatio,
+                    'tested_topics' => [
+                        'Routing',
+                        'Eloquent',
+                    ],
+                    'improvement_topics' => [
+                        'Validation',
+                    ],
+                    'topic_coverage_ratio' => (
+                        $topicCoverageRatio
+                    ),
                 ],
             ],
         ]);
 
         AssessmentSkillSession::query()->create([
-            'AssessmentSessionID' => $session->AssessmentSessionID,
+            'AssessmentSessionID' => (
+                $session->AssessmentSessionID
+            ),
             'SkillID' => $skill->id,
             'InitialLevel' => 3.0,
             'CurrentEstimatedLevel' => 3.0,
@@ -137,6 +229,6 @@ class SkillGapServiceTest extends TestCase
             'CompletedAt' => now(),
         ]);
 
-        return [$session, $skill];
+        return [$session, $skill, $careerPath];
     }
 }

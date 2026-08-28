@@ -34,6 +34,7 @@ class AssessmentSkillSession extends Model
         'FinalLevel' => 'decimal:1',
         'ConfidenceScore' => 'decimal:2',
         'QuestionCount' => 'integer',
+        'CompletedAt' => 'datetime',
     ];
 
     public function assessmentSession()

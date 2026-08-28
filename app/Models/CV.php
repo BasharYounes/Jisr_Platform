@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CV extends Model
 {
@@ -32,5 +33,16 @@ class CV extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class, 'cv_id', 'CvID');
+    }
+
+    public function analyses(): HasMany
+    {
+        return $this->hasMany(CVAnalysis::class, 'CvId', 'CvID');
+    }
+
+    public function latestAnalysis(): HasOne
+    {
+        return $this->hasOne(CVAnalysis::class, 'CvId', 'CvID')
+            ->latestOfMany('CVAnalysisID');
     }
 }

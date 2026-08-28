@@ -2,6 +2,7 @@
 
 namespace App\Services\CompanyTasks;
 
+use App\Events\CompanyTaskHighMatchApplicationReceived;
 use App\Interfaces\CompanyTaskApplicationRepositoryInterface;
 use App\Interfaces\CompanyTaskRepositoryInterface;
 use App\Models\CompanyTask;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use App\Events\CompanyTaskHighMatchApplicationReceived;
 
 class StudentTaskService
 {
