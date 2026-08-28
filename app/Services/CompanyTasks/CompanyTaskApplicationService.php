@@ -59,7 +59,20 @@ class CompanyTaskApplicationService
             $actor,
             $data
         ) {
-            $application = $this->applicationRepository->findCompanyApplicationOrFail(
+            // 1. Get Application snapshot just to know the task_id
+            $applicationSnapshot = $this->applicationRepository->findCompanyApplicationOrFail(
+                $companyId,
+                $applicationId
+            );
+
+            // 2. Lock Task
+            $this->companyTaskRepository->findCompanyTaskForUpdateOrFail(
+                $companyId,
+                $applicationSnapshot->company_task_id
+            );
+
+            // 3. Lock Application
+            $application = $this->applicationRepository->findCompanyApplicationForUpdateOrFail(
                 $companyId,
                 $applicationId
             );
@@ -133,7 +146,7 @@ class CompanyTaskApplicationService
     public function rejectApplication(int $companyId, int $applicationId, array $data = []): CompanyTaskApplication
     {
         return DB::transaction(function () use ($companyId, $applicationId, $data) {
-            $application = $this->applicationRepository->findCompanyApplicationOrFail(
+            $application = $this->applicationRepository->findCompanyApplicationForUpdateOrFail(
                 companyId: $companyId,
                 applicationId: $applicationId
             );
@@ -159,7 +172,7 @@ class CompanyTaskApplicationService
                     'application_id' => (string) $application->id,
                     'company_task_id' => (string) $application->company_task_id,
                 ],
-            );
+            )->afterCommit();
 
             return $application;
         });
@@ -178,7 +191,7 @@ class CompanyTaskApplicationService
 
     private function ensureAcceptedLimitNotReached(CompanyTaskApplication $application): void
     {
-        $acceptedCount = $this->applicationRepository->countAcceptedForTask(
+        $acceptedCount = $this->assignmentRepository->countActiveForTask(
             taskId: $application->company_task_id
         );
 

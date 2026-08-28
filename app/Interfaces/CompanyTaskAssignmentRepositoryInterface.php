@@ -22,4 +22,6 @@ interface CompanyTaskAssignmentRepositoryInterface
         CompanyTaskAssignment $assignment,
         array $data
     ): CompanyTaskAssignment;
+
+    public function countActiveForTask(int $taskId): int;
 }

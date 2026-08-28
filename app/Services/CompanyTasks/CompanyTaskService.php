@@ -36,6 +36,7 @@ class CompanyTaskService
     public function updateTask(int $companyId, int $taskId, array $data): CompanyTask
     {
         return DB::transaction(function () use ($companyId, $taskId, $data) {
+            $this->companyTaskRepository->findCompanyTaskForUpdateOrFail($companyId, $taskId);
             $task = $this->companyTaskRepository->findCompanyTaskOrFail($companyId, $taskId);
 
             $this->ensureTaskCanBeUpdated($task);
@@ -88,6 +89,7 @@ class CompanyTaskService
     public function publishTask(int $companyId, int $taskId): CompanyTask
     {
         return DB::transaction(function () use ($companyId, $taskId) {
+            $this->companyTaskRepository->findCompanyTaskForUpdateOrFail($companyId, $taskId);
             $task = $this->companyTaskRepository->findCompanyTaskOrFail($companyId, $taskId);
 
             $this->ensureTaskCanBePublished($task);
@@ -145,6 +147,7 @@ class CompanyTaskService
         int $taskId
     ): CompanyTask {
         return DB::transaction(function () use ($companyId, $taskId): CompanyTask {
+            $this->companyTaskRepository->findCompanyTaskForUpdateOrFail($companyId, $taskId);
             $task = $this->companyTaskRepository
                 ->findCompanyTaskWithAssignmentsOrFail(
                     companyId: $companyId,
@@ -198,6 +201,7 @@ class CompanyTaskService
             $taskId,
             $reason
         ): CompanyTask {
+            $this->companyTaskRepository->findCompanyTaskForUpdateOrFail($companyId, $taskId);
             $task = $this->companyTaskRepository
                 ->findCompanyTaskWithAssignmentsOrFail(
                     companyId: $companyId,

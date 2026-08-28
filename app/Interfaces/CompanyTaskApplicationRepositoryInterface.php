@@ -17,6 +17,8 @@ interface CompanyTaskApplicationRepositoryInterface
 
     public function findCompanyApplicationOrFail(int $companyId, int $applicationId): CompanyTaskApplication;
 
+    public function findCompanyApplicationForUpdateOrFail(int $companyId, int $applicationId): CompanyTaskApplication;
+
     public function update(
         CompanyTaskApplication $application,
         array $data

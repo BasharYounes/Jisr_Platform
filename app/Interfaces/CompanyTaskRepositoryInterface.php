@@ -13,6 +13,10 @@ interface CompanyTaskRepositoryInterface
 
     public function findCompanyTaskOrFail(int $companyId, int $taskId): CompanyTask;
 
+    public function findTaskForUpdateOrFail(int $taskId): CompanyTask;
+
+    public function findCompanyTaskForUpdateOrFail(int $companyId, int $taskId): CompanyTask;
+
     public function getByCompany(
         int $companyId,
         ?string $status = null
