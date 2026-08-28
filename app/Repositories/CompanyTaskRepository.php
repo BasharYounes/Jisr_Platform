@@ -43,6 +43,21 @@ class CompanyTaskRepository implements CompanyTaskRepositoryInterface
             ->firstOrFail();
     }
 
+    public function findTaskForUpdateOrFail(int $taskId): CompanyTask
+    {
+        return CompanyTask::query()
+            ->lockForUpdate()
+            ->findOrFail($taskId);
+    }
+
+    public function findCompanyTaskForUpdateOrFail(int $companyId, int $taskId): CompanyTask
+    {
+        return CompanyTask::query()
+            ->where('company_id', $companyId)
+            ->lockForUpdate()
+            ->findOrFail($taskId);
+    }
+
     public function getByCompany(
         int $companyId,
         ?string $status = null

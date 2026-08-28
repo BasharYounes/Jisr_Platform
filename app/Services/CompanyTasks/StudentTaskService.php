@@ -49,8 +49,13 @@ class StudentTaskService
         array $data
     ): CompanyTaskApplication {
         return DB::transaction(function () use ($studentUserId, $taskId, $data) {
+            // 1. Lock Task
+            $this->companyTaskRepository->findTaskForUpdateOrFail($taskId);
+
+            // 2. Recheck task availability
             $task = $this->companyTaskRepository->findAvailableTaskOrFail($taskId);
 
+            // 3. Check duplicate application
             if ($this->companyTaskApplicationRepository->existsForStudent($task->id, $studentUserId)) {
                 throw ValidationException::withMessages([
                     'task' => [

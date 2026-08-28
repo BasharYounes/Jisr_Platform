@@ -84,4 +84,12 @@ class CompanyTaskAssignmentRepository implements CompanyTaskAssignmentRepository
             'reviews',
         ]);
     }
+
+    public function countActiveForTask(int $taskId): int
+    {
+        return CompanyTaskAssignment::query()
+            ->where('company_task_id', $taskId)
+            ->where('status', '!=', 'cancelled')
+            ->count();
+    }
 }

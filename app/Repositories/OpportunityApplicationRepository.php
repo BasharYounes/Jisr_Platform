@@ -114,6 +114,25 @@ class OpportunityApplicationRepository implements OpportunityApplicationReposito
         return Application::query()
             ->with([
                 'user.studentProfile',
+
+                'user.skills' => fn ($query) => $query
+                    ->orderBy('skills.name'),
+
+                'user.portfolioProjects' => fn ($query) => $query
+                    ->orderByDesc('completion_date')
+                    ->orderByDesc('id'),
+
+                'user.studentProjectAssignments' => fn ($query) => $query
+                    ->orderByDesc('project_assignments.assigned_at')
+                    ->orderByDesc('project_assignments.id'),
+
+                'user.studentProjectAssignments.projectTemplate',
+                'user.studentProjectAssignments.supervisor',
+
+                'user.receivedProjectEvaluations' => fn ($query) => $query
+                    ->orderByDesc('evaluated_at')
+                    ->orderByDesc('id'),
+
                 'opportunity.company',
                 'opportunity.skills',
                 'cv',

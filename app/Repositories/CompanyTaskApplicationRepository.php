@@ -67,6 +67,19 @@ class CompanyTaskApplicationRepository implements CompanyTaskApplicationReposito
             ->firstOrFail();
     }
 
+    public function findCompanyApplicationForUpdateOrFail(
+        int $companyId,
+        int $applicationId
+    ): CompanyTaskApplication {
+        return CompanyTaskApplication::query()
+            ->where('id', $applicationId)
+            ->whereHas('task', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })
+            ->lockForUpdate()
+            ->firstOrFail();
+    }
+
     public function update(
         CompanyTaskApplication $application,
         array $data

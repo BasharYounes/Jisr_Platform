@@ -58,10 +58,10 @@ final class SendCompanyTaskApplicationAcceptedNotification
             recipient: $student,
             title: $title,
             body: $body,
-            data: array_map(
-                static fn (mixed $value): string => (string) $value,
-                $data
-            ),
+            data: [
+                'type' => NotificationTypes::COMPANY_TASK_APPLICATION_ACCEPTED,
+                ...$data,
+            ],
         );
     }
 }
