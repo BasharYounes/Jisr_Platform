@@ -13,30 +13,39 @@ class NotifyStudentProjectStatusChanged
         private readonly NotificationService $notifications
     ) {}
 
-    public function handle(ProjectAssignmentStatusChanged $event): void
-    {
-        $assignment = $event->assignment;
+    public function handle(
+        ProjectAssignmentStatusChanged $event
+    ): void {
+        $assignment = $event->assignment->loadMissing([
+            'members.student',
+        ]);
 
-        $student = $assignment->student;
         $actor = User::find($event->changedBy);
 
-        if (! $student) {
-            return;
-        }
+        $activeMembers = $assignment->members
+            ->where('status', 'active');
 
-        $this->notifications->send(
-            recipient: $student,
-            type: NotificationTypes::PROJECT_STATUS_CHANGED,
-            title: 'تم تحديث حالة مشروعك',
-            body: 'قام المشرف بتحديث حالة المشروع.',
-            actor: $actor,
-            related: $assignment,
-            data: [
-                'project_assignment_id' => $assignment->id,
-                'old_status' => $event->oldStatus,
-                'new_status' => $event->newStatus,
-                'screen' => 'project_assignment_details',
-            ],
-        );
+        foreach ($activeMembers as $member) {
+            $student = $member->student;
+
+            if ($student === null) {
+                continue;
+            }
+
+            $this->notifications->send(
+                recipient: $student,
+                type: NotificationTypes::PROJECT_STATUS_CHANGED,
+                title: 'تم تحديث حالة مشروعك',
+                body: 'قام المشرف بتحديث حالة المشروع.',
+                actor: $actor,
+                related: $assignment,
+                data: [
+                    'project_assignment_id' => $assignment->id,
+                    'old_status' => $event->oldStatus,
+                    'new_status' => $event->newStatus,
+                    'screen' => 'project_assignment_details',
+                ],
+            );
+        }
     }
 }
