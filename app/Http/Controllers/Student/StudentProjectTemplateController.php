@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Student;
 
 use App\Domains\Student\Actions\ApplyToProjectTemplateAction;
+use App\Domains\Student\Actions\GetStudentProjectTemplateDetailsAction;
+use App\Domains\Student\Actions\ListStudentProjectTemplatesAction;
 use App\Domains\Student\Enums\ProjectTemplateApplicationStatus;
 use App\Domains\Student\Requests\ApplyToProjectTemplateRequest;
+use App\Domains\Student\Requests\ListStudentProjectTemplatesRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\StudentProjectTemplateApplicationResource;
+use App\Http\Resources\Student\StudentProjectTemplateResource;
 use App\Models\ProjectTemplate;
 use App\Services\Student\StudentProjectTemplateApplicationService;
 use App\Traits\ApiResponse;
@@ -21,6 +25,47 @@ class StudentProjectTemplateController extends Controller
     public function __construct(
         private readonly StudentProjectTemplateApplicationService $applicationService
     ) {}
+
+    public function index(
+        ListStudentProjectTemplatesRequest $request,
+        ListStudentProjectTemplatesAction $action
+    ): JsonResponse {
+        $projects = $action->execute(
+            student: $request->user(),
+            filters: $request->validated()
+        );
+
+        return $this->success(
+            'تم جلب مشاريع المشرفين المتاحة للطالب بنجاح. | Supervisor project templates retrieved successfully.',
+            [
+                'projects' => StudentProjectTemplateResource::collection(
+                    $projects->getCollection()
+                )->resolve($request),
+                'pagination' => [
+                    'current_page' => $projects->currentPage(),
+                    'last_page' => $projects->lastPage(),
+                    'per_page' => $projects->perPage(),
+                    'total' => $projects->total(),
+                ],
+            ]
+        );
+    }
+
+    public function show(
+        Request $request,
+        ProjectTemplate $projectTemplate,
+        GetStudentProjectTemplateDetailsAction $action
+    ): JsonResponse {
+        $project = $action->execute(
+            projectTemplate: $projectTemplate,
+            student: $request->user()
+        );
+
+        return $this->success(
+            'تم جلب تفاصيل المشروع بنجاح. | Supervisor project template retrieved successfully.',
+            new StudentProjectTemplateResource($project)
+        );
+    }
 
     public function apply(
         ApplyToProjectTemplateRequest $request,

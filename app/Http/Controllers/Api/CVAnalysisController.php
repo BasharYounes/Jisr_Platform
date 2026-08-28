@@ -25,6 +25,10 @@ class CVAnalysisController extends Controller
 
     public function analyze(CV $cv): JsonResponse
     {
+        if ((int) $cv->UserId !== (int) auth()->id()) {
+            return ApiResponse::error('You are not authorized to analyze this CV.', 403);
+        }
+
         $absolutePath = Storage::disk('public')->path($cv->FileUrl);
         $text = $this->textExtractionService->extractFromPath($absolutePath);
 
@@ -98,7 +102,7 @@ class CVAnalysisController extends Controller
 
     public function show(CV $cv): JsonResponse
     {
-        if ($cv->UserId !== auth()->id()) {
+        if ((int) $cv->UserId !== (int) auth()->id()) {
             return ApiResponse::error('You are not authorized to view this CV.', 403);
         }
 

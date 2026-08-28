@@ -2,11 +2,11 @@
 
 namespace App\Services\CompanyTasks;
 
+use App\Events\CompanyTaskReviewCompleted;
 use App\Interfaces\CompanyTaskReviewRepositoryInterface;
 use App\Models\CompanyTaskAssignment;
 use App\Models\CompanyTaskReview;
 use App\Models\CompanyTaskSubmission;
-use App\Events\CompanyTaskReviewCompleted;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;

@@ -52,10 +52,10 @@ class ProjectEvaluationAppealResource extends JsonResource
 
             'reviewed_by' => $this->reviewedBy
                     ? [
-                    'id' => $this->reviewedBy->id,
-                    'name' => $this->reviewedBy->name,
-                    'email' => $this->reviewedBy->email,
-                ]
+                        'id' => $this->reviewedBy->id,
+                        'name' => $this->reviewedBy->name,
+                        'email' => $this->reviewedBy->email,
+                    ]
                     : null,
 
             'review_notes' => $this->review_notes,

@@ -195,7 +195,7 @@ class User extends Authenticatable
     public function cvs()
     {
         return $this->hasMany(
-            Cv::class,
+            CV::class,
             'UserId',
             'id'
         );

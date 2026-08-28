@@ -191,21 +191,21 @@ class ProjectEvaluationAppealController extends Controller
                 ))->resolve($request),
 
                 'appeal_window' => [
-                'started_at' => $evaluation
-                    ->appeal_started_at
-                    ?->toISOString(),
+                    'started_at' => $evaluation
+                        ->appeal_started_at
+                        ?->toISOString(),
 
-                'deadline_at' => $evaluation
-                    ->appeal_deadline_at
-                    ?->toISOString(),
+                    'deadline_at' => $evaluation
+                        ->appeal_deadline_at
+                        ?->toISOString(),
 
-                'is_open' => $evaluation
-                    ->isAppealWindowOpen(),
+                    'is_open' => $evaluation
+                        ->isAppealWindowOpen(),
 
-                'duration_hours' => (int) config(
-                    'evaluations.appeal_window_hours',
-                    48
-                ),
+                    'duration_hours' => (int) config(
+                        'evaluations.appeal_window_hours',
+                        48
+                    ),
                 ],
 
                 'can_appeal' => Gate::allows(

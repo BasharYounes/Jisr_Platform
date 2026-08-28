@@ -8,6 +8,11 @@ class ProjectTemplate extends Model
 {
     protected $guarded = [];
 
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+
     public function assignments()
     {
         return $this->hasMany(ProjectAssignment::class);

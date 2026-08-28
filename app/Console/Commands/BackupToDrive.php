@@ -16,7 +16,7 @@ class BackupToDrive extends Command
         $backupName = config('backup.backup.name');
 
         $backupPath = storage_path(
-            'app/private/' . $backupName
+            'app/private/'.$backupName
         );
 
         if (! is_dir($backupPath)) {
@@ -27,10 +27,10 @@ class BackupToDrive extends Command
 
         $rclone = '"C:\rclone\rclone-v1.72.1-windows-amd64\rclone.exe"';
 
-        $command = $rclone . ' copy ' .
-            '"' . $backupPath . '" ' .
-            '"batoul_drive:Jisr Platform" ' .
-            '--log-file="' . storage_path('logs/rclone.log') . '" ' .
+        $command = $rclone.' copy '.
+            '"'.$backupPath.'" '.
+            '"batoul_drive:Jisr Platform" '.
+            '--log-file="'.storage_path('logs/rclone.log').'" '.
             '--log-level INFO';
 
         exec($command, $output, $status);
